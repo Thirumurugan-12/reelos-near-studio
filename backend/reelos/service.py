@@ -81,8 +81,10 @@ class Editor:
     ) -> dict:
         assets = {a["id"]: a for a in self.store.list("asset", project_id)}
         validate_assets(plan, assets)
+        profile = {"font": "aileron", "pillow": "12.3.0", "version": "1"}
         if parent:
-            self.store.get("version", parent, project_id)
+            previous = self.store.get("version", parent, project_id)
+            profile = previous.get("render_profile", {"font": "system", "version": "legacy"})
         return self.store.put(
             "version",
             new_id(),
@@ -93,6 +95,7 @@ class Editor:
                 "plan": plan.model_dump(),
                 "summary": summary,
                 "track_key": track_key,
+                "render_profile": profile,
                 "storyboard": plan.storyboard(),
                 "observations": observations or [],
                 "has_preview": False,
@@ -207,6 +210,7 @@ class Editor:
                     width=360 if quality == "preview" else 1080,
                     track=track,
                     progress=lambda p: stage("Rendering your " + quality, p),
+                    font_family=version.get("render_profile", {}).get("font", "system"),
                 )
             version["has_" + quality] = True
             self.store.put("version", version["id"], version)

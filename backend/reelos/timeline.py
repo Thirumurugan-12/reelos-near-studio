@@ -13,6 +13,17 @@ class Contract(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
+class Framing(Contract):
+    scale: float = Field(default=1, ge=0.65, le=1)
+    offset_y: float = Field(default=0, ge=0, le=0.35)
+
+    @model_validator(mode="after")
+    def fits_canvas(self):
+        if self.scale + self.offset_y > 1.001:
+            raise ValueError("framed footage must fit within the output canvas")
+        return self
+
+
 class TextStyle(Contract):
     text: str = Field(min_length=1, max_length=120)
     x: Unit = 0.5
@@ -57,6 +68,7 @@ class EditPlan(Contract):
     source_in: Seconds = 0
     source_out: Seconds
     fps: Literal[30] = 30
+    framing: Framing = Field(default_factory=Framing)
     effects: list[Effect] = Field(default_factory=list, max_length=12)
 
     @property

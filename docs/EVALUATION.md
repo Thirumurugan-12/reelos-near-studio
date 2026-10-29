@@ -31,7 +31,13 @@ These are individual development runs on the current machine, not latency percen
 
 ## Current automated checks
 
-25 backend tests passed at the initial checkpoint. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render.
+31 backend tests now pass. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render. Additional checks cover matched footage/mask framing, hidden-title detection, smoothed tracking anchors without filling absent masks, font independence from host fonts, and single-line short headlines at both preview and export sizes. Ruff also passes.
+
+## Visible-edit correction
+
+The user correctly reported that the first treatment was too subtle: the title was mostly occluded and the spotlight was weak. A new Muse-directed 18-second draft (`c8d845c855964067b03c152bd2f7bce1`) uses 0.82 framing scale, 0.16 vertical offset, a readable YOUR STORY headline at 0–6 seconds, spotlight intensity 0.6 at 6–12 seconds, and a contrasting YOUR VOICE label at 12–18 seconds. Preview frames at seconds 2, 8, and 14 were visually inspected. Planning plus preview took 15.73 seconds with cached SAM masks. These labels are editorial titles, not transcribed speech. Export inspection caught a resolution-dependent title wrap; a short-title fitting correction was applied and the same Muse plan was preserved as child version `5bc1e98a11c742c591dbde42e842cb3e`, without another paid model request. The first corrected export took 38.73 seconds; decoded source/export audio correlation was 0.99919.
+
+An earlier correction attempt exhausted the provider's output-token limit and produced no version. The planner now explicitly uses low reasoning effort so reasoning does not consume the entire response budget. The successful subsequent request was manually initiated; failed paid requests are not automatically retried. The renderer now rejects a title with less than 40% unoccluded glyph area at its midpoint; this is a limited guardrail, not a substitute for playback review.
 
 Frontend type checking and production build passed. The npm production dependency audit reported no vulnerabilities at that checkpoint. These do not replace browser interaction and visual checks.
 
@@ -43,7 +49,7 @@ The fitted mobile workspace measured document dimensions equal to the viewport a
 
 - Two additional independent, rights-cleared footage sets; three excerpts from one recording would not prove independent coverage.
 - Validate reference analysis against an actual style reference and show a visible mapped change.
-- Complete visual subject selection, deterministic label smoothing, and consistent bundled rendering fonts.
+- Complete visual subject selection and broaden validation of the new label smoothing and recorded font profiles.
 - Confirm restore behavior in the browser and run all three revision intents through the actual model workflow.
 - Broaden compositing inspection across motion, occlusion, missing subjects, and effect boundaries.
 - Repeat demo runs and collect creator task feedback; no time-savings or preference claim is established yet.

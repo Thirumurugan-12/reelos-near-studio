@@ -4,6 +4,7 @@ import json
 import math
 import subprocess
 import tempfile
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -82,18 +83,31 @@ def make_proxy(source: Path, output: Path, fps: int = 10) -> None:
     )
 
 
-def font(size: int):
-    for path in FONT_CANDIDATES:
-        if Path(path).is_file():
-            return ImageFont.truetype(path, size)
+def font(size: int, family: str = "aileron"):
+    if family == "system":  # Legacy development artifacts retain their original policy.
+        for path in FONT_CANDIDATES:
+            if Path(path).is_file():
+                return ImageFont.truetype(path, size)
     return ImageFont.load_default(size=size)
 
 
-def text_layer(size: tuple, style, time: float, start: float, end: float) -> Image.Image:
+def text_layer(
+    size: tuple,
+    style,
+    time: float,
+    start: float,
+    end: float,
+    font_family: str = "aileron",
+    badge: bool = False,
+) -> Image.Image:
     width, height = size
     layer = Image.new("RGBA", size)
     draw = ImageDraw.Draw(layer)
-    face = font(max(10, round(height * style.size)))
+    face = font(max(10, round(height * style.size)), font_family)
+    # Short editorial titles should keep one line at every output resolution.
+    if len(style.text) <= 24:
+        while draw.textlength(style.text, font=face) > width * 0.88:
+            face = font(max(5, face.size - 1), font_family)
     # Fit bounded lines rather than silently crop long user text.
     words, lines, line = style.text.split(), [], ""
     for word in words:
@@ -106,7 +120,7 @@ def text_layer(size: tuple, style, time: float, start: float, end: float) -> Ima
     lines.append(line)
     text = "\n".join(lines)
     while draw.multiline_textbbox((0, 0), text, font=face)[2] > width * 0.9:
-        face = font(max(5, face.size - 1))
+        face = font(max(5, face.size - 1), font_family)
     entrance = min(1.0, max(0, (time - start) / 0.4))
     eased = 1 - (1 - entrance) ** 3
     alpha = round(255 * min(eased, max(0, (end - time) / 0.15)))
@@ -116,6 +130,18 @@ def text_layer(size: tuple, style, time: float, start: float, end: float) -> Ima
     x = max(tw / 2 + 4, min(width - tw / 2 - 4, x))
     y = max(th / 2 + 4, min(height - th / 2 - 4, y))
     color = tuple(bytes.fromhex(style.color[1:])) + (alpha,)
+    if badge:
+        padding = height * 0.013
+        draw.rounded_rectangle(
+            (
+                x - tw / 2 - padding,
+                y - th / 2 - padding,
+                x + tw / 2 + padding,
+                y + th / 2 + padding,
+            ),
+            radius=height * 0.01,
+            fill=(15, 23, 18, round(alpha * 0.85)),
+        )
     draw.multiline_text(
         (x - tw / 2, y - th / 2 - bounds[1]),
         text,
@@ -129,7 +155,9 @@ def text_layer(size: tuple, style, time: float, start: float, end: float) -> Ima
     return layer
 
 
-def composite(frame: Image.Image, plan: EditPlan, time: float, masks: dict) -> np.ndarray:
+def composite(
+    frame: Image.Image, plan: EditPlan, time: float, masks: dict, font_family: str = "aileron"
+) -> np.ndarray:
     original = frame.convert("RGBA")
     current = original.copy()
     active = [e for e in plan.effects if e.start <= time < e.end]
@@ -144,7 +172,9 @@ def composite(frame: Image.Image, plan: EditPlan, time: float, masks: dict) -> n
     for effect in active:
         mask = masks.get(effect.subject_id)
         if mask is not None and effect.type == "behind_subject_text":
-            layer = text_layer(frame.size, effect.params, time, effect.start, effect.end)
+            layer = text_layer(
+                frame.size, effect.params, time, effect.start, effect.end, font_family
+            )
             with_text = Image.alpha_composite(current, layer)
             current = Image.composite(current, with_text, mask)
     for effect in active:
@@ -152,17 +182,60 @@ def composite(frame: Image.Image, plan: EditPlan, time: float, masks: dict) -> n
         if mask is not None and effect.type == "tracked_label":
             bounds = mask.getbbox()
             if bounds:
+                dx, dy = mask.info.get("label_motion", (0, 0))
                 style = effect.params.model_copy(
                     update={
-                        "x": ((bounds[0] + bounds[2]) / 2) / frame.width,
-                        "y": min(0.9, bounds[3] / frame.height + 0.04),
+                        "x": max(0.05, min(0.95, effect.params.x + dx)),
+                        "y": max(0.05, min(0.95, effect.params.y + dy)),
                     }
                 )
                 current = Image.alpha_composite(
                     current,
-                    text_layer(frame.size, style, time, effect.start, effect.end),
+                    text_layer(
+                        frame.size, style, time, effect.start, effect.end, font_family, badge=True
+                    ),
                 )
     return np.asarray(current.convert("RGB"))
+
+
+def frame_subject(frame: Image.Image, masks: dict, framing) -> tuple[Image.Image, dict]:
+    if framing.scale == 1 and framing.offset_y == 0:
+        return frame, masks
+    width, height = frame.size
+    size = (round(width * framing.scale), round(height * framing.scale))
+    position = ((width - size[0]) // 2, round(height * framing.offset_y))
+    backdrop = ImageEnhance.Brightness(
+        frame.filter(ImageFilter.GaussianBlur(width * 0.05))
+    ).enhance(0.35)
+    backdrop.paste(frame.resize(size, Image.Resampling.LANCZOS), position)
+    transformed = {}
+    for subject, mask in masks.items():
+        canvas = Image.new("L", frame.size)
+        canvas.paste(mask.resize(size, Image.Resampling.BILINEAR), position)
+        if "label_motion" in mask.info:
+            canvas.info["label_motion"] = tuple(
+                v * framing.scale for v in mask.info["label_motion"]
+            )
+        transformed[subject] = canvas
+    return backdrop, transformed
+
+
+def headline_visibility(
+    size: tuple, effect, mask: Image.Image, font_family: str = "aileron"
+) -> float:
+    time = (effect.start + effect.end) / 2
+    alpha = (
+        np.asarray(
+            text_layer(size, effect.params, time, effect.start, effect.end, font_family).getchannel(
+                "A"
+            )
+        )
+        > 32
+    )
+    total = np.count_nonzero(alpha)
+    if not total:
+        return 0
+    return float(np.count_nonzero(alpha & (np.asarray(mask) < 128)) / total)
 
 
 class MaskTrack:
@@ -173,15 +246,46 @@ class MaskTrack:
         self.manifest = json.loads((directory / "manifest.json").read_text())
         self.fps = self.manifest["fps"]
         self.subjects = self.manifest["subjects"]
+        self._cached_read = lru_cache(maxsize=24)(self._read)
+        self.reference = {}
+        for subject in self.subjects:
+            paths = sorted((directory / subject).glob("*.png"))
+            if paths:
+                image = self._cached_read(subject, int(paths[0].stem))
+                self.reference[subject] = self._anchor(image)
+
+    def _read(self, subject: str, frame: int):
+        path = self.directory / subject / f"{frame:06d}.png"
+        if not path.exists():
+            return None
+        with Image.open(path) as image:
+            return image.convert("L")
+
+    @staticmethod
+    def _anchor(image):
+        bounds = image.getbbox() if image else None
+        if not bounds:
+            return None
+        return ((bounds[0] + bounds[2]) / (2 * image.width), bounds[3] / image.height)
 
     def at(self, seconds: float, size: tuple) -> dict:
         frame = math.floor(seconds * self.fps + 1e-6)
         result = {}
         for subject in self.subjects:
-            path = self.directory / subject / f"{frame:06d}.png"
-            if path.exists():
-                with Image.open(path) as image:
-                    result[subject] = image.convert("L").resize(size, Image.Resampling.BILINEAR)
+            image = self._cached_read(subject, frame)
+            if image is not None:
+                mask = image.resize(size, Image.Resampling.BILINEAR)
+                recent = [
+                    self._anchor(self._cached_read(subject, f))
+                    for f in range(max(0, frame - 2), frame + 1)
+                ]
+                anchors = [a for a in recent if a is not None]
+                ref = self.reference.get(subject)
+                if anchors and ref:
+                    mask.info["label_motion"] = tuple(
+                        sum(a[i] for a in anchors) / len(anchors) - ref[i] for i in range(2)
+                    )
+                result[subject] = mask
         return result
 
 
@@ -192,6 +296,7 @@ def render(
     width: int = 1080,
     track: MaskTrack | None = None,
     progress=None,
+    font_family: str = "aileron",
 ) -> None:
     if plan.effects and track is None:
         raise ValueError("Subject effects require a real tracking artifact.")
@@ -281,7 +386,20 @@ def render(
                     image = Image.frombytes("RGB", (width, height), raw)
                     t = index / plan.fps
                     masks = track.at(plan.source_in + t, image.size) if track else {}
-                    encoder.stdin.write(composite(image, plan, t, masks).tobytes())
+                    image, masks = frame_subject(image, masks, plan.framing)
+                    for effect in plan.effects:
+                        midpoint = round((effect.start + effect.end) * plan.fps / 2)
+                        if effect.type == "behind_subject_text" and index == midpoint:
+                            mask = masks.get(effect.subject_id)
+                            if (
+                                mask is not None
+                                and headline_visibility(image.size, effect, mask, font_family) < 0.4
+                            ):
+                                raise ValueError(
+                                    "The headline is mostly hidden by the subject. "
+                                    "Move it into clear space or use a framed layout."
+                                )
+                    encoder.stdin.write(composite(image, plan, t, masks, font_family).tobytes())
                     if progress and index % 15 == 0:
                         progress(index / count)
                 encoder.stdin.close()

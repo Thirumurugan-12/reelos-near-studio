@@ -90,6 +90,6 @@ Real model verification is documented in [the evaluation report](docs/EVALUATION
 
 ## Scope and provenance
 
-The implementation is original project code. The supplied Claude effects repository and Notion recipes informed the workflow and catalog; their renderer code was not copied. SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles and package notices for third-party components. The current renderer resolves fonts available on its host; cross-host font freezing is still a reproducibility refinement.
+The implementation is original project code. The supplied Claude effects repository, Notion recipes, and video-editor agent informed the workflow and catalog; their renderer code was not copied. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles and package notices for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
 
 Exact-word captions, elaborate transitions, full timeline manipulation, social publishing, and automatic video generation are outside the baseline. Muse outputs are validated data, never shell commands. Reference observations are proposed interpretations rather than a promise to recover a video's hidden editing settings.
