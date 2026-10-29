@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+**/.venv
+**/node_modules
+**/.next
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+data
+testing_video
+testing_videos
+docs/design-references

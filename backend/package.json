@@ -1,0 +1,7 @@
+{
+  "name": "reelos-mask-decoder",
+  "private": true,
+  "type": "module",
+  "description": "Official Meta SAM parser runtime for fast mask decoding",
+  "dependencies": {"@meta-sam/parser": "0.1.0"}
+}

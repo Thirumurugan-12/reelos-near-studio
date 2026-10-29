@@ -7,6 +7,8 @@ __pycache__/
 *.egg-info/
 .ruff_cache/
 data/
+testing_video/
+testing_videos/
 node_modules/
 .next/
 dist/
