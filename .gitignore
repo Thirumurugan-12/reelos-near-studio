@@ -9,6 +9,8 @@ __pycache__/
 data/
 testing_video/
 testing_videos/
+reference_video/
+reference_videos/
 node_modules/
 .next/
 dist/

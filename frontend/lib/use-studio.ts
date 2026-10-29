@@ -54,7 +54,8 @@ export function useStudio() {
           );
           setJob(
             p.jobs.find((j) => ["queued", "running"].includes(j.status)) ||
-              p.jobs[0] || null,
+              p.jobs[0] ||
+              null,
           );
         }
         await refreshUsage();
@@ -122,7 +123,9 @@ export function useStudio() {
       setSourceId(p.assets.find((a) => a.role === "source")?.id || "");
       setReferenceId(p.assets.find((a) => a.role === "reference")?.id || "");
       setJob(
-        p.jobs.find((j) => ["queued", "running"].includes(j.status)) || p.jobs[0] || null,
+        p.jobs.find((j) => ["queued", "running"].includes(j.status)) ||
+          p.jobs[0] ||
+          null,
       );
       setSubjectId("");
       window.history.replaceState(null, "", `?project=${id}`);
@@ -166,6 +169,12 @@ export function useStudio() {
       await load(project.id);
     });
   }
+  function selectSource(id: string) {
+    setSourceId(id);
+    setVersionId("");
+    setSubjectId("");
+    setJob(null);
+  }
   return {
     health,
     projects,
@@ -173,7 +182,7 @@ export function useStudio() {
     versionId,
     setVersionId,
     sourceId,
-    setSourceId,
+    setSourceId: selectSource,
     referenceId,
     setReferenceId,
     job,

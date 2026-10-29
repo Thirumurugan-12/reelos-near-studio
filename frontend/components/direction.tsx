@@ -11,6 +11,7 @@ export function Direction({
   onRevise,
   subjectId,
   onSubject,
+  projectId,
 }: {
   version?: Version;
   job: Job | null;
@@ -20,6 +21,7 @@ export function Direction({
   onRevise: (instruction: string) => void;
   subjectId: string;
   onSubject: (id: string) => void;
+  projectId?: string;
 }) {
   const [instruction, setInstruction] = useState(
     "A clear, confident explainer. Give the opening a bold headline, keep the focus on me, and add a subtle tracked label.",
@@ -27,6 +29,8 @@ export function Direction({
   const [revision, setRevision] = useState("");
   const [review, setReview] = useState(false);
   const [subject, setSubject] = useState("person");
+  const needsSubject =
+    job?.status === "needs_subject" && job.request.subject_prompt === subject;
   return (
     <section className="direction panel" aria-label="Creative direction">
       <div className="panel-heading">
@@ -61,31 +65,42 @@ export function Direction({
             id="subject"
             value={subject}
             maxLength={120}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+              setSubject(e.target.value);
+              onSubject("");
+            }}
             disabled={busy}
           />
-          {job?.status === "needs_subject" && (
-            <div className="subject-choice">
-              <label htmlFor="subject-choice">
-                We found more than one subject. Choose the tracked ID.
-              </label>
-              <select
-                id="subject-choice"
-                value={subjectId}
-                onChange={(e) => onSubject(e.target.value)}
-              >
-                <option value="">Choose subject</option>
-                {job.result?.subjects.map((id) => (
-                  <option key={id} value={id}>
-                    Subject {id}
-                  </option>
-                ))}
-              </select>
+          {needsSubject && (
+            <fieldset className="subject-choice">
+              <legend>Who should we track?</legend>
               <p className="small muted">
-                IDs refer to SAM tracks. Visual selection is still being
-                developed.
+                Choose the highlighted person to use in your edit.
               </p>
-            </div>
+              <div className="subject-grid">
+                {job.result?.subjects.map((id) => (
+                  <label key={id} className="subject-card">
+                    <input
+                      type="radio"
+                      name="tracked-subject"
+                      value={id}
+                      checked={subjectId === id}
+                      onChange={() => onSubject(id)}
+                      disabled={busy}
+                    />
+                    {/* Local thumbnails already have the correct display size. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/api/projects/${projectId}/jobs/${job.id}/subjects/${id}/thumbnail`}
+                      alt={`Highlighted subject ${id}`}
+                      width={192}
+                      height={192}
+                    />
+                    <span>Subject {id}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
           )}
           <label className="checkbox">
             <input
@@ -102,7 +117,7 @@ export function Direction({
               busy ||
               !canDraft ||
               !subject.trim() ||
-              (job?.status === "needs_subject" && !subjectId)
+              (needsSubject && !subjectId)
             }
           >
             <Icon name="sparkle" size={17} />

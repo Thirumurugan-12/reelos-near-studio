@@ -48,6 +48,7 @@ export type Job = {
   version_id?: string;
   result?: { subjects: string[]; track_key: string };
   elapsed?: number;
+  request: { asset_id?: string; subject_prompt?: string };
 };
 export type Project = {
   id: string;

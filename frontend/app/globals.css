@@ -849,10 +849,53 @@ input[type="checkbox"] {
   margin-top: 12px;
   border-radius: 6px;
   font-size: 12px;
+  border: 1px solid var(--line);
+  min-width: 0;
 }
-.subject-choice select {
+.subject-choice legend {
+  font-weight: 600;
+}
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 0;
+}
+.subject-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.subject-card:has(input:checked) {
+  border-color: var(--green);
+}
+.subject-card:has(input:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.subject-card img {
   width: 100%;
-  margin: 8px 0;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  object-fit: cover;
+}
+.subject-card input[type="radio"] {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+}
+.subject-card span {
+  font-size: 11px;
 }
 .preview-slot > .primary {
   margin-top: 16px;

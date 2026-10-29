@@ -245,6 +245,7 @@ export default function Studio() {
         </div>
         <div className="direction-slot">
           <Direction
+            projectId={s.project?.id}
             version={version}
             job={s.job}
             busy={s.busy}

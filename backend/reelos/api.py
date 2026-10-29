@@ -6,11 +6,12 @@ from typing import Literal
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import Field, model_validator
 
 from reelos.config import Settings
 from reelos.media import inspect_media, make_proxy
+from reelos.segmentation import subject_thumbnail
 from reelos.service import Editor
 from reelos.store import new_id
 from reelos.timeline import Contract, EditPlan, Identifier
@@ -103,7 +104,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def usage():
         return editor.store.budget() | {
             "limit_usd": settings.budget_usd,
-            "note": "Local reservations are conservative allowances, not confirmed Meta billing.",
+            "note": "Estimates cover reported usage only; unpriced calls may add cost. "
+            "Reservations remain conservative allowances. Neither is confirmed Meta billing.",
         }
 
     @app.get("/api/projects")
@@ -222,5 +224,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/projects/{project_id}/jobs/{job_id}")
     def job_get(project_id: Identifier, job_id: Identifier):
         return editor.store.get("job", job_id, project_id)
+
+    @app.get("/api/projects/{project_id}/jobs/{job_id}/subjects/{subject_id}/thumbnail")
+    def subject_preview(project_id: Identifier, job_id: Identifier, subject_id: str):
+        job = editor.store.get("job", job_id, project_id)
+        if subject_id not in job.get("result", {}).get("subjects", []):
+            raise KeyError("Subject not found")
+        asset = editor.store.get("asset", job["request"]["asset_id"], project_id)
+        directory = editor.asset_dir(asset["id"])
+        return Response(
+            subject_thumbnail(
+                directory / "proxy.mp4",
+                directory / "tracks" / job["result"]["track_key"],
+                subject_id,
+            ),
+            media_type="image/png",
+        )
 
     return app

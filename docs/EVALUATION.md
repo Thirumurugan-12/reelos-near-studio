@@ -45,12 +45,20 @@ Frontend type checking and production build passed. The npm production dependenc
 
 The fitted mobile workspace measured document dimensions equal to the viewport at 390 × 844 and 320 × 568 during development. Final browser checks of the deployed Compose build are scheduled after functional editing verification, as requested. Do not infer broader device compatibility from those two measurements.
 
+### Functional workspace verification, 29 October
+
+Visual SAM selection now shows real mask-highlighted source thumbnails, including small background photo detections. The speaker was selected in the browser and a new Muse draft rendered in 14.0 seconds using cached masks. Three subsequent browser-submitted revisions changed headline y 0.09 → 0.11, spotlight intensity 0.6 → 0.35, and headline end 6 → 4 seconds. Whole-plan comparisons proved that each changed only its requested field. Preview latencies were 8.00, 8.24, and 8.85 seconds. Restoring the earlier draft through the browser changed the durable current-version pointer and retained all eight playable versions present at that checkpoint.
+
+A controlled coral reference derived from our own renderer exercised the real reference-upload/analysis path. Muse approximated its headline as #E78A66 (the fixture used #D97757), with timestamped reference observations. The rendered reference-mapped title was visually inspected. This proves limited supported mapping on a controlled fixture; it does not prove general style matching. The user subsequently supplied a separate 54-second landscape reference, whose more elaborate treatment requires further implementation and verification.
+
+The usage endpoint now separates known-usage cost estimates, unpriced calls, and conservative reservations. At the 15-request checkpoint it reported $0.21033950 for known usage, one unpriced request, and $15 reserved against the configured $50 cap. These are local calculations using [Meta's published rates](https://dev.meta.ai/docs/pricing-rate-limits), checked 29 October; neither is confirmed account billing. Forty backend tests passed after these additions.
+
 ## Still required
 
 - Two additional independent, rights-cleared footage sets; three excerpts from one recording would not prove independent coverage.
-- Validate reference analysis against an actual style reference and show a visible mapped change.
-- Complete visual subject selection and broaden validation of the new label smoothing and recorded font profiles.
-- Confirm restore behavior in the browser and run all three revision intents through the actual model workflow.
+- Implement and validate the user's supplied reference treatment, including requested Remotion graphics.
+- Broaden validation of visual subject selection, label smoothing, and recorded font profiles.
+- Repeat the three revision intents across the two additional footage sets.
 - Broaden compositing inspection across motion, occlusion, missing subjects, and effect boundaries.
 - Repeat demo runs and collect creator task feedback; no time-savings or preference claim is established yet.
 - Verify current official submission rules, access, and required artifacts; prepare the demo video and submission package.
