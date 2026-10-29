@@ -7,6 +7,8 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 
+from reelos.pricing import PRICING_AS_OF, PRICING_SOURCE, estimate_cost
+
 
 def new_id() -> str:
     return uuid.uuid4().hex
@@ -89,8 +91,13 @@ class Store:
     def budget(self) -> dict:
         with self.connect() as db:
             rows = db.execute("SELECT * FROM api_calls ORDER BY created DESC").fetchall()
+        estimates = [estimate_cost(r["model"], json.loads(r["usage"])) for r in rows]
         return {
             "reserved_usd": sum(r["reserve"] for r in rows),
+            "estimated_known_usd": round(sum(v for v in estimates if v is not None), 8),
+            "unpriced_calls": sum(v is None for v in estimates),
+            "pricing_as_of": PRICING_AS_OF,
+            "pricing_source": PRICING_SOURCE,
             "calls": [
                 {
                     "id": r["id"],
@@ -99,7 +106,8 @@ class Store:
                     "latency": r["latency"],
                     "usage": json.loads(r["usage"]),
                     "reserved_usd": r["reserve"],
+                    "estimated_usd": estimate,
                 }
-                for r in rows
+                for r, estimate in zip(rows, estimates, strict=True)
             ],
         }

@@ -20,3 +20,16 @@ def test_records_survive_reopen_and_enforce_project_scope(tmp_path):
     assert Store(tmp_path).get("asset", "a")["duration"] == 20
     with pytest.raises(KeyError):
         store.get("asset", "a", project_id="p2")
+
+
+def test_usage_estimates_keep_unpriced_calls_and_reservations_separate(tmp_path):
+    store = Store(tmp_path)
+    known = store.reserve("muse-spark-1.3", 1, 5)
+    store.finish_call(known, "incomplete", {"input_tokens": 1000, "output_tokens": 200}, 0.4)
+    unknown = store.reserve("sam-3.1", 1, 5)
+    store.finish_call(unknown, "failed_or_unknown", {}, 2)
+    report = Store(tmp_path).budget()
+    assert report["estimated_known_usd"] == pytest.approx(0.0021)
+    assert report["unpriced_calls"] == 1
+    assert report["reserved_usd"] == 2
+    assert report["calls"][0]["estimated_usd"] is None
