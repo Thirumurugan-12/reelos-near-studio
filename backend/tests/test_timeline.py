@@ -9,8 +9,16 @@ def plan_data():
         "asset_id": "a" * 32,
         "source_in": 1,
         "source_out": 4,
-        "effects": [{"id": "title", "type": "behind_subject_text", "start": 0,
-                     "end": 2, "subject_id": "0", "params": {"text": "Hello"}}],
+        "effects": [
+            {
+                "id": "title",
+                "type": "behind_subject_text",
+                "start": 0,
+                "end": 2,
+                "subject_id": "0",
+                "params": {"text": "Hello"},
+            }
+        ],
     }
 
 
@@ -21,10 +29,16 @@ def test_rejects_effect_outside_trimmed_output():
         EditPlan.model_validate(data)
 
 
-@pytest.mark.parametrize("change", [
-    {"source_out": 0}, {"source_in": float("nan")}, {"source_out": 40},
-    {"asset_id": "../../secret"}, {"speed": 2},
-])
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"source_out": 0},
+        {"source_in": float("nan")},
+        {"source_out": 40},
+        {"asset_id": "../../secret"},
+        {"speed": 2},
+    ],
+)
 def test_rejects_unsafe_or_unsupported_plan(change):
     with pytest.raises(ValidationError):
         EditPlan.model_validate(plan_data() | change)

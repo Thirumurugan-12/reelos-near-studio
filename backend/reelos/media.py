@@ -20,8 +20,10 @@ FONT_CANDIDATES = [
 def inspect_media(path: Path) -> dict:
     try:
         result = subprocess.run(
-            ["ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json",
-             str(path)], capture_output=True, timeout=20, check=True,
+            ["ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json", str(path)],
+            capture_output=True,
+            timeout=20,
+            check=True,
         )
         info = json.loads(result.stdout)
         video = next(s for s in info["streams"] if s["codec_type"] == "video")
@@ -29,23 +31,48 @@ def inspect_media(path: Path) -> dict:
         width, height = int(video["width"]), int(video["height"])
         if not math.isfinite(duration) or duration <= 0 or not 0 < width * height <= 3840 * 2160:
             raise ValueError("unsupported media dimensions or duration")
-        return {"duration": duration, "width": width, "height": height,
-                "has_audio": any(s["codec_type"] == "audio" for s in info["streams"])}
+        return {
+            "duration": duration,
+            "width": width,
+            "height": height,
+            "has_audio": any(s["codec_type"] == "audio" for s in info["streams"]),
+        }
     except (subprocess.SubprocessError, ValueError, KeyError, StopIteration) as exc:
         raise ValueError("Cannot decode this video; use a supported MP4 or MOV.") from exc
 
 
 def portrait_filter(width: int, fps: int) -> str:
     height = width * 16 // 9
-    return (f"fps={fps},scale={width}:{height}:force_original_aspect_ratio=increase,"
-            f"crop={width}:{height},setsar=1")
+    return (
+        f"fps={fps},scale={width}:{height}:force_original_aspect_ratio=increase,"
+        f"crop={width}:{height},setsar=1"
+    )
 
 
 def make_proxy(source: Path, output: Path, fps: int = 10) -> None:
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(source), "-vf",
-                    portrait_filter(360, fps), "-an", "-c:v", "libx264", "-preset",
-                    "veryfast", "-pix_fmt", "yuv420p", str(output)],
-                   capture_output=True, timeout=180, check=True)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-v",
+            "error",
+            "-y",
+            "-i",
+            str(source),
+            "-vf",
+            portrait_filter(360, fps),
+            "-an",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-pix_fmt",
+            "yuv420p",
+            str(output),
+        ],
+        capture_output=True,
+        timeout=180,
+        check=True,
+    )
 
 
 def font(size: int):
@@ -82,9 +109,16 @@ def text_layer(size: tuple, style, time: float, start: float, end: float) -> Ima
     x = max(tw / 2 + 4, min(width - tw / 2 - 4, x))
     y = max(th / 2 + 4, min(height - th / 2 - 4, y))
     color = tuple(bytes.fromhex(style.color[1:])) + (alpha,)
-    draw.multiline_text((x - tw / 2, y - th / 2 - bounds[1]), text, font=face,
-                        fill=color, align="center", spacing=4, stroke_width=1,
-                        stroke_fill=(0, 0, 0, alpha // 3))
+    draw.multiline_text(
+        (x - tw / 2, y - th / 2 - bounds[1]),
+        text,
+        font=face,
+        fill=color,
+        align="center",
+        spacing=4,
+        stroke_width=1,
+        stroke_fill=(0, 0, 0, alpha // 3),
+    )
     return layer
 
 
@@ -111,12 +145,15 @@ def composite(frame: Image.Image, plan: EditPlan, time: float, masks: dict) -> n
         if mask is not None and effect.type == "tracked_label":
             bounds = mask.getbbox()
             if bounds:
-                style = effect.params.model_copy(update={
-                    "x": ((bounds[0] + bounds[2]) / 2) / frame.width,
-                    "y": min(0.9, bounds[3] / frame.height + 0.04),
-                })
+                style = effect.params.model_copy(
+                    update={
+                        "x": ((bounds[0] + bounds[2]) / 2) / frame.width,
+                        "y": min(0.9, bounds[3] / frame.height + 0.04),
+                    }
+                )
                 current = Image.alpha_composite(
-                    current, text_layer(frame.size, style, time, effect.start, effect.end),
+                    current,
+                    text_layer(frame.size, style, time, effect.start, effect.end),
                 )
     return np.asarray(current.convert("RGB"))
 
@@ -141,8 +178,14 @@ class MaskTrack:
         return result
 
 
-def render(source: Path, plan: EditPlan, output: Path, width: int = 1080,
-           track: MaskTrack | None = None, progress=None) -> None:
+def render(
+    source: Path,
+    plan: EditPlan,
+    output: Path,
+    width: int = 1080,
+    track: MaskTrack | None = None,
+    progress=None,
+) -> None:
     if plan.effects and track is None:
         raise ValueError("Subject effects require a real tracking artifact.")
     if track and any(e.subject_id not in track.subjects for e in plan.effects):
@@ -153,21 +196,76 @@ def render(source: Path, plan: EditPlan, output: Path, width: int = 1080,
     # Temporary output is promoted atomically only after decoder and encoder succeed.
     with tempfile.TemporaryDirectory(dir=output.parent) as temp:
         part = Path(temp) / "render.mp4"
-        with (Path(temp) / "decode.log").open("w+b") as dec_log, \
-                (Path(temp) / "encode.log").open("w+b") as enc_log:
-            decoder = subprocess.Popen([
-                "ffmpeg", "-v", "error", "-ss", str(plan.source_in), "-i", str(source),
-                "-an", "-vf", portrait_filter(width, plan.fps), "-frames:v", str(count),
-                "-pix_fmt", "rgb24", "-f", "rawvideo", "pipe:1",
-            ], stdout=subprocess.PIPE, stderr=dec_log)
-            encoder = subprocess.Popen([
-                "ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
-                "-s", f"{width}x{height}", "-r", str(plan.fps), "-i", "pipe:0",
-                "-ss", str(plan.source_in), "-i", str(source), "-map", "0:v",
-                "-map", "1:a:0?", "-t", str(count / plan.fps), "-c:v", "libx264",
-                "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
-                "-c:a", "aac", "-movflags", "+faststart", str(part),
-            ], stdin=subprocess.PIPE, stderr=enc_log)
+        with (
+            (Path(temp) / "decode.log").open("w+b") as dec_log,
+            (Path(temp) / "encode.log").open("w+b") as enc_log,
+        ):
+            decoder = subprocess.Popen(
+                [
+                    "ffmpeg",
+                    "-v",
+                    "error",
+                    "-ss",
+                    str(plan.source_in),
+                    "-i",
+                    str(source),
+                    "-an",
+                    "-vf",
+                    portrait_filter(width, plan.fps),
+                    "-frames:v",
+                    str(count),
+                    "-pix_fmt",
+                    "rgb24",
+                    "-f",
+                    "rawvideo",
+                    "pipe:1",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=dec_log,
+            )
+            encoder = subprocess.Popen(
+                [
+                    "ffmpeg",
+                    "-v",
+                    "error",
+                    "-y",
+                    "-f",
+                    "rawvideo",
+                    "-pix_fmt",
+                    "rgb24",
+                    "-s",
+                    f"{width}x{height}",
+                    "-r",
+                    str(plan.fps),
+                    "-i",
+                    "pipe:0",
+                    "-ss",
+                    str(plan.source_in),
+                    "-i",
+                    str(source),
+                    "-map",
+                    "0:v",
+                    "-map",
+                    "1:a:0?",
+                    "-t",
+                    str(count / plan.fps),
+                    "-c:v",
+                    "libx264",
+                    "-preset",
+                    "veryfast",
+                    "-crf",
+                    "20",
+                    "-pix_fmt",
+                    "yuv420p",
+                    "-c:a",
+                    "aac",
+                    "-movflags",
+                    "+faststart",
+                    str(part),
+                ],
+                stdin=subprocess.PIPE,
+                stderr=enc_log,
+            )
             try:
                 for index in range(count):
                     raw = decoder.stdout.read(width * height * 3)

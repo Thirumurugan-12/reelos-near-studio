@@ -75,11 +75,19 @@ class EditPlan(Contract):
         return self
 
     def storyboard(self) -> list[dict]:
-        return [{"operation_id": e.id, "type": e.type, "start": e.start, "end": e.end,
-                 "source_start": self.source_in + e.start,
-                 "source_end": self.source_in + e.end, "reason": e.reason,
-                 "text": getattr(e.params, "text", None)}
-                for e in sorted(self.effects, key=lambda e: e.start)]
+        return [
+            {
+                "operation_id": e.id,
+                "type": e.type,
+                "start": e.start,
+                "end": e.end,
+                "source_start": self.source_in + e.start,
+                "source_end": self.source_in + e.end,
+                "reason": e.reason,
+                "text": getattr(e.params, "text", None),
+            }
+            for e in sorted(self.effects, key=lambda e: e.start)
+        ]
 
 
 def validate_assets(plan: EditPlan, assets: dict) -> None:
