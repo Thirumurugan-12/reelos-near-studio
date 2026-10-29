@@ -1,0 +1,35 @@
+[project]
+name = "reelos"
+version = "0.1.0"
+description = "A subject-aware creative editor powered by Meta models"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.34,<1",
+  "python-multipart>=0.0.20,<1",
+  "pydantic>=2.10,<3",
+  "python-dotenv>=1,<2",
+  "httpx>=0.28,<1",
+  "pillow>=11,<13",
+  "numpy>=2,<3",
+  "meta-sam-parser==0.1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[project.scripts]
+reelos = "reelos.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
