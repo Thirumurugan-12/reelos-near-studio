@@ -1,0 +1,190 @@
+import { useState } from "react";
+import { type Job, type Version } from "../lib/api";
+import { Icon } from "./icons";
+
+export function Direction({
+  version,
+  job,
+  busy,
+  canDraft,
+  onDraft,
+  onRevise,
+  subjectId,
+  onSubject,
+}: {
+  version?: Version;
+  job: Job | null;
+  busy: boolean;
+  canDraft: boolean;
+  onDraft: (instruction: string, review: boolean, prompt: string) => void;
+  onRevise: (instruction: string) => void;
+  subjectId: string;
+  onSubject: (id: string) => void;
+}) {
+  const [instruction, setInstruction] = useState(
+    "A clear, confident explainer. Give the opening a bold headline, keep the focus on me, and add a subtle tracked label.",
+  );
+  const [revision, setRevision] = useState("");
+  const [review, setReview] = useState(false);
+  const [subject, setSubject] = useState("person");
+  return (
+    <section className="direction panel" aria-label="Creative direction">
+      <div className="panel-heading">
+        <h2>Creative direction</h2>
+        <span className="spark-mark">
+          <Icon name="sparkle" size={16} />
+        </span>
+      </div>
+      <p className="muted small">A little intention goes a long way.</p>
+      {!version ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onDraft(instruction, review, subject);
+          }}
+        >
+          <label className="field-label" htmlFor="direction">
+            What do you have in mind?
+          </label>
+          <textarea
+            id="direction"
+            value={instruction}
+            maxLength={2000}
+            onChange={(e) => setInstruction(e.target.value)}
+            rows={5}
+            disabled={busy}
+          />
+          <label className="field-label" htmlFor="subject">
+            Subject to track
+          </label>
+          <input
+            id="subject"
+            value={subject}
+            maxLength={120}
+            onChange={(e) => setSubject(e.target.value)}
+            disabled={busy}
+          />
+          {job?.status === "needs_subject" && (
+            <div className="subject-choice">
+              <label htmlFor="subject-choice">
+                We found more than one subject. Choose the tracked ID.
+              </label>
+              <select
+                id="subject-choice"
+                value={subjectId}
+                onChange={(e) => onSubject(e.target.value)}
+              >
+                <option value="">Choose subject</option>
+                {job.result?.subjects.map((id) => (
+                  <option key={id} value={id}>
+                    Subject {id}
+                  </option>
+                ))}
+              </select>
+              <p className="small muted">
+                IDs refer to SAM tracks. Visual selection is still being
+                developed.
+              </p>
+            </div>
+          )}
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={review}
+              onChange={(e) => setReview(e.target.checked)}
+              disabled={busy}
+            />{" "}
+            Review storyboard before rendering
+          </label>
+          <button
+            className="primary wide"
+            disabled={
+              busy ||
+              !canDraft ||
+              !subject.trim() ||
+              (job?.status === "needs_subject" && !subjectId)
+            }
+          >
+            <Icon name="sparkle" size={17} />
+            {busy ? "Creating your edit…" : "Create draft"}
+            <Icon name="arrow" size={17} />
+          </button>
+          <p className="privacy-note">
+            Creating a draft sends your proxy footage to Meta for analysis and
+            subject tracking.
+          </p>
+        </form>
+      ) : (
+        <>
+          <div className="edit-summary">
+            <span className="eyebrow">EDITOR’S NOTE</span>
+            <p>{version.summary}</p>
+          </div>
+          <div className="decisions">
+            {version.storyboard.map((beat) => (
+              <div className="decision" key={beat.operation_id}>
+                <span>{beat.start.toFixed(1)}s</span>
+                <p>
+                  {beat.reason || beat.text || beat.type.replaceAll("_", " ")}
+                </p>
+              </div>
+            ))}
+          </div>
+          <form
+            className="revision-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (revision.trim()) onRevise(revision);
+            }}
+          >
+            <label className="field-label" htmlFor="revision">
+              Make it yours
+            </label>
+            <textarea
+              id="revision"
+              value={revision}
+              onChange={(e) => setRevision(e.target.value)}
+              placeholder="Lower the headline and soften the spotlight…"
+              rows={3}
+              maxLength={2000}
+              disabled={busy}
+            />
+            <div className="suggestions">
+              {[
+                "Lower the headline",
+                "Soften the spotlight",
+                "Make the opening faster",
+              ].map((text) => (
+                <button
+                  type="button"
+                  key={text}
+                  onClick={() => setRevision(text)}
+                  disabled={busy}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+            <button
+              className="primary wide"
+              disabled={busy || !revision.trim()}
+            >
+              Apply changes
+              <Icon name="arrow" size={17} />
+            </button>
+          </form>
+          {version.observations.length > 0 && (
+            <details>
+              <summary>Footage & reference observations</summary>
+              {version.observations.map((o, i) => (
+                <p className="small" key={i}>
+                  <strong>{o.origin}:</strong> {o.text}
+                </p>
+              ))}
+            </details>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
