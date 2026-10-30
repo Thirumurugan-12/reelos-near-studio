@@ -113,7 +113,7 @@ def text_layer(
     face = font(max(10, round(height * style.size)), font_family)
     # Short editorial titles should keep one line at every output resolution.
     if len(style.text) <= 24:
-        while draw.textlength(style.text, font=face) > width * 0.88:
+        while face.size > 5 and draw.textlength(style.text, font=face) > width * 0.88:
             face = font(max(5, face.size - 1), font_family)
     # Fit bounded lines rather than silently crop long user text.
     words, lines, line = style.text.split(), [], ""
@@ -126,8 +126,10 @@ def text_layer(
             line = candidate
     lines.append(line)
     text = "\n".join(lines)
-    while draw.multiline_textbbox((0, 0), text, font=face)[2] > width * 0.9:
+    while face.size > 5 and draw.multiline_textbbox((0, 0), text, font=face)[2] > width * 0.9:
         face = font(max(5, face.size - 1), font_family)
+    if draw.multiline_textbbox((0, 0), text, font=face)[2] > width * 0.9:
+        raise ValueError("Use shorter text or add spaces so the headline fits the frame.")
     entrance = min(1.0, max(0, (time - start) / 0.4))
     eased = 1 - (1 - entrance) ** 3
     alpha = round(255 * min(eased, max(0, (end - time) / 0.15)))
