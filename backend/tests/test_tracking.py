@@ -29,3 +29,15 @@ def test_font_is_available_without_platform_specific_font_files(monkeypatch):
     monkeypatch.setattr(Path, "is_file", lambda self: False)
     face = font(32)
     assert face.getname()[0] == "Aileron"
+
+
+def test_short_audio_tail_keeps_last_mask_without_filling_internal_gaps(tmp_path):
+    (tmp_path / "0").mkdir()
+    (tmp_path / "manifest.json").write_text(
+        json.dumps({"fps": 10, "subjects": ["0"], "frame_count": 10})
+    )
+    Image.new("L", (10, 10), 255).save(tmp_path / "0" / "000009.png")
+    track = MaskTrack(tmp_path)
+    assert track.at(0.8, (10, 10)) == {}
+    assert track.at(1.1, (10, 10))["0"].getbbox() == (0, 0, 10, 10)
+    assert track.at(1.5, (10, 10)) == {}

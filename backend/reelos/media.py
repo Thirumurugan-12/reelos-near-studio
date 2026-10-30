@@ -317,6 +317,11 @@ class MaskTrack:
 
     def at(self, seconds: float, size: tuple) -> dict:
         frame = math.floor(seconds * self.fps + 1e-6)
+        count = self.manifest.get("frame_count")
+        # Camera files may end video slightly before audio. Match the short
+        # final-picture hold used by full-video rendering, without bridging gaps.
+        if count and count <= frame <= count + math.ceil(self.fps * 0.25):
+            frame = count - 1
         result = {}
         for subject in self.subjects:
             image = self._cached_read(subject, frame)
@@ -371,7 +376,12 @@ def render(
                     str(source),
                     "-an",
                     "-vf",
-                    portrait_filter(width, plan.fps),
+                    portrait_filter(width, plan.fps)
+                    + (
+                        ",tpad=stop_mode=clone:stop_duration=0.25"
+                        if plan.output_mode == "full"
+                        else ""
+                    ),
                     "-frames:v",
                     str(count),
                     "-pix_fmt",

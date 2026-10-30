@@ -91,3 +91,59 @@ def test_subject_effects_require_real_tracking_artifact(source, tmp_path):
     }
     with pytest.raises(ValueError, match="tracking"):
         render(source, EditPlan.model_validate(data), tmp_path / "out.mp4", width=180)
+
+
+def test_full_video_preserves_audio_tail_after_last_camera_frame(tmp_path):
+    source = tmp_path / "audio-tail.mp4"
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-v",
+            "error",
+            "-f",
+            "lavfi",
+            "-i",
+            "color=blue:s=90x160:r=30:d=1",
+            "-f",
+            "lavfi",
+            "-i",
+            "sine=frequency=440:duration=1.1",
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            str(source),
+        ],
+        check=True,
+    )
+    duration = inspect_media(source)["duration"]
+    output = tmp_path / "complete.mp4"
+    render(
+        source,
+        EditPlan(asset_id="a" * 32, source_out=duration, output_mode="full"),
+        output,
+        width=90,
+    )
+    meta = inspect_media(output)
+    assert meta["has_audio"]
+    assert abs(meta["duration"] - duration) <= 1 / 30
+    count = subprocess.run(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=nb_frames",
+            "-of",
+            "csv=p=0",
+            str(output),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert int(count.stdout.strip()) == round(duration * 30)
