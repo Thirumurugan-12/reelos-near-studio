@@ -245,7 +245,18 @@ def composite(
         if effect.type == "graphic_insert":
             if not graphics or effect.id not in graphics:
                 raise ValueError("Graphic insert is missing its rendered Remotion asset.")
-            current = graphics[effect.id].at(time - effect.start, frame.size)
+            asset = graphics[effect.id].at(time - effect.start, frame.size)
+            if effect.params.presentation == "broll":
+                from reelos.broll import broll_layer
+
+                current = Image.alpha_composite(
+                    current.convert("RGBA"),
+                    broll_layer(
+                        asset, effect.params, time - effect.start, effect.end - effect.start
+                    ),
+                )
+            else:
+                current = asset
     return np.asarray(current.convert("RGB"))
 
 

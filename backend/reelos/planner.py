@@ -29,6 +29,7 @@ class Change(Contract):
         "template",
         "design",
         "accent_color",
+        "presentation",
     ]
     value: str | float
 
@@ -49,7 +50,10 @@ def apply_revision(parent: EditPlan, patch: Revision) -> EditPlan:
             effect["type"] in {"behind_subject_text", "tracked_label"}
             and change.field in {"design", "accent_color"}
         )
-        if change.field not in target and not optional_text_field:
+        optional_graphic_field = (
+            effect["type"] == "graphic_insert" and change.field == "presentation"
+        )
+        if change.field not in target and not optional_text_field and not optional_graphic_field:
             raise ValueError("This effect does not support the requested change.")
         target[change.field] = change.value
     return EditPlan.model_validate(data)
@@ -151,6 +155,9 @@ def create_plan(
             "Observations: at most 5 objects with text, source_start, source_end, origin.",
             "ASR is approximate; use it for topic, never exact word alignment.",
             "When requested, use graphic_insert cutaways with approved Remotion templates.",
+            "For B-roll or supporting overlays, set graphic_insert params.presentation='broll'. "
+            "This uses compact lower-frame animated cards and keeps the presenter visible. "
+            "Use presentation='fullscreen' only for a requested full-screen cutaway.",
             "Matching a reference with graphic inserts counts as a request for relevant inserts.",
             "With a reference, map its palette, background and contour to supported style fields.",
             "A glowing cutout look can use continuous spotlight plus outline_width and glow.",

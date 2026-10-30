@@ -60,3 +60,118 @@ def test_oversized_or_overlapping_graphic_work_is_rejected_before_rendering():
     ]:
         with pytest.raises(ValueError, match="[Gg]raphic"):
             EditPlan.model_validate({"asset_id": "a" * 32, "source_out": 10, "effects": effects})
+
+
+def test_broll_keeps_presenter_visible_and_only_overlays_lower_frame(tmp_path):
+    Image.new("RGB", (360, 640), "red").save(tmp_path / "0.png")
+    (tmp_path / "manifest.json").write_text(json.dumps({"fps": 30, "frames": ["0.png"]}))
+    track = GraphicTrack(tmp_path)
+    plan = EditPlan.model_validate(
+        {
+            "asset_id": "a" * 32,
+            "source_out": 3,
+            "effects": [
+                {
+                    "id": "broll",
+                    "type": "graphic_insert",
+                    "start": 0,
+                    "end": 3,
+                    "subject_id": "0",
+                    "params": {
+                        "template": "glasses",
+                        "title": "My glasses story",
+                        "body": "A childhood memory.",
+                        "presentation": "broll",
+                    },
+                }
+            ],
+        }
+    )
+    source = Image.new("RGB", (360, 640), "blue")
+    result = composite(source, plan, 1, {}, graphics={"broll": track})
+    assert np.array_equal(result[:380], np.asarray(source)[:380])
+    assert np.array_equal(result[:, 0], np.asarray(source)[:, 0])
+    assert not np.array_equal(result[450:580, 40:320], np.asarray(source)[450:580, 40:320])
+    start = composite(source, plan, 0, {}, graphics={"broll": track})
+    assert np.array_equal(start, np.asarray(source))
+
+
+def test_legacy_graphic_style_serialization_stays_unchanged():
+    from reelos.timeline import GraphicStyle
+
+    assert (
+        "presentation"
+        not in GraphicStyle(template="glasses", title="Story", body="Glasses.").model_dump()
+    )
+
+
+def test_broll_reuses_the_existing_remotion_frames(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    from reelos.graphics import prepare_graphics
+
+    requests = []
+
+    def fake_render(command, **kwargs):
+        batch = json.loads(Path(command[-1]).read_text())
+        requests.extend(batch)
+        for request in batch:
+            directory = Path(request["outputDir"])
+            directory.mkdir(parents=True)
+            Image.new("RGB", (90, 160), "red").save(directory / "0.png")
+            (directory / "manifest.json").write_text(json.dumps({"fps": 30, "frames": ["0.png"]}))
+
+    monkeypatch.setattr("reelos.graphics.subprocess.run", fake_render)
+    data = {
+        "asset_id": "a" * 32,
+        "source_out": 3,
+        "effects": [
+            {
+                "id": "g",
+                "type": "graphic_insert",
+                "start": 0,
+                "end": 3,
+                "subject_id": "0",
+                "params": {"template": "glasses", "title": "Glasses", "body": "A memory."},
+            }
+        ],
+    }
+    legacy = prepare_graphics(EditPlan.model_validate(data), tmp_path)
+    data["effects"][0]["params"]["presentation"] = "broll"
+    overlay = prepare_graphics(EditPlan.model_validate(data), tmp_path)
+    assert len(requests) == 1
+    assert legacy["g"].directory == overlay["g"].directory
+    assert "presentation" not in requests[0]["props"]
+
+
+def test_presentation_revision_is_targeted_and_preserves_parent():
+    from reelos.planner import Revision, apply_revision
+
+    parent = EditPlan.model_validate(
+        {
+            "asset_id": "a" * 32,
+            "source_out": 3,
+            "effects": [
+                {
+                    "id": "g",
+                    "type": "graphic_insert",
+                    "start": 0,
+                    "end": 3,
+                    "subject_id": "0",
+                    "params": {"template": "glasses", "title": "Glasses", "body": "A memory."},
+                }
+            ],
+        }
+    )
+    original = parent.model_dump()
+    child = apply_revision(
+        parent,
+        Revision(
+            summary="B-roll overlay",
+            changes=[{"effect_id": "g", "field": "presentation", "value": "broll"}],
+        ),
+    )
+    expected = parent.model_dump()
+    expected["effects"][0]["params"]["presentation"] = "broll"
+    assert child.model_dump() == expected
+    assert parent.model_dump() == original

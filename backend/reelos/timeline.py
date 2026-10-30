@@ -75,6 +75,9 @@ class GraphicStyle(Contract):
     title: str = Field(min_length=1, max_length=36)
     body: str = Field(min_length=1, max_length=120)
     accent: str = Field(default="#F21F2B", pattern=r"^#[0-9a-fA-F]{6}$")
+    presentation: Literal["fullscreen", "broll"] | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
 
 class GraphicInsert(EffectBase):

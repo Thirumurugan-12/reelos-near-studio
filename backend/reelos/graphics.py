@@ -17,6 +17,8 @@ def prepare_graphics(plan, root: Path) -> dict:
         if effect.type != "graphic_insert":
             continue
         props = effect.params.model_dump() | {"duration": effect.end - effect.start}
+        # Layout is composited over the presenter; the underlying Remotion art is reusable.
+        props.pop("presentation", None)
         key = hashlib.sha256(
             json.dumps({"renderer": "4.0.539-v1", "props": props}, sort_keys=True).encode()
         ).hexdigest()
