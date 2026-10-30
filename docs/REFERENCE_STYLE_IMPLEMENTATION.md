@@ -51,3 +51,5 @@ At the 19-attempt checkpoint, known-usage estimates totaled $0.262862, two reque
 ## Finishing pass
 
 The initial cut briefly returned to the speaker after the final illustration. Motion sampling also exposed a source-camera crop as the speaker leaned beyond its edge. Manual child versions preserved the model plan and corrected the classroom interval to 14.5–19.5 seconds, covering that source limitation and finishing on the illustration. Final version: `6f45a4247574489bbcac3d432681e93f` (preview 26.91 seconds with the new cached sequence). Earlier artifacts remain intact. The reference interpretation and illustration wording remain the original Muse plan; the timing correction is an editorial QA change, not a new inferred model result.
+
+The final story-cut export completed in 62.64 seconds. It is a verified 19.5-second, 1080 × 1920, 30 fps H.264/AAC MP4 of 11,726,355 bytes, with source/export audio correlation 0.999197. Browser playback of the final version reached the end and its download link was visible. Source frames before the 14.5-second cut and illustration frames during the previously clipped movement were checked.

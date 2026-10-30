@@ -34,7 +34,7 @@ Useful revision prompts are “Move only the headline lower to y=0.11,” “Sof
 
 ## Measured example and backup
 
-In the existing local project `25ec54f2c76e4b87b9357927edf8d6a9`, final version `6f45a4247574489bbcac3d432681e93f` contains the 19.5-second reference-inspired result. The initial reference adaptation took 40.98 seconds for preview and 64.39 seconds for export on this development machine with cached masks/transcript. These are individual runs, not guarantees or cold-run statistics. Keep any edited waiting period visibly labelled with its real elapsed time.
+In the existing local project `25ec54f2c76e4b87b9357927edf8d6a9`, final version `6f45a4247574489bbcac3d432681e93f` contains the 19.5-second reference-inspired result. The initial reference adaptation took 40.98 seconds for preview and 64.39 seconds for export on this development machine with cached masks/transcript. The final QA child exported in 62.64 seconds. These are individual runs, not guarantees or cold-run statistics. Keep any edited waiting period visibly labelled with its real elapsed time.
 
 If a provider call fails during rehearsal, show the previously generated export and say it is previously generated. Inspect the same job before retrying; unknown paid outcomes retain their budget allowance. Never present a saved result as a fresh live generation.
 
