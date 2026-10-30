@@ -89,11 +89,11 @@ docker compose config --quiet
 
 Backend tests generate their own tiny videos and include a real, recorded SAM response to a generated red square. Tests do not call paid APIs. Run `npm --prefix backend ci --ignore-scripts` first so segmentation fixtures use the official native JavaScript parser.
 
-Real model verification is documented in [the evaluation report](docs/EVALUATION.md). One independent footage set has been tested so far. Three-set evaluation and repeated demo rehearsals remain required before declaring the hackathon submission ready.
+Real model verification is documented in [the evaluation report](docs/EVALUATION.md). Three independent footage sets now have playable exports and nine exact targeted revision checks; see [results and quality limitations](docs/THREE_SET_EVALUATION.md). [Three fresh-project rehearsals](docs/REHEARSALS.md) also pass. Creator feedback, the final demo recording and current portal checks remain open.
 
 ## Scope and provenance
 
-The implementation is original project code. The supplied Claude effects repository, Notion recipes, and video-editor agent informed the workflow and catalog; their renderer code was not copied. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles and package notices for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
+The implementation is original project code. The supplied Claude effects repository, Notion recipes, and video-editor agent informed the workflow and catalog; their renderer code was not copied. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles, retained package notices, and [dependency/media inventory](docs/DEPENDENCIES.md) for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
 
 Exact-word captions, elaborate transitions, full timeline manipulation, social publishing, and automatic video generation are outside the baseline. Muse outputs are validated data, never shell commands. Reference observations are proposed interpretations rather than a promise to recover a video's hidden editing settings.
 

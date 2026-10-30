@@ -33,7 +33,7 @@ These are individual development runs on the current machine, not latency percen
 
 ## Current automated checks
 
-47 backend tests now pass. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render. Additional checks cover matched footage/mask framing, hidden-title detection, smoothed tracking anchors without filling absent masks, font independence from host fonts, and single-line short headlines at both preview and export sizes. Ruff also passes.
+56 backend tests now pass. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render. Additional checks cover matched footage/mask framing, hidden-title detection, smoothed tracking anchors without filling absent masks, font independence from host fonts, and single-line short headlines at both preview and export sizes. Ruff also passes.
 
 ## Visible-edit correction
 
@@ -57,12 +57,12 @@ The usage endpoint now separates known-usage cost estimates, unpriced calls, and
 
 ## Still required
 
-- Two additional independent, rights-cleared footage sets; three excerpts from one recording would not prove independent coverage.
+- Three-set functional evidence is now recorded in [the independent-footage evaluation](THREE_SET_EVALUATION.md); broader robustness remains unproven.
 - Broaden reference matching beyond the one guided red/black adaptation documented below.
 - Broaden validation of visual subject selection, label smoothing, and recorded font profiles.
-- Repeat the three revision intents across the two additional footage sets.
+- Nine targeted revision trials now pass across three independent sets; see the exact scope and timing caveats in the three-set report.
 - Broaden compositing inspection across motion, occlusion, missing subjects, and effect boundaries.
-- Repeat demo runs and collect creator task feedback; no time-savings or preference claim is established yet.
+- Three fresh-project workflow rehearsals now pass; see [scope and cache/timing details](REHEARSALS.md). Creator task feedback remains pending; no time-savings or preference claim is established.
 - Verify current official submission rules, access, and required artifacts; prepare the demo video and submission package.
 
 Private raw responses, masks, footage, exports, and run metadata stay in local/Compose data storage, outside Git. API reservations are local guardrails, not confirmed account billing.

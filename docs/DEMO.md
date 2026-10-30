@@ -1,6 +1,6 @@
 # Reproducible ReelOS demo
 
-This is a rehearsal runbook, not a claim that the submission is complete. Two additional independent rights-cleared source recordings and broader evaluation remain outstanding. The official event details currently redirect to sign-in; confirm the portal's required video length, access format, deadline and declarations in the participant account before submission. Nothing has been submitted externally.
+This is a rehearsal runbook, not a claim that the submission is complete. Three independent footage sets and three fresh-project workflow rehearsals are now documented; creator feedback, final demo recording and current portal checks remain outstanding. The official event details currently redirect to sign-in; confirm the portal's required video length, access format, deadline and declarations in the participant account before submission. Nothing has been submitted externally.
 
 ## Start and check
 
@@ -34,8 +34,10 @@ Useful revision prompts are “Move only the headline lower to y=0.11,” “Sof
 
 ## Measured example and backup
 
-In the existing local project `25ec54f2c76e4b87b9357927edf8d6a9`, final version `6f45a4247574489bbcac3d432681e93f` contains the 19.5-second reference-inspired result. The initial reference adaptation took 40.98 seconds for preview and 64.39 seconds for export on this development machine with cached masks/transcript. The final QA child exported in 62.64 seconds. These are individual runs, not guarantees or cold-run statistics. Keep any edited waiting period visibly labelled with its real elapsed time.
+The main project `25ec54f2c76e4b87b9357927edf8d6a9` selects full version `673e9071da774bbcb3e00444dbb6d576`: 167.9 seconds, 1080 × 1920 H.264/AAC. Preview processing took 148.70 seconds and export 567.84 seconds with cached graphics. [Exact full-recording evidence](FULL_VIDEO_VERIFICATION.md).
+
+The earlier 19.5-second reference cut `6f45a4247574489bbcac3d432681e93f` remains a clearly labelled short backup. Do not show it as the complete source. [Three fresh 20-second excerpt rehearsals](REHEARSALS.md) passed planning, precise revision, restore and 1080p export; [three independent footage sets](THREE_SET_EVALUATION.md) passed functional checks with documented quality limits. These are measured individual runs, not guarantees.
 
 If a provider call fails during rehearsal, show the previously generated export and say it is previously generated. Inspect the same job before retrying; unknown paid outcomes retain their budget allowance. Never present a saved result as a fresh live generation.
 
-The original source, reference, plan, preview, export and request ledger provide the local evidence trail. See [evaluation](EVALUATION.md) and [reference implementation](REFERENCE_STYLE_IMPLEMENTATION.md) for current limits, exact output metadata, dependency provenance and usage estimates. Do not claim arbitrary style reconstruction, word-aligned captions, music synchronization, creator time savings or three-recording reliability from this single tested recording.
+The original source, reference, plan, preview, export and request ledger provide the local evidence trail. See [evaluation](EVALUATION.md) and [reference implementation](REFERENCE_STYLE_IMPLEMENTATION.md) for current limits, exact output metadata, dependency provenance and usage estimates. Do not claim arbitrary style reconstruction, word-aligned captions, music synchronization, creator time savings or general reliability from these limited tests.
