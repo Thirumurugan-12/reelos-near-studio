@@ -1,6 +1,6 @@
 # ReelOS implementation and evaluation
 
-Updated 29 October 2026. This is measured progress, not a declaration that the full hackathon goal is complete.
+Updated 30 October 2026. This is measured progress, not a declaration that the full hackathon goal is complete.
 
 ## Verified
 
@@ -31,7 +31,7 @@ These are individual development runs on the current machine, not latency percen
 
 ## Current automated checks
 
-31 backend tests now pass. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render. Additional checks cover matched footage/mask framing, hidden-title detection, smoothed tracking anchors without filling absent masks, font independence from host fonts, and single-line short headlines at both preview and export sizes. Ruff also passes.
+47 backend tests now pass. They cover invalid plans, time mapping, missing assets, actual media decode/export, audio presence, foreground occlusion, required tracking, revision isolation, geometry decoding, durable budget claims, project scoping, cross-origin rejection, and a real API background render. Additional checks cover matched footage/mask framing, hidden-title detection, smoothed tracking anchors without filling absent masks, font independence from host fonts, and single-line short headlines at both preview and export sizes. Ruff also passes.
 
 ## Visible-edit correction
 
@@ -43,7 +43,7 @@ Frontend type checking and production build passed. The npm production dependenc
 
 ## Browser checkpoint
 
-The fitted mobile workspace measured document dimensions equal to the viewport at 390 × 844 and 320 × 568 during development. Final browser checks of the deployed Compose build are scheduled after functional editing verification, as requested. Do not infer broader device compatibility from those two measurements.
+The deployed Compose build was checked at 320 × 568, 390 × 844, 768 × 1024, and 1024 × 768: document dimensions equaled the viewport and the video was loaded (`readyState=4`). At 1440 × 900, the three-column desktop layout rendered with a 1440 × 1416 scrollable document. The fitted body requirement applies to mobile; long forms remain internally scrollable. Original/Edit switched between the verified source and rendered preview URLs. Full edited playback reached 19.5 seconds. These browser checks do not establish compatibility with every device or browser.
 
 ### Functional workspace verification, 29 October
 
@@ -56,7 +56,7 @@ The usage endpoint now separates known-usage cost estimates, unpriced calls, and
 ## Still required
 
 - Two additional independent, rights-cleared footage sets; three excerpts from one recording would not prove independent coverage.
-- Implement and validate the user's supplied reference treatment, including requested Remotion graphics.
+- Broaden reference matching beyond the one guided red/black adaptation documented below.
 - Broaden validation of visual subject selection, label smoothing, and recorded font profiles.
 - Repeat the three revision intents across the two additional footage sets.
 - Broaden compositing inspection across motion, occlusion, missing subjects, and effect boundaries.
@@ -64,3 +64,11 @@ The usage endpoint now separates known-usage cost estimates, unpriced calls, and
 - Verify current official submission rules, access, and required artifacts; prepare the demo video and submission package.
 
 Private raw responses, masks, footage, exports, and run metadata stay in local/Compose data storage, outside Git. API reservations are local guardrails, not confirmed account billing.
+
+## Supplied reference and Remotion verification, 30 October
+
+The user-supplied 54-second landscape reference now drives a guided red/black adaptation with a SAM contour, behind-person red titles, and original Remotion glasses/classroom illustrations matched to the source topic. [Implementation, provenance, timings and output evidence](REFERENCE_STYLE_IMPLEMENTATION.md). Muse Voice supplied the approximate source transcript; exact-word captions remain deferred. Preview took 40.98 seconds and 1080p export took 64.39 seconds. Both were rendered through the shared web/CLI engine.
+
+A real Muse revision changed only the glasses-insert title to “I wanted glasses”; all other plan fields were preserved, including template, body, accent, timings and subject treatment. Its preview took 24.3 seconds. The classroom sequence was reused: two initial graphic sequences plus one changed sequence existed afterward. The original exported version was restored through the workspace.
+
+The final QA child (`6f45a4247574489bbcac3d432681e93f`) starts the classroom illustration at 14.5 seconds and holds it to the 19.5-second output end. This covers a source-camera edge crop during the speaker’s movement and removes the short return to the speaker at the ending. The timing adjustment was manual and preserved the model-directed content and other settings.

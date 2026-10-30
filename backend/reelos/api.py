@@ -152,9 +152,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                         raise ValueError("Video exceeds the 200 MB upload limit.")
                     target.write(chunk)
             metadata = inspect_media(source)
-            if metadata["duration"] > (30 if role == "reference" else 60):
-                raise ValueError("Use a source up to 60 seconds or reference up to 30 seconds.")
-            make_proxy(source, directory / "proxy.mp4")
+            if metadata["duration"] > 60:
+                raise ValueError("Use a source or reference up to 60 seconds.")
+            make_proxy(source, directory / "proxy.mp4", portrait=role == "source")
             return editor.store.put(
                 "asset",
                 id,

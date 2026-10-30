@@ -8,7 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 
 from reelos.timeline import EditPlan
 
@@ -50,7 +50,14 @@ def portrait_filter(width: int, fps: int) -> str:
     )
 
 
-def make_proxy(source: Path, output: Path, fps: int = 10) -> None:
+def make_proxy(source: Path, output: Path, fps: int = 10, portrait: bool = True) -> None:
+    filters = (
+        portrait_filter(360, fps)
+        if portrait
+        else (
+            f"fps={fps},scale=640:640:force_original_aspect_ratio=decrease:force_divisible_by=2,setsar=1"
+        )
+    )
     subprocess.run(
         [
             "ffmpeg",
@@ -60,7 +67,7 @@ def make_proxy(source: Path, output: Path, fps: int = 10) -> None:
             "-i",
             str(source),
             "-vf",
-            portrait_filter(360, fps),
+            filters,
             "-map",
             "0:v:0",
             "-map",
@@ -156,7 +163,12 @@ def text_layer(
 
 
 def composite(
-    frame: Image.Image, plan: EditPlan, time: float, masks: dict, font_family: str = "aileron"
+    frame: Image.Image,
+    plan: EditPlan,
+    time: float,
+    masks: dict,
+    font_family: str = "aileron",
+    graphics: dict | None = None,
 ) -> np.ndarray:
     original = frame.convert("RGBA")
     current = original.copy()
@@ -167,7 +179,16 @@ def composite(
         if mask is None:
             continue  # Missing tracked frame means subject absent; never guess another subject.
         if effect.type == "subject_spotlight":
-            dark = ImageEnhance.Brightness(current).enhance(1 - effect.params.intensity)
+            style = effect.params
+            if style.background == "black":
+                dark = Image.blend(current, Image.new("RGBA", frame.size, "black"), style.intensity)
+            else:
+                backdrop = (
+                    current.convert("L").convert("RGBA")
+                    if style.background == "monochrome"
+                    else current
+                )
+                dark = ImageEnhance.Brightness(backdrop).enhance(1 - style.intensity)
             current = Image.composite(current, dark, mask.filter(ImageFilter.GaussianBlur(1)))
     for effect in active:
         mask = masks.get(effect.subject_id)
@@ -177,6 +198,25 @@ def composite(
             )
             with_text = Image.alpha_composite(current, layer)
             current = Image.composite(current, with_text, mask)
+    for effect in active:
+        mask = masks.get(effect.subject_id)
+        if (
+            mask is not None
+            and effect.type == "subject_spotlight"
+            and effect.params.outline_width > 0
+        ):
+            # Bound morphology cost at the source-mask resolution, including for 1080p exports.
+            width = min(360, frame.width)
+            size = (width, round(frame.height * width / frame.width))
+            local = mask.resize(size, Image.Resampling.BILINEAR)
+            radius = max(1, round(width * effect.params.outline_width))
+            edge = ImageChops.subtract(local.filter(ImageFilter.MaxFilter(radius * 2 + 1)), local)
+            halo = ImageChops.subtract(local.filter(ImageFilter.GaussianBlur(radius * 4)), local)
+            halo = halo.point(lambda p: round(p * effect.params.glow))
+            alpha = ImageChops.add(edge, halo).resize(frame.size, Image.Resampling.BILINEAR)
+            current = Image.composite(
+                Image.new("RGBA", frame.size, effect.params.outline_color), current, alpha
+            )
     for effect in active:
         mask = masks.get(effect.subject_id)
         if mask is not None and effect.type == "tracked_label":
@@ -195,6 +235,11 @@ def composite(
                         frame.size, style, time, effect.start, effect.end, font_family, badge=True
                     ),
                 )
+    for effect in active:
+        if effect.type == "graphic_insert":
+            if not graphics or effect.id not in graphics:
+                raise ValueError("Graphic insert is missing its rendered Remotion asset.")
+            current = graphics[effect.id].at(time - effect.start, frame.size)
     return np.asarray(current.convert("RGB"))
 
 
@@ -297,8 +342,9 @@ def render(
     track: MaskTrack | None = None,
     progress=None,
     font_family: str = "aileron",
+    graphics: dict | None = None,
 ) -> None:
-    if plan.effects and track is None:
+    if any(e.type != "graphic_insert" for e in plan.effects) and track is None:
         raise ValueError("Subject effects require a real tracking artifact.")
     if track and any(e.subject_id not in track.subjects for e in plan.effects):
         raise ValueError("Selected subject is absent from tracking artifact.")
@@ -399,7 +445,9 @@ def render(
                                     "The headline is mostly hidden by the subject. "
                                     "Move it into clear space or use a framed layout."
                                 )
-                    encoder.stdin.write(composite(image, plan, t, masks, font_family).tobytes())
+                    encoder.stdin.write(
+                        composite(image, plan, t, masks, font_family, graphics).tobytes()
+                    )
                     if progress and index % 15 == 0:
                         progress(index / count)
                 encoder.stdin.close()

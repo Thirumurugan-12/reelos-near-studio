@@ -34,4 +34,7 @@ def estimate_cost(model: str, usage: dict) -> float | None:
             return None
         billed_frames = max(50, frames) if frames else 0
         return (images or 0) * 2.5 / 1000 + billed_frames * 0.2 / 1000
+    if model == "muse-voice-transcribe-1.0":
+        duration = count("audio_duration_ms")
+        return None if duration is None else (duration // 1000) * 0.18 / 3600
     return None

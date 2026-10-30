@@ -9,7 +9,7 @@ Use the running ReelOS backend and its CLI from this repository. The web app and
 
 Check `health` and `usage` first. Provider keys stay in the server environment. The local ledger reports reserved allowances, not confirmed Meta billing. Input media is uploaded to Meta only as part of an authorized draft request.
 
-Supported inputs: one source up to 60 seconds, optional reference up to 30 seconds. Output is up to 30 seconds, portrait. Implemented effect types are behind-subject text, subject spotlight, and tracked label. Word-level captions and elaborate transitions are unsupported.
+Supported inputs: one source and optional reference, each up to 60 seconds. Output is up to 30 seconds, portrait. Effects are behind-subject text, subject spotlight (including monochrome/black background and a glowing contour), tracked label, and Remotion graphic inserts. Four approved insert templates are glasses, classroom, document_stack, and browser_demo. Use inserts only when requested and make their text relevant to the actual source speech; Muse Voice's approximate transcript is for topic understanding, never exact-word alignment. Word-level captions and elaborate transitions are unsupported.
 
 Typical commands:
 

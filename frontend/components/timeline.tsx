@@ -5,6 +5,7 @@ const labels: Record<string, string> = {
   behind_subject_text: "Headline",
   subject_spotlight: "Spotlight",
   tracked_label: "Tracked label",
+  graphic_insert: "Graphic insert",
 };
 export function Timeline({ version }: { version?: Version }) {
   const duration = version

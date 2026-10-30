@@ -34,6 +34,10 @@ class TextStyle(Contract):
 
 class SpotlightStyle(Contract):
     intensity: Unit = 0.45
+    background: Literal["original", "monochrome", "black"] = "original"
+    outline_color: str = Field(default="#F21F2B", pattern=r"^#[0-9a-fA-F]{6}$")
+    outline_width: float = Field(default=0, ge=0, le=0.02)
+    glow: Unit = 0
 
 
 class EffectBase(Contract):
@@ -59,7 +63,19 @@ class Label(EffectBase):
     params: TextStyle
 
 
-Effect = Annotated[Headline | Spotlight | Label, Field(discriminator="type")]
+class GraphicStyle(Contract):
+    template: Literal["document_stack", "browser_demo", "glasses", "classroom"]
+    title: str = Field(min_length=1, max_length=36)
+    body: str = Field(min_length=1, max_length=120)
+    accent: str = Field(default="#F21F2B", pattern=r"^#[0-9a-fA-F]{6}$")
+
+
+class GraphicInsert(EffectBase):
+    type: Literal["graphic_insert"]
+    params: GraphicStyle
+
+
+Effect = Annotated[Headline | Spotlight | Label | GraphicInsert, Field(discriminator="type")]
 
 
 class EditPlan(Contract):
@@ -84,6 +100,13 @@ class EditPlan(Contract):
         for effect in self.effects:
             if not 0 <= effect.start < effect.end <= self.duration:
                 raise ValueError(f"effect {effect.id} outside output duration")
+        inserts = sorted(
+            (e for e in self.effects if e.type == "graphic_insert"), key=lambda e: e.start
+        )
+        if len(inserts) > 2 or any(e.end - e.start > 5 for e in inserts):
+            raise ValueError("Use at most two graphic inserts, each up to five seconds.")
+        if any(b.start < a.end for a, b in zip(inserts, inserts[1:])):
+            raise ValueError("Graphic inserts must not overlap.")
         return self
 
     def storyboard(self) -> list[dict]:

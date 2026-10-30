@@ -14,6 +14,46 @@ class MetaClient:
         self.settings = settings
         self.store = store
 
+    def transcribe(self, path: Path) -> dict:
+        if not self.settings.api_key:
+            raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
+        model = "muse-voice-transcribe-1.0"
+        call = self.store.reserve(model, self.settings.reserve_usd, self.settings.budget_usd)
+        started = time.monotonic()
+        try:
+            import json
+
+            with path.open("rb") as audio, httpx.Client(timeout=180) as client:
+                response = client.post(
+                    "https://api.meta.ai/v1/asr/transcribe",
+                    headers={"Authorization": f"Bearer {self.settings.api_key}"},
+                    files={
+                        "request": (
+                            None,
+                            json.dumps(
+                                {"model": model, "audioEncoding": "WAV", "mode": "ENDPOINTING"}
+                            ),
+                            "application/json",
+                        ),
+                        "audio": ("source.wav", audio, "audio/wav"),
+                    },
+                )
+            if response.is_error:
+                raise ValueError(f"Source speech analysis failed (HTTP {response.status_code}).")
+            result = response.json()
+            if not isinstance(result.get("transcript"), str):
+                raise ValueError("Speech analysis returned no usable transcript.")
+            self.store.finish_call(
+                call,
+                "completed",
+                {"audio_duration_ms": result.get("audioDurationMs")},
+                time.monotonic() - started,
+            )
+            return result
+        except Exception:
+            self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
+            raise
+
     def upload(self, path: Path) -> str:
         if not self.settings.api_key:
             raise ValueError("Configure MODEL_API_KEY in the server's .env first.")

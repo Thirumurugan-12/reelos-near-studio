@@ -50,6 +50,39 @@ def test_revision_only_changes_requested_fields_and_keeps_parent():
     assert changed == original
 
 
+def test_graphic_copy_revision_preserves_template_timing_and_other_effects():
+    parent = base()
+    data = parent.model_dump()
+    data["effects"].append(
+        {
+            "id": "illustration",
+            "type": "graphic_insert",
+            "start": 9,
+            "end": 12,
+            "subject_id": "0",
+            "params": {"template": "glasses", "title": "My story", "body": "A pair of glasses."},
+        }
+    )
+    parent = EditPlan.model_validate(data)
+    expected = parent.model_dump()
+    expected["effects"][2]["params"]["title"] = "Seeing clearly"
+    child = apply_revision(
+        parent,
+        Revision(
+            summary="Change insert heading",
+            changes=[
+                {
+                    "effect_id": "illustration",
+                    "field": "title",
+                    "value": "Seeing clearly",
+                }
+            ],
+        ),
+    )
+    assert child.model_dump() == expected
+    assert parent.effects[2].params.title == "My story"
+
+
 @pytest.mark.parametrize(
     "change",
     [

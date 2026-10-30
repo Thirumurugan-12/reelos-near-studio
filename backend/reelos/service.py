@@ -1,9 +1,12 @@
 import json
+import subprocess
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from reelos.config import Settings
+from reelos.graphics import prepare_graphics
 from reelos.media import MaskTrack, render
 from reelos.meta import MetaClient, output_text
 from reelos.planner import create_plan, revise_plan
@@ -42,6 +45,35 @@ class Editor:
             asset["provider_file"] = self.meta.upload(self.asset_dir(asset["id"]) / "proxy.mp4")
             self.store.put("asset", asset["id"], asset)
         return asset["provider_file"]
+
+    def source_speech(self, asset: dict) -> dict | None:
+        if not asset.get("has_audio"):
+            return None
+        if not asset.get("speech"):
+            with tempfile.TemporaryDirectory() as temp:
+                wav = Path(temp) / "source.wav"
+                subprocess.run(
+                    [
+                        "ffmpeg",
+                        "-v",
+                        "error",
+                        "-i",
+                        str(self.asset_dir(asset["id"]) / "source.mp4"),
+                        "-ac",
+                        "1",
+                        "-ar",
+                        "24000",
+                        "-c:a",
+                        "pcm_s16le",
+                        str(wav),
+                    ],
+                    capture_output=True,
+                    check=True,
+                    timeout=60,
+                )
+                asset["speech"] = self.meta.transcribe(wav)
+            self.store.put("asset", asset["id"], asset)
+        return asset["speech"]
 
     def segment(self, asset: dict, prompt: str, stage=None) -> tuple[dict, str]:
         import hashlib
@@ -157,6 +189,7 @@ class Editor:
                         raise ValueError("Choose a reference video for style analysis.")
                     reference_file = self.provider_file(reference)
                 stage("Muse is planning the edit")
+                speech = self.source_speech(asset)
                 plan, observations = create_plan(
                     self.meta,
                     asset,
@@ -164,11 +197,14 @@ class Editor:
                     subject,
                     req["instruction"],
                     reference_file,
+                    speech,
                 )
                 version = self.version(
                     pid,
                     plan,
-                    summary="First Meta-directed edit",
+                    summary="Reference-inspired edit"
+                    if req.get("reference_id")
+                    else "First Meta-directed edit",
                     track_key=track_key,
                     observations=observations,
                 )
@@ -199,6 +235,9 @@ class Editor:
             quality = req.get("quality", "preview")
             target = self.version_dir(version["id"]) / f"{quality}.mp4"
             if not target.exists():
+                if any(e.type == "graphic_insert" for e in plan.effects):
+                    stage("Remotion is illustrating the story")
+                graphics = prepare_graphics(plan, self.store.root)
                 track = None
                 if version.get("track_key"):
                     track = MaskTrack(self.asset_dir(asset["id"]) / "tracks" / version["track_key"])
@@ -211,6 +250,7 @@ class Editor:
                     track=track,
                     progress=lambda p: stage("Rendering your " + quality, p),
                     font_family=version.get("render_profile", {}).get("font", "system"),
+                    graphics=graphics,
                 )
             version["has_" + quality] = True
             self.store.put("version", version["id"], version)

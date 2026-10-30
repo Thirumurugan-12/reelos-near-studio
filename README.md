@@ -4,7 +4,7 @@ An AI creative director for short portrait videos. Meta Muse proposes an edit; S
 
 ## Run with Docker Compose
 
-Both applications live in this repository. Docker installs Python, Node, FFmpeg, and the required font/runtime dependencies.
+Both applications live in this repository. Docker installs Python, Node, FFmpeg, Remotion, Chrome Headless Shell, and the required font/runtime dependencies.
 
 1. Copy `.env.example` to `.env` and set `MODEL_API_KEY` locally. Keep it server-side.
 2. Run `docker compose up --build -d`.
@@ -22,10 +22,10 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 
 ## Current workflow
 
-1. Upload one MP4/MOV source up to 60 seconds and 200 MB. Add an optional reference up to 30 seconds.
-2. Describe the edit and subject. Creating a draft uploads a compressed portrait proxy to Meta.
-3. If SAM finds multiple subjects, select a tracked ID. Visual subject selection is a remaining refinement.
-4. Inspect the storyboard or play the draft. The supported effects are text behind the subject, subject spotlight, and a tracked label.
+1. Upload one MP4/MOV source and an optional reference, each up to 60 seconds and 200 MB.
+2. Describe the edit and subject. Creating a draft sends a compressed source proxy to Meta; reference proxies preserve their original composition. Muse Voice transcribes source speech for topic selection, without generating exact-word captions.
+3. If SAM finds multiple subjects, choose the highlighted person from actual source thumbnails.
+4. Inspect the storyboard or play the draft. Effects include text behind the subject, spotlight with optional black/monochrome background and glowing outline, tracked labels, and original Remotion illustration cutaways when requested.
 5. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
 6. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
 
@@ -40,6 +40,7 @@ backend/                 FastAPI, durable jobs, timeline, compositor, Meta integ
   scripts/decode-sam.mjs  Official Meta parser for fast mask decoding
   tests/                 Contract, media, API, revision, segmentation, and ledger checks
 frontend/                Next.js/React workspace
+graphics/                Approved, parameterized Remotion illustration templates and renderer
 skills/reelos-effects/   Portable skill instructions using the shared service
 docs/                    Product specifications and measured progress
 compose.yaml             Backend + frontend deployment with health checks
@@ -55,6 +56,7 @@ Requires Python 3.12+, uv, Node 22, npm, FFmpeg, and ffprobe.
 uv --directory backend sync --frozen
 npm --prefix backend ci --ignore-scripts
 npm --prefix frontend ci --ignore-scripts
+npm --prefix graphics ci --ignore-scripts
 uv --directory backend run uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8000
 # Separate terminal:
 npm --prefix frontend run dev
@@ -81,15 +83,18 @@ uv --directory backend run ruff check reelos tests
 npm --prefix frontend run typecheck
 npm --prefix frontend run build
 npm --prefix frontend audit --omit=dev
+npm --prefix graphics audit --omit=dev
 docker compose config --quiet
 ```
 
 Backend tests generate their own tiny videos and include a real, recorded SAM response to a generated red square. Tests do not call paid APIs. Run `npm --prefix backend ci --ignore-scripts` first so segmentation fixtures use the official native JavaScript parser.
 
-Real model verification is documented in [the evaluation report](docs/EVALUATION.md). One independent footage set has been tested so far. Three-set evaluation, repeated demo rehearsals, and reference-style quality validation remain required before declaring the hackathon submission ready.
+Real model verification is documented in [the evaluation report](docs/EVALUATION.md). One independent footage set has been tested so far. Three-set evaluation and repeated demo rehearsals remain required before declaring the hackathon submission ready.
 
 ## Scope and provenance
 
 The implementation is original project code. The supplied Claude effects repository, Notion recipes, and video-editor agent informed the workflow and catalog; their renderer code was not copied. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles and package notices for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
 
 Exact-word captions, elaborate transitions, full timeline manipulation, social publishing, and automatic video generation are outside the baseline. Muse outputs are validated data, never shell commands. Reference observations are proposed interpretations rather than a promise to recover a video's hidden editing settings.
+
+Remotion 4.0.539 renders original SVG/React graphics from four allowlisted templates: glasses, classroom, document stack, and a stylized browser mockup. Model text is passed as escaped props; the model cannot supply executable components or external asset URLs. Rendered frames are cached by template version, props, and duration. See [Remotion's licence](https://www.remotion.dev/docs/license/pricing); its free tier covers individuals and companies of up to three people, with different terms for larger organizations. This independent demo does not copy the reference's logos or screenshots. The lockfile overrides a vulnerable transitive Zod release with 4.6.7; the graphics dependency audit passes.
