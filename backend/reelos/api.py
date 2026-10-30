@@ -129,7 +129,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def project_get(project_id: Identifier):
         return editor.store.get("project", project_id) | {
             "assets": editor.store.list("asset", project_id),
-            "versions": editor.store.list("version", project_id),
+            "versions": sorted(
+                editor.store.list("version", project_id),
+                key=lambda version: (version.get("created_at", 0), version["id"]),
+                reverse=True,
+            ),
             "jobs": editor.store.list("job", project_id),
         }
 
