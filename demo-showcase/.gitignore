@@ -1,0 +1,8 @@
+assets/
+.hyperframes/
+.media/
+*.mp4
+
+.thumbnails/
+.waveform-cache/
+renders/

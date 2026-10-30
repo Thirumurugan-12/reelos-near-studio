@@ -13,3 +13,6 @@ testing_videos
 reference_video
 reference_videos
 docs/design-references
+
+# Presentation-only assets are not part of the app deployment
+demo-showcase

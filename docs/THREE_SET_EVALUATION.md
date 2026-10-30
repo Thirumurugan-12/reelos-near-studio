@@ -34,4 +34,4 @@ Both stock projects have their baseline restored as the durable current version 
 
 ## Remaining gates
 
-Fresh-project rehearsals, creator task feedback, current official portal requirements, and a final demo recording/submission package remain separate gates. Three playable inputs and nine precise revisions do not prove the PID's 9/10 end-to-end reliability target or its 2/3 creator usefulness target.
+Follow-up evidence now includes [three fresh-project rehearsals](REHEARSALS.md) and a [verified local demo MP4](DEMO_ARTIFACT.md). Creator task feedback, current official portal requirements and human presentation review remain open. Three playable inputs and nine precise revisions do not prove the PID's 9/10 end-to-end reliability target or its 2/3 creator usefulness target.

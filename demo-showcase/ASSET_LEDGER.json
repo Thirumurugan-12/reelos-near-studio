@@ -1,0 +1,152 @@
+[
+  {
+    "asset": "raw.mp4",
+    "source": "testing_videos/VID_20261012_002734_182_bsl.mp4",
+    "source_in": 0,
+    "duration": 8,
+    "sha256": "ad88896193a48aa8ebd3714abf625dd59f1fdc4491d285a828257615ad120a30"
+  },
+  {
+    "asset": "edited.mp4",
+    "source": "data/reelos-full-video-1080p.mp4",
+    "source_in": 0,
+    "duration": 8,
+    "sha256": "8b770236635dcc8a7ab0d43a28242ce93adb2d46fa6a05fae53b783999093168"
+  },
+  {
+    "asset": "glasses.mp4",
+    "source": "data/reelos-full-video-1080p.mp4",
+    "source_in": 12,
+    "duration": 3,
+    "sha256": "afbe684041275b5fbe6634b3971c6633d342db950b82d843a8d2df13564b403d"
+  },
+  {
+    "asset": "classroom.mp4",
+    "source": "data/reelos-full-video-1080p.mp4",
+    "source_in": 36,
+    "duration": 3,
+    "sha256": "214d81e2997abbaf1277a8820868f76060185e8572c35143380259d8f12ea3a1"
+  },
+  {
+    "asset": "label.mp4",
+    "source": "data/reelos-full-video-1080p.mp4",
+    "source_in": 18,
+    "duration": 5,
+    "sha256": "caedf45f9f1b5894b9feddcada8913e6c1204646fc62e89bba48c9002ed6dc93"
+  },
+  {
+    "asset": "late.mp4",
+    "source": "data/reelos-full-video-1080p.mp4",
+    "source_in": 132,
+    "duration": 8,
+    "sha256": "cee47113e0c2fd503a673bd9fcbb94eb6e24c40fb3007050f7d95e687dc4dc92"
+  },
+  {
+    "asset": "loft.mp4",
+    "source": "data/evaluation-media/loft-export.mp4",
+    "source_in": 1,
+    "duration": 4,
+    "sha256": "6f917c170a5a948f40fbde3a5c9462869d2744c6b7db3e37cdeeccb80e9706f5"
+  },
+  {
+    "asset": "occlusion.mp4",
+    "source": "data/evaluation-media/home-export.mp4",
+    "source_in": 5,
+    "duration": 4,
+    "sha256": "7c5deb168667da1c7e28c542a4031465ce8d82b170c84592877d2668904ecfbe"
+  },
+  {
+    "asset": "before.mp4",
+    "source": "http://127.0.0.1:3000/api/projects/5988d17cb3a34cf2967a0b442c6d6936/versions/5916fdeb69cc4e829955f91a95080d96/preview",
+    "sha256": "f8792bb0c937cc17e4648b9a78bf3ba29bee3d2f2e3f6e691572af3f216f8baf",
+    "meaning": "Actual generated preview; opener y=0.10"
+  },
+  {
+    "asset": "after.mp4",
+    "source": "http://127.0.0.1:3000/api/projects/5988d17cb3a34cf2967a0b442c6d6936/versions/2677c275e4b34e62a643ba692006a200/preview",
+    "sha256": "be2844cead28e0e593a15f24582175709718a9ebfc78d97628251845eb89a82c",
+    "meaning": "Actual revised preview; opener y=0.12"
+  },
+  {
+    "asset": "before-headline.mp4",
+    "source": "before.mp4",
+    "crop": "360:120:0:0",
+    "duration": 5,
+    "sha256": "a15e558f1d5f8973a7504257e3e71b5d346ebba2f76f463582266396a7784a76"
+  },
+  {
+    "asset": "after-headline.mp4",
+    "source": "after.mp4",
+    "crop": "360:120:0:0",
+    "duration": 5,
+    "sha256": "b1da40a8fa6595e70cc3927a2614379dc47421407bfd83c091debeec430f9cbc"
+  },
+  {
+    "asset": "assets-detail.png",
+    "source": "assets-panel.png",
+    "crop_xyxy": [
+      24,
+      454,
+      366,
+      808
+    ],
+    "sha256": "66b68c80f8814ba0c28a3251a91cbd3b9bbbeb6d0b2931ff097f5fb44908b76b"
+  },
+  {
+    "asset": "history-baseline-detail.png",
+    "source": "history-baseline.png",
+    "crop_xyxy": [
+      12,
+      675,
+      378,
+      824
+    ],
+    "sha256": "5e3ba0255e0969ff7a83d67b9d9ca2834de4bcaad7ca6d5684c3e7fb9446b233"
+  },
+  {
+    "asset": "history-revision-detail.png",
+    "source": "history-revision.png",
+    "crop_xyxy": [
+      12,
+      675,
+      378,
+      824
+    ],
+    "sha256": "aa245a4494c0433d28e2f38c319b97dc263fde07d8785bf724e6153d5107e3a1"
+  },
+  {
+    "asset": "assets-panel.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "07b72b561d46ebd89550992692f492dd94707dc0c7a2331c2654b97af43a10b3"
+  },
+  {
+    "asset": "history-baseline.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "ae6405aecafdb1cc504df36b12f2aba80a1eb945bbd886d59b464c9d5d5ada51"
+  },
+  {
+    "asset": "history-revision.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "ac2ea12ea47bdd6e240fd67e117ca471638c73a21c33f502fa64a3fbe3a08e5e"
+  },
+  {
+    "asset": "original-bed.wav",
+    "source": "compose_audio.py: original deterministic score",
+    "sha256": "1728af7dd815c391a0b3a8e670ab51afa569e3002c88824abe1c303f76fc8907"
+  },
+  {
+    "asset": "sam-subject.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "e901c59ccf08bd50bf1ac64383cd27376690db8cf87df5ab550b084337cf757e"
+  },
+  {
+    "asset": "storyboard-panel.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "1be8b4e460bde4b65c1041688b779f5894e129b351a51cdd34761e6a04a5a675"
+  },
+  {
+    "asset": "workspace.png",
+    "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
+    "sha256": "07183beb043afb7ca542bfef295b53365e3b369332a905e97819b477743cd6ac"
+  }
+]

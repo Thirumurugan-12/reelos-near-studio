@@ -1,6 +1,6 @@
 # Reproducible ReelOS demo
 
-This is a rehearsal runbook, not a claim that the submission is complete. Three independent footage sets and three fresh-project workflow rehearsals are now documented; creator feedback, final demo recording and current portal checks remain outstanding. The official event details currently redirect to sign-in; confirm the portal's required video length, access format, deadline and declarations in the participant account before submission. Nothing has been submitted externally.
+This is a rehearsal runbook, not a claim that the submission is complete. Three independent footage sets and three fresh-project workflow rehearsals are now documented; the local [75-second demo MP4](DEMO_ARTIFACT.md) is verified. Creator feedback, human listening review and current portal checks remain outstanding. The official event details currently redirect to sign-in; confirm the portal's required video length, access format, deadline and declarations in the participant account before submission. Nothing has been submitted externally.
 
 ## Start and check
 

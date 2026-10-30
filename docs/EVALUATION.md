@@ -63,7 +63,7 @@ The usage endpoint now separates known-usage cost estimates, unpriced calls, and
 - Nine targeted revision trials now pass across three independent sets; see the exact scope and timing caveats in the three-set report.
 - Broaden compositing inspection across motion, occlusion, missing subjects, and effect boundaries.
 - Three fresh-project workflow rehearsals now pass; see [scope and cache/timing details](REHEARSALS.md). Creator task feedback remains pending; no time-savings or preference claim is established.
-- Verify current official submission rules, access, and required artifacts; prepare the demo video and submission package.
+- A [verified 75-second local demo MP4](DEMO_ARTIFACT.md) and submission description draft now exist. Verify current official portal rules/access, collect creator feedback and complete human presentation review before external submission.
 
 Private raw responses, masks, footage, exports, and run metadata stay in local/Compose data storage, outside Git. API reservations are local guardrails, not confirmed account billing.
 

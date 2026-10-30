@@ -17,3 +17,9 @@ dist/
 .DS_Store
 coverage/
 *.tsbuildinfo
+
+# Private footage and generated showcase assets
+/demo-showcase/assets/
+/demo-showcase/.hyperframes/
+/demo-showcase/.media/
+/demo-showcase/*.mp4

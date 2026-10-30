@@ -1,6 +1,8 @@
 # ReelOS evidence-led demo script
 
-Draft 75–90 second showcase. Final length and format depend on the participant portal requirements. This is a script and capture plan, not an existing demo video.
+The initial script below has now produced a [verified 75-second composed walkthrough](DEMO_ARTIFACT.md). Its editable source and review notes are in `demo-showcase/`.
+
+Initial draft: 75–90 second showcase. Final length and format depend on the participant portal requirements. This section retains the original script and capture plan; use the artifact report for the actual delivered timing and verification.
 
 Use the actual running workspace, actual source, saved plan and rendered outputs. Any saved result must be labelled “Previously generated result.” If waiting is shortened, show the actual elapsed time and the playback speed. Never animate a pretend model result or describe a saved export as a fresh live generation.
 
@@ -27,4 +29,4 @@ Prefer a short excerpt of the full output for the showcase. Showing a 20-second 
 
 ## Recording and review gates
 
-Capture real UI interactions or compose a clearly labelled walkthrough from actual UI captures and real exports. A final MP4, playback inspection and current portal length/access check are still required. Do not call this script a completed recording. Creator feedback is a separate pending validation gate and must not be invented in the narration.
+Capture real UI interactions or compose a clearly labelled walkthrough from actual UI captures and real exports. The local MP4, metadata and encoded-frame inspection are now verified in the artifact report; current portal length/access confirmation and human review remain required. Do not call this script a completed recording. Creator feedback is a separate pending validation gate and must not be invented in the narration.

@@ -22,6 +22,8 @@ Full video preserves complete recordings up to five minutes. An explicitly selec
 
 ## Evidence to attach or demonstrate
 
+- [Verified 75-second local demo MP4](DEMO_ARTIFACT.md), composed from actual captures and real outputs; portal format remains unconfirmed.
+
 - Complete main recording: 167.9 s / 1080 × 1920 H.264/AAC. [Verification](FULL_VIDEO_VERIFICATION.md).
 - Three independent footage sets with real Meta execution and playable exports. [Results, licences and quality limitations](THREE_SET_EVALUATION.md).
 - Nine targeted revision trials: all changed only the requested field in the complete plan; previous versions remained available.

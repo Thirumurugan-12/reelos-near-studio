@@ -40,4 +40,4 @@ Detailed job IDs, phase responses, observed times, output hashes and metadata re
 
 The rehearsals revealed a version-label defect: exporting an earlier version moved its record to the front of an update-ordered list, reversing v1/v2 display labels. The API now sorts by immutable creation time. A regression test reproduces the old failure and passes with the fix; the deployed browser shows the correct original v1 and revision v2. All 56 backend tests and Ruff passed.
 
-These three successful rehearsals do not establish 9/10 general end-to-end reliability, creator usefulness, or time savings. Creator task feedback and the final recorded demo remain separate pending gates.
+These three successful rehearsals do not establish 9/10 general end-to-end reliability, creator usefulness, or time savings. A [verified local demo MP4](DEMO_ARTIFACT.md) is now available. Creator task feedback and current portal/human review remain separate pending gates.

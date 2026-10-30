@@ -89,7 +89,7 @@ docker compose config --quiet
 
 Backend tests generate their own tiny videos and include a real, recorded SAM response to a generated red square. Tests do not call paid APIs. Run `npm --prefix backend ci --ignore-scripts` first so segmentation fixtures use the official native JavaScript parser.
 
-Real model verification is documented in [the evaluation report](docs/EVALUATION.md). Three independent footage sets now have playable exports and nine exact targeted revision checks; see [results and quality limitations](docs/THREE_SET_EVALUATION.md). [Three fresh-project rehearsals](docs/REHEARSALS.md) also pass. Creator feedback, the final demo recording and current portal checks remain open.
+Real model verification is documented in [the evaluation report](docs/EVALUATION.md). Three independent footage sets now have playable exports and nine exact targeted revision checks; see [results and quality limitations](docs/THREE_SET_EVALUATION.md). [Three fresh-project rehearsals](docs/REHEARSALS.md) also pass. A [75-second local demo MP4](docs/DEMO_ARTIFACT.md) is verified. Creator feedback, human listening review and current portal checks remain open.
 
 ## Scope and provenance
 

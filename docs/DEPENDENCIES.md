@@ -31,3 +31,7 @@ FFmpeg, Python, Node and Debian runtime components are installed through the Doc
 - Design-reference captures under `docs/design-references/` are research material. They are not product UI assets or assets for automatic public redistribution.
 
 Exact-word captions, music synchronization and arbitrary effects are not implemented merely because external references describe them. Model output is data for approved components, never downloaded executable effect code.
+
+## Separate presentation project
+
+The local showcase uses HyperFrames 0.8.220, GSAP 3.14.2 and Inter; its [specific provenance](../demo-showcase/THIRD_PARTY.md) and [review record](../demo-showcase/REVIEW.md) are separate from the production editing engine. Its original locally authored score is presentation material, not an implemented ReelOS music-sync feature.
