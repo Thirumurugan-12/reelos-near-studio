@@ -2,6 +2,8 @@
 
 Updated 30 October 2026. This is measured progress, not a declaration that the full hackathon goal is complete.
 
+The initial short-clip results below are historical. The user-requested complete recording is documented separately in [complete-recording verification](FULL_VIDEO_VERIFICATION.md).
+
 ## Verified
 
 | Requirement | Evidence |

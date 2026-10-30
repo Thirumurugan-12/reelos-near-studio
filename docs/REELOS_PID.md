@@ -1,10 +1,12 @@
 # ReelOS — Project Initiation Document
 
-**Version:** 0.3 · **Prepared:** 26 October 2026 · **Owner:** Thirumurugan
+**Version:** 0.4 · **Updated:** 30 October 2026 · **Owner:** Thirumurugan
 
 **Purpose:** Define the product, execution boundaries, evidence, and submission package for the Meta AI Developer Hackathon. PID means Project Initiation Document here; this document includes product requirements and an implementation brief.
 
 **Status:** Proposed build baseline. No implementation, API access, acceptance into the event, or user-validation results are implied by this document.
+
+**Scope update, 30 October:** The user requires the complete recording, not an automatic excerpt. Full video is the web default and preserves the complete source up to five minutes; short reels require explicit selection. Earlier short-clip latency/evaluation targets below apply to short-reel mode. See [complete-recording verification](FULL_VIDEO_VERIFICATION.md) for the measured full-video run; broader submission gates remain open.
 
 **Positioning:** An AI creative director that turns a creator's footage and visual inspiration into an actual edited video, then revises it through conversation.
 
@@ -474,3 +476,4 @@ Sources inspected or carried forward on 26 October 2026. Product choices and num
 | 0.1 | 26 Oct 2026 | Initial PID covering project rationale, requirements, Meta integration, delivery, evaluation, and submission |
 | 0.2 | 26 Oct 2026 | Added reusable style parameters, storyboard summary, and analysis of supplied editing recipes; retained three-effect MVP |
 | 0.3 | 26 Oct 2026 | Incorporated guide into creative editing specification, full staged catalog, storyboard workflow, style resolution, and requirements R16–R17 |
+| 0.4 | 30 Oct 2026 | Full-video default, complete-source validation, five-minute source support, explicit short-reel alternative, and full-recording evidence |
