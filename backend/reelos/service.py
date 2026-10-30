@@ -118,6 +118,11 @@ class Editor:
         if parent:
             previous = self.store.get("version", parent, project_id)
             profile = previous.get("render_profile", {"font": "system", "version": "legacy"})
+            if previous["plan"]["asset_id"] == plan.asset_id:
+                if track_key is None:
+                    track_key = previous.get("track_key")
+                if observations is None:
+                    observations = previous.get("observations", [])
         return self.store.put(
             "version",
             new_id(),
