@@ -20,7 +20,7 @@ const records=[];
 for (const record of recordsOfKind(result.records,"mask")) {
   const id=String(record.objectId), frame=record.frame?.frameIndex??0;
   const mask=record.mask, bounds=record.bounds;
-  if(!/^\d{1,8}$/.test(id)||frame<0||frame>=600||mask.width*mask.height>input.width*input.height*4) {
+  if(!/^\d{1,8}$/.test(id)||frame<0||frame>=3000||mask.width*mask.height>input.width*input.height*4) {
     throw new Error("Invalid SAM frame or mask dimensions.");
   }
   const raster=decodeMaskToRaster(mask);

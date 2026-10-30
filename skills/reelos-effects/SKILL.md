@@ -9,14 +9,14 @@ Use the running ReelOS backend and its CLI from this repository. The web app and
 
 Check `health` and `usage` first. Provider keys stay in the server environment. The local ledger reports reserved allowances, not confirmed Meta billing. Input media is uploaded to Meta only as part of an authorized draft request.
 
-Supported inputs: one source and optional reference, each up to 60 seconds. Output is up to 30 seconds, portrait. Effects are behind-subject text, subject spotlight (including monochrome/black background and a glowing contour), tracked label, and Remotion graphic inserts. Four approved insert templates are glasses, classroom, document_stack, and browser_demo. Use inserts only when requested and make their text relevant to the actual source speech; Muse Voice's approximate transcript is for topic understanding, never exact-word alignment. Word-level captions and elaborate transitions are unsupported.
+Supported inputs: one source up to five minutes and an optional reference up to 60 seconds, each up to 200 MB. Full-video mode preserves the entire source; select it with `draft --full-length` (the web UI defaults to full video). Short-reel mode remains available for outputs up to 30 seconds. Both outputs are portrait. Effects are behind-subject text, subject spotlight (including monochrome/black background and a glowing contour), tracked label, and Remotion graphic inserts. Four approved insert templates are glasses, classroom, document_stack, and browser_demo. Use inserts only when requested and make their text relevant to the actual source speech; Muse Voice's approximate transcript is for topic understanding, never exact-word alignment. Word-level captions and elaborate transitions are unsupported.
 
 Typical commands:
 
 ```text
 reelos create "My reel"
 reelos upload PROJECT_ID /absolute/path/clip.mp4
-reelos draft PROJECT_ID ASSET_ID "A bold introduction with a subtle spotlight" --storyboard-only
+reelos draft PROJECT_ID ASSET_ID "Edit the complete recording with chapter headings and a subtle spotlight" --full-length --storyboard-only
 reelos job PROJECT_ID JOB_ID --wait
 reelos plan PROJECT_ID VERSION_ID
 reelos render PROJECT_ID VERSION_ID --quality preview

@@ -36,6 +36,7 @@ class JobInput(Contract):
     subject_id: str | None = Field(default=None, pattern=r"^[0-9]{1,8}$")
     review_storyboard: bool = False
     quality: Literal["preview", "export"] = "preview"
+    output_mode: Literal["reel", "full"] = "reel"
 
     @model_validator(mode="after")
     def references(self):
@@ -152,8 +153,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                         raise ValueError("Video exceeds the 200 MB upload limit.")
                     target.write(chunk)
             metadata = inspect_media(source)
-            if metadata["duration"] > 60:
-                raise ValueError("Use a source or reference up to 60 seconds.")
+            if metadata["duration"] > (300 if role == "source" else 60):
+                raise ValueError(
+                    "Use source footage up to five minutes or a reference up to one minute."
+                )
             make_proxy(source, directory / "proxy.mp4", portrait=role == "source")
             return editor.store.put(
                 "asset",

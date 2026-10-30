@@ -149,7 +149,12 @@ export function useStudio() {
         method: "POST",
         body: form,
       });
-      role === "source" ? setSourceId(asset.id) : setReferenceId(asset.id);
+      if (role === "source") {
+        setSourceId(asset.id);
+        setVersionId("");
+      } else {
+        setReferenceId(asset.id);
+      }
       setSubjectId("");
       setJob(null);
       await load(p.id);

@@ -14,7 +14,7 @@
 
 ReelOS helps solo creators turn a recorded idea into a finished short video without manually managing masks, layers, effect timings, and export settings. A creator uploads footage, optionally supplies a reference, and describes the desired result. Muse Spark interprets the footage and reference and proposes a structured edit. SAM 3.1 isolates and tracks the chosen subject. A deterministic effects engine executes the approved operations and exports an MP4. The creator can say “make the opening faster” or “move the headline lower,” receive a new version, and compare it with the previous edit.
 
-The hackathon build concentrates on 15–30 second portrait talking-head videos and three effects that visibly benefit from segmentation. Its technical contribution is the connection between creative intent, validated editing operations, persistent subject identity, compositing, and controlled revisions. A reusable command interface will expose the same workflow as a skill; a small web interface makes the result approachable and demonstrable.
+The hackathon build supports complete portrait talking-head recordings up to five minutes, plus an explicit short-reel mode. Its three subject effects visibly benefit from segmentation. Its technical contribution is the connection between creative intent, validated editing operations, persistent subject identity, compositing, and controlled revisions. A reusable command interface will expose the same workflow as a skill; a small web interface makes the result approachable and demonstrable.
 
 The original ReelOS ambition includes multi-clip creative direction and broad reference matching. This release deliberately proves that ambition with a narrower supported workflow. Additional clip selection, music synchronization, and effects only enter after the core workflow passes its quality gates.
 
@@ -84,9 +84,9 @@ Changing providers or renaming an existing skill is insufficient as the core con
 
 | Dimension | Hackathon commitment |
 |---|---|
-| Main input | One talking-head video, initially capped at 60 seconds |
-| Reference | Zero or one uploaded reference, initially capped at 30 seconds |
-| Output | One 15–30 second 9:16 video; shorter input may produce shorter output |
+| Main input | One talking-head video up to five minutes |
+| Reference | Zero or one uploaded reference up to 60 seconds |
+| Output | Full source duration in 9:16 by default; explicit short-reel mode up to 30 seconds |
 | Input formats | MP4/MOV if installed decoders support the actual codecs |
 | Initial upload cap | Proposed 200 MB per file; enforce server-side and revise after host testing |
 | Subjects | One selected primary person; another person triggers selection rather than silent guessing |

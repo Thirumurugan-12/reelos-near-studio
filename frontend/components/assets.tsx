@@ -40,7 +40,7 @@ export function Assets({
         />
         <Icon name="upload" />
         <strong>Upload footage</strong>
-        <span>MP4 or MOV · up to 60 seconds</span>
+        <span>MP4 or MOV · up to 5 minutes</span>
       </label>
       <div className="asset-list">
         {assets

@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import pytest
 
@@ -25,6 +27,9 @@ def test_incomplete_response_keeps_usage_and_terminal_reason(tmp_path, monkeypat
         MetaClient(Settings(api_key="test"), store).response("test", [])
     assert store.budget()["calls"][0]["usage"] == {"output_tokens": 64}
     assert store.budget()["calls"][0]["status"] == "incomplete"
+    cached = list((tmp_path / "responses").glob("*.json"))
+    assert len(cached) == 1
+    assert json.loads(cached[0].read_text())["incomplete_details"]["reason"] == "max_output_tokens"
 
 
 def test_transcription_records_billed_audio_duration(tmp_path, monkeypatch):

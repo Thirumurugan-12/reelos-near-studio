@@ -55,6 +55,17 @@ def parse_json(text: str):
     return json.loads(text)
 
 
+def validate_output_scope(plan: EditPlan, source_duration: float, output_mode: str):
+    if plan.output_mode != output_mode:
+        raise ValueError("The plan does not match the selected output mode.")
+    if output_mode == "full" and (
+        plan.source_in != 0 or abs(plan.source_out - source_duration) > 1 / plan.fps
+    ):
+        raise ValueError(
+            "Full-video mode must preserve the entire source; a short excerpt was rejected."
+        )
+
+
 def create_plan(
     client: MetaClient,
     asset: dict,
@@ -63,6 +74,7 @@ def create_plan(
     instruction: str,
     reference_file: str | None = None,
     speech: dict | None = None,
+    output_mode: str = "reel",
 ) -> tuple[EditPlan, list]:
     prompt = {
         "task": "Direct a short portrait edit. Return JSON only: {plan, observations}.",
@@ -73,7 +85,11 @@ def create_plan(
             "Make the edit visibly intentional. Avoid titles hidden almost entirely by a face.",
             "For a close-up, use framing scale 0.82 and offset_y 0.16 to create title headroom.",
             "With that framing, place a short headline near y=0.10 and a label near y=0.88.",
-            "Choose a source interval <=30 seconds, within source duration; no speed changes.",
+            (
+                "Full mode: source_in=0, source_out=source_duration. Never trim."
+                if output_mode == "full"
+                else "Choose a source interval <=30 seconds; no speed changes."
+            ),
             "Every effect must name the selected subject and fit the trimmed output duration.",
             "Observations: at most 5 objects with text, source_start, source_end, origin.",
             "ASR is approximate; use it for topic, never exact word alignment.",
@@ -82,7 +98,14 @@ def create_plan(
             "With a reference, map its palette, background and contour to supported style fields.",
             "A glowing cutout look can use continuous spotlight plus outline_width and glow.",
             "Illustrate the actual topic; never copy reference logos or screenshots.",
-            "Use at most two inserts of 1.5-3 seconds; preserve speech beneath them.",
+            (
+                "Spread 4-8 inserts and headline beats across the full story. Each graphic_insert "
+                "must last at most 5 seconds (end-start <=5); inserts must not overlap. "
+                "Use 3-second inserts as a safe default. Preserve speech."
+                if output_mode == "full"
+                else "Use at most two inserts of 1.5-3 seconds; preserve speech."
+            ),
+            "Use only supported speech meaning; do not invent numbers, diagnoses or exact quotes.",
             "origin is footage or reference. Mark approximate reference matches in text.",
         ],
         "source_duration": asset["duration"],
@@ -90,6 +113,7 @@ def create_plan(
         "selected_subject_id": subject_id,
         "creative_direction": instruction,
         "has_reference": reference_file is not None,
+        "requested_output_mode": output_mode,
         "graphic_templates": {
             "glasses": "Original eyewear illustration for glasses or eyesight stories.",
             "classroom": "Original school board and desk for classroom stories.",
@@ -109,10 +133,15 @@ def create_plan(
             {"type": "input_file", "file_id": reference_file},
         ]
     result = client.response(
-        client.settings.muse_model, content, max_output_tokens=4096, reasoning={"effort": "low"}
+        client.settings.muse_model,
+        content,
+        max_output_tokens=8192 if output_mode == "full" else 4096,
+        reasoning={"effort": "low"},
+        request_timeout=300 if output_mode == "full" else 180,
     )
     parsed = parse_json(output_text(result))
-    plan = EditPlan.model_validate(parsed["plan"])
+    plan = EditPlan.model_validate(parsed["plan"] | {"output_mode": output_mode})
+    validate_output_scope(plan, asset["duration"], output_mode)
     if plan.asset_id != asset["id"] or any(e.subject_id != subject_id for e in plan.effects):
         raise ValueError("Planner referenced an unavailable asset or subject.")
     observations = parsed.get("observations", [])

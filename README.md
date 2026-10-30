@@ -22,7 +22,7 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 
 ## Current workflow
 
-1. Upload one MP4/MOV source and an optional reference, each up to 60 seconds and 200 MB.
+1. Upload one MP4/MOV source up to five minutes and an optional reference up to 60 seconds, each up to 200 MB. Choose Full video (web default) to preserve the entire recording, or Short reel for a 15–30 second excerpt.
 2. Describe the edit and subject. Creating a draft sends a compressed source proxy to Meta; reference proxies preserve their original composition. Muse Voice transcribes source speech for topic selection, without generating exact-word captions.
 3. If SAM finds multiple subjects, choose the highlighted person from actual source thumbnails.
 4. Inspect the storyboard or play the draft. Effects include text behind the subject, spotlight with optional black/monochrome background and glowing outline, tracked labels, and original Remotion illustration cutaways when requested.
@@ -31,7 +31,7 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 
 Mobile uses a fitted workspace with Preview, Assets, Direction, and Storyboard tabs. Long forms scroll within their panels. Desktop displays assets, preview/timeline, and direction together.
 
-The supplied testing video is longer than the initial input limit. Its original remains untouched; the first real test uses a 20-second excerpt of the updated raw recording. Originals and generated outputs are ignored by Git.
+The initial prototype used a 20-second excerpt. Full-video mode now validates source coverage from zero to the complete source duration; it rejects an excerpt instead of silently shortening the recording. The CLI selects this mode with `draft --full-length`. Originals and generated outputs are ignored by Git.
 
 ## Repository
 

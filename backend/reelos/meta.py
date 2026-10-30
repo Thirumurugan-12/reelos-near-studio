@@ -1,5 +1,6 @@
 """Small server-side Meta Responses client; never retries ambiguous paid requests."""
 
+import json
 import time
 from pathlib import Path
 
@@ -71,14 +72,16 @@ class MetaClient:
             raise ValueError("Meta returned an invalid media reference.")
         return id
 
-    def response(self, model: str, content: list[dict], **kwargs) -> dict:
+    def response(
+        self, model: str, content: list[dict], request_timeout: float = 180, **kwargs
+    ) -> dict:
         if not self.settings.api_key:
             raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
         call = self.store.reserve(model, self.settings.reserve_usd, self.settings.budget_usd)
         started = time.monotonic()
         recorded = False
         try:
-            with httpx.Client(timeout=httpx.Timeout(180, connect=20)) as client:
+            with httpx.Client(timeout=httpx.Timeout(request_timeout, connect=20)) as client:
                 response = client.post(
                     "https://api.meta.ai/v1/responses",
                     headers={"Authorization": f"Bearer {self.settings.api_key}"},
@@ -94,6 +97,11 @@ class MetaClient:
                         "Check model access and account limits."
                     )
                 data = response.json()
+                # Keep private provider evidence before parsing/validation so a bad
+                # timeline can be repaired without repeating a paid model request.
+                responses = self.store.root / "responses"
+                responses.mkdir(exist_ok=True)
+                (responses / f"{call}.json").write_text(json.dumps(data))
                 if data.get("status") not in (None, "completed"):
                     self.store.finish_call(
                         call, "incomplete", data.get("usage", {}), time.monotonic() - started

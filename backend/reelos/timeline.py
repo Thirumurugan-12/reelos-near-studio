@@ -5,7 +5,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 Identifier = Annotated[str, Field(pattern=r"^[a-f0-9]{32}$")]
-Seconds = Annotated[float, Field(ge=0, le=60, allow_inf_nan=False)]
+Seconds = Annotated[float, Field(ge=0, le=300, allow_inf_nan=False)]
 Unit = Annotated[float, Field(ge=0, le=1, allow_inf_nan=False)]
 
 
@@ -84,8 +84,9 @@ class EditPlan(Contract):
     source_in: Seconds = 0
     source_out: Seconds
     fps: Literal[30] = 30
+    output_mode: Literal["reel", "full"] = "reel"
     framing: Framing = Field(default_factory=Framing)
-    effects: list[Effect] = Field(default_factory=list, max_length=12)
+    effects: list[Effect] = Field(default_factory=list, max_length=48)
 
     @property
     def duration(self) -> float:
@@ -93,8 +94,11 @@ class EditPlan(Contract):
 
     @model_validator(mode="after")
     def valid_timeline(self):
-        if not 0.2 <= self.duration <= 30:
-            raise ValueError("output duration must be between 0.2 and 30 seconds")
+        limit = 300 if self.output_mode == "full" else 30
+        if not 0.2 <= self.duration <= limit:
+            raise ValueError(f"output duration must be between 0.2 and {limit} seconds")
+        if self.output_mode == "reel" and len(self.effects) > 12:
+            raise ValueError("Use at most twelve effects in a short reel.")
         if len({e.id for e in self.effects}) != len(self.effects):
             raise ValueError("effect IDs must be unique")
         for effect in self.effects:
@@ -103,8 +107,11 @@ class EditPlan(Contract):
         inserts = sorted(
             (e for e in self.effects if e.type == "graphic_insert"), key=lambda e: e.start
         )
-        if len(inserts) > 2 or any(e.end - e.start > 5 for e in inserts):
-            raise ValueError("Use at most two graphic inserts, each up to five seconds.")
+        insert_limit = 8 if self.output_mode == "full" else 2
+        if len(inserts) > insert_limit or any(e.end - e.start > 5 for e in inserts):
+            raise ValueError(
+                f"Use at most {insert_limit} graphic inserts, up to five seconds each."
+            )
         if any(b.start < a.end for a, b in zip(inserts, inserts[1:])):
             raise ValueError("Graphic inserts must not overlap.")
         return self
@@ -130,3 +137,8 @@ def validate_assets(plan: EditPlan, assets: dict) -> None:
         raise ValueError("source asset not found")
     if plan.source_out > assets[plan.asset_id]["duration"] + 0.001:
         raise ValueError("source interval exceeds asset duration")
+    if plan.output_mode == "full" and (
+        plan.source_in != 0
+        or abs(plan.source_out - assets[plan.asset_id]["duration"]) > 1 / plan.fps
+    ):
+        raise ValueError("Full-video mode must preserve the entire source.")

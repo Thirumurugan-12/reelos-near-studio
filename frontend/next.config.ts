@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  experimental: {
+    proxyClientMaxBodySize: "210mb",
+    proxyTimeout: 240_000,
+  },
   async rewrites() {
     return [
       {

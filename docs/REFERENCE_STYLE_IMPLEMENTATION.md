@@ -6,7 +6,7 @@ Implemented 30 October 2026 after the creator supplied a 54.08-second landscape 
 
 The reference uses red/black contrast, glowing subject contours, large typography behind the speaker, and short illustration/interface cutaways. Representative frames at 1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 53 seconds were inspected. The code adapts those visual ideas; it does not copy the example's Claude branding, screenshots, logos, or illustrations.
 
-Reference proxies now preserve landscape framing rather than center-cropping it to portrait. Source proxies retain the portrait geometry required by SAM. Both input roles accept up to 60 seconds and 200 MB.
+Reference proxies now preserve landscape framing rather than center-cropping it to portrait. Source proxies retain the portrait geometry required by SAM. Sources accept up to five minutes; references accept up to 60 seconds. Both accept up to 200 MB. Full-video mode preserves the complete source; short-reel mode is an explicit alternative.
 
 ## Source understanding
 

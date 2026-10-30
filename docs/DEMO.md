@@ -13,7 +13,7 @@ docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost
 docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost:8000 usage
 ```
 
-Use one source and optional style reference, each no longer than 60 seconds. The existing long source was preserved; the tested source is a 20-second derivative of its seconds 10–30. Sources, references, outputs, masks and transcripts stay outside Git in the Compose data volume.
+Use one source up to five minutes and an optional style reference up to 60 seconds, each up to 200 MB. Select Full video to preserve the whole recording. Earlier prototype evidence used a 20-second derivative of source seconds 10–30; it does not demonstrate full-video completion. Sources, references, outputs, masks and transcripts stay outside Git in the Compose data volume.
 
 ## Main sequence
 
@@ -28,7 +28,7 @@ Use one source and optional style reference, each no longer than 60 seconds. The
 | Recovery | Select an earlier version and Restore | Earlier preview/export remains playable |
 | Output | Export and download | Actual H.264/AAC 1080 × 1920 MP4 |
 
-Suggested prompt for the provided source/reference: “Adapt this reference's red/black palette, glowing speaker outline, bold typography and illustration cutaways to my story. Use original graphics relevant to the source, preserve my speech, and make a short portrait edit.” Automatic interpretations still require review; the measured main example used explicit timing and styling instructions to direct the result.
+Suggested prompt for the provided source/reference: “Adapt this reference's red/black palette, glowing speaker outline, bold typography and illustration cutaways to my story. Use original graphics relevant to the source, preserve my speech, and edit the complete recording without trimming.” Automatic interpretations still require review; the measured main example used explicit timing and styling instructions to direct the result.
 
 Useful revision prompts are “Move only the headline lower to y=0.11,” “Soften only the spotlight to 0.35,” or “End only the opening headline at four seconds.” For an illustration, specify its operation ID and the title change. Explain that faster opening effects do not speed up the voice.
 

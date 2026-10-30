@@ -95,6 +95,7 @@ class Editor:
                     {"type": "input_video", "file_id": self.provider_file(asset)},
                 ],
                 metadata={"mask_encoding": "one_bit"},
+                request_timeout=600 if asset["duration"] > 60 else 180,
             )
             cached.write_text(json.dumps(data))
         if stage:
@@ -198,6 +199,7 @@ class Editor:
                     req["instruction"],
                     reference_file,
                     speech,
+                    req.get("output_mode", "reel"),
                 )
                 version = self.version(
                     pid,

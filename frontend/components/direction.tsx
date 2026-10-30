@@ -17,7 +17,12 @@ export function Direction({
   job: Job | null;
   busy: boolean;
   canDraft: boolean;
-  onDraft: (instruction: string, review: boolean, prompt: string) => void;
+  onDraft: (
+    instruction: string,
+    review: boolean,
+    prompt: string,
+    outputMode: "full" | "reel",
+  ) => void;
   onRevise: (instruction: string) => void;
   subjectId: string;
   onSubject: (id: string) => void;
@@ -29,6 +34,7 @@ export function Direction({
   const [revision, setRevision] = useState("");
   const [review, setReview] = useState(false);
   const [subject, setSubject] = useState("person");
+  const [outputMode, setOutputMode] = useState<"full" | "reel">("full");
   const needsSubject =
     job?.status === "needs_subject" && job.request.subject_prompt === subject;
   return (
@@ -44,7 +50,7 @@ export function Direction({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onDraft(instruction, review, subject);
+            onDraft(instruction, review, subject, outputMode);
           }}
         >
           <label className="field-label" htmlFor="direction">
@@ -58,6 +64,20 @@ export function Direction({
             rows={5}
             disabled={busy}
           />
+          <label className="field-label" htmlFor="output-mode">
+            Edit length
+          </label>
+          <select
+            id="output-mode"
+            value={outputMode}
+            onChange={(e) => setOutputMode(e.target.value as "full" | "reel")}
+            disabled={busy}
+          >
+            <option value="full">
+              Full video · preserve the complete recording
+            </option>
+            <option value="reel">Short reel · 15–30 second excerpt</option>
+          </select>
           <label className="field-label" htmlFor="subject">
             Subject to track
           </label>

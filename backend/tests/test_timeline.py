@@ -58,3 +58,26 @@ def test_storyboard_is_derived_from_source_mapping():
     assert beat["source_start"] == 1
     assert beat["source_end"] == 3
     assert beat["operation_id"] == "title"
+
+
+def test_full_video_plan_keeps_late_effects_without_relaxing_reel_limit():
+    data = plan_data() | {"output_mode": "full", "source_in": 0, "source_out": 167.9}
+    data["effects"][0].update(start=120, end=125)
+    plan = EditPlan.model_validate(data)
+    assert plan.duration == 167.9
+    assert plan.storyboard()[0]["source_end"] == 125
+    with pytest.raises(ValidationError):
+        EditPlan.model_validate(data | {"output_mode": "reel"})
+    with pytest.raises(ValidationError):
+        EditPlan.model_validate(data | {"source_out": 301})
+
+
+def test_full_video_scope_rejects_a_short_plan_or_shifted_source():
+    from reelos.planner import validate_output_scope
+
+    plan = EditPlan(asset_id="a" * 32, output_mode="full", source_out=167.9)
+    validate_output_scope(plan, 167.900417, "full")
+    with pytest.raises(ValueError, match="entire source"):
+        validate_output_scope(plan.model_copy(update={"source_out": 19.5}), 167.9, "full")
+    with pytest.raises(ValueError, match="entire source"):
+        validate_output_scope(plan.model_copy(update={"source_in": 10}), 167.9, "full")

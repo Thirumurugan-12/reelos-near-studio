@@ -17,7 +17,12 @@ export default function Studio() {
     (a) => a.id === (version?.plan.asset_id || s.sourceId),
   );
   const prefix = s.project ? `/api/projects/${s.project.id}` : "";
-  const draft = (instruction: string, review: boolean, subject: string) =>
+  const draft = (
+    instruction: string,
+    review: boolean,
+    subject: string,
+    outputMode: "full" | "reel",
+  ) =>
     s.start({
       action: "draft",
       asset_id: s.sourceId,
@@ -26,6 +31,7 @@ export default function Studio() {
       subject_prompt: subject,
       subject_id: s.subjectId || null,
       review_storyboard: review,
+      output_mode: outputMode,
     });
   return (
     <main className="studio">

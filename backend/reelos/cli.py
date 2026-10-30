@@ -30,6 +30,9 @@ def main():
     draft.add_argument("--subject-id")
     draft.add_argument("--reference")
     draft.add_argument("--storyboard-only", action="store_true")
+    draft.add_argument(
+        "--full-length", action="store_true", help="Edit the entire source without trimming."
+    )
     revise = commands.add_parser("revise")
     revise.add_argument("project")
     revise.add_argument("version")
@@ -81,6 +84,7 @@ def main():
                         subject_id=args.subject_id,
                         reference_id=args.reference,
                         review_storyboard=args.storyboard_only,
+                        output_mode="full" if args.full_length else "reel",
                     )
                 else:
                     data.update(version_id=args.version)

@@ -20,3 +20,14 @@ def test_official_image_smoke_has_valid_geometry(tmp_path):
     image = Image.open(tmp_path / subject / "000000.png")
     assert image.getpixel((64, 64)) > 200
     assert image.getpixel((0, 0)) == 0
+
+
+def test_late_video_frame_is_decoded_beyond_the_old_one_minute_guard(tmp_path):
+    # Parser fixture derived from the image smoke, moved to video frame 750.
+    text = (
+        "<750f>0<|box;x1=32;y1=32;x2=96;y2=96;w=128;h=128|>"
+        "<|mask;x=0;y=0;data=65,65,!!!!!(y:U@EM#s|>\n"
+    )
+    manifest = save_masks(text, tmp_path, 128, 128, 10)
+    mask = Image.open(tmp_path / manifest["subjects"][0] / "000750.png")
+    assert mask.getpixel((64, 64)) > 200

@@ -72,9 +72,9 @@ def save_masks(text: str, directory: Path, width: int, height: int, fps: int) ->
         request.write_text(json.dumps({"text": text, "width": width, "height": height}))
         try:
             subprocess.run(
-                ["node", "--max-old-space-size=256", str(helper), str(request), str(root)],
+                ["node", "--max-old-space-size=1024", str(helper), str(request), str(root)],
                 capture_output=True,
-                timeout=120,
+                timeout=300,
                 check=True,
             )
         except subprocess.SubprocessError as exc:
