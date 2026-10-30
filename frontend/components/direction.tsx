@@ -208,16 +208,27 @@ export function Direction({
               <Icon name="arrow" size={17} />
             </button>
           </form>
-          {version.observations.length > 0 && (
-            <details>
-              <summary>Footage & reference observations</summary>
-              {version.observations.map((o, i) => (
-                <p className="small" key={i}>
-                  <strong>{o.origin}:</strong> {o.text}
-                </p>
-              ))}
-            </details>
-          )}
+          <details>
+            <summary>Footage & reference observations</summary>
+            {version.observations.length === 0 && (
+              <p className="small">
+                No observations are available for this version.
+              </p>
+            )}
+            {version.observations.map((o, i) => (
+              <p className="small" key={i}>
+                <strong>{o.origin}:</strong> {o.text}
+                <br />
+                <span className="muted">
+                  {o.timing === "approximate" &&
+                  typeof o.source_start === "number" &&
+                  typeof o.source_end === "number"
+                    ? `Approximate timing · ${o.source_start.toFixed(1)}–${o.source_end.toFixed(1)} s`
+                    : "Timing unverified"}
+                </span>
+              </p>
+            ))}
+          </details>
         </>
       )}
     </section>

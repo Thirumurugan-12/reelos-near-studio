@@ -189,11 +189,13 @@ class Editor:
                 if subject not in manifest["subjects"]:
                     raise ValueError("Selected subject is not in this track.")
                 reference_file = None
+                reference_duration = None
                 if req.get("reference_id"):
                     reference = self.store.get("asset", req["reference_id"], pid)
                     if reference["role"] != "reference":
                         raise ValueError("Choose a reference video for style analysis.")
                     reference_file = self.provider_file(reference)
+                    reference_duration = reference["duration"]
                 stage("Muse is planning the edit")
                 speech = self.source_speech(asset)
                 plan, observations = create_plan(
@@ -205,6 +207,7 @@ class Editor:
                     reference_file,
                     speech,
                     req.get("output_mode", "reel"),
+                    reference_duration=reference_duration,
                 )
                 version = self.version(
                     pid,

@@ -1,4 +1,5 @@
 import json
+import math
 from typing import Literal
 
 from pydantic import Field
@@ -66,6 +67,50 @@ def validate_output_scope(plan: EditPlan, source_duration: float, output_mode: s
         )
 
 
+def clean_observations(raw, source_duration: float, reference_duration: float | None) -> list:
+    """Bound model annotations independently of the executable timeline."""
+    clean = []
+    for item in (raw if isinstance(raw, list) else [])[:5]:
+        if not isinstance(item, dict) or not isinstance(item.get("text"), str):
+            continue
+        text = item["text"].strip()[:600]
+        if not text:
+            continue
+        origin = item.get("origin")
+        if (
+            not isinstance(origin, str)
+            or origin not in {"footage", "reference"}
+            or (origin == "reference" and reference_duration is None)
+        ):
+            origin = "unknown"
+        duration = source_duration if origin == "footage" else reference_duration
+        start, end = item.get("source_start"), item.get("source_end")
+        verified_range = (
+            origin != "unknown"
+            and duration is not None
+            and all(type(t) in (int, float) and math.isfinite(t) for t in (start, end))
+            and 0 <= start < end <= duration
+        )
+        clean.append(
+            {
+                "text": text,
+                "origin": origin,
+                "source_start": float(start) if verified_range else None,
+                "source_end": float(end) if verified_range else None,
+                "timing": "approximate" if verified_range else "unverified",
+            }
+        )
+    return clean or [
+        {
+            "text": "No grounded observations were returned for this version.",
+            "origin": "unknown",
+            "source_start": None,
+            "source_end": None,
+            "timing": "unverified",
+        }
+    ]
+
+
 def create_plan(
     client: MetaClient,
     asset: dict,
@@ -75,6 +120,7 @@ def create_plan(
     reference_file: str | None = None,
     speech: dict | None = None,
     output_mode: str = "reel",
+    reference_duration: float | None = None,
 ) -> tuple[EditPlan, list]:
     prompt = {
         "task": "Direct a short portrait edit. Return JSON only: {plan, observations}.",
@@ -109,6 +155,7 @@ def create_plan(
             "origin is footage or reference. Mark approximate reference matches in text.",
         ],
         "source_duration": asset["duration"],
+        "reference_duration": reference_duration,
         "asset_id": asset["id"],
         "selected_subject_id": subject_id,
         "creative_direction": instruction,
@@ -144,21 +191,9 @@ def create_plan(
     validate_output_scope(plan, asset["duration"], output_mode)
     if plan.asset_id != asset["id"] or any(e.subject_id != subject_id for e in plan.effects):
         raise ValueError("Planner referenced an unavailable asset or subject.")
-    observations = parsed.get("observations", [])
-    if not isinstance(observations, list):
-        raise ValueError("Planner observations have an invalid shape.")
-    clean = []
-    for item in observations[:5]:
-        if isinstance(item, dict) and isinstance(item.get("text"), str):
-            clean.append(
-                {
-                    "text": item["text"][:600],
-                    "origin": item.get("origin", "footage"),
-                    "source_start": item.get("source_start"),
-                    "source_end": item.get("source_end"),
-                }
-            )
-    return plan, clean
+    return plan, clean_observations(
+        parsed.get("observations"), asset["duration"], reference_duration
+    )
 
 
 def revise_plan(client: MetaClient, parent: EditPlan, instruction: str) -> tuple[EditPlan, str]:

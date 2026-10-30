@@ -37,7 +37,13 @@ export type Version = {
     reason: string;
     text?: string;
   }[];
-  observations: { text: string; origin: string }[];
+  observations: {
+    text: string;
+    origin: string;
+    source_start?: number | null;
+    source_end?: number | null;
+    timing?: "approximate" | "unverified";
+  }[];
 };
 export type Job = {
   id: string;
