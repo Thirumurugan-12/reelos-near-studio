@@ -107,6 +107,10 @@ def text_layer(
     font_family: str = "aileron",
     badge: bool = False,
 ) -> Image.Image:
+    if style.design:
+        from reelos.typography import designed_text
+
+        return designed_text(size, style, time - start, end - start, badge)
     width, height = size
     layer = Image.new("RGBA", size)
     draw = ImageDraw.Draw(layer)

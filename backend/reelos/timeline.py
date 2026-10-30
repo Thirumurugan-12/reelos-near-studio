@@ -30,6 +30,13 @@ class TextStyle(Contract):
     y: Unit = 0.23
     size: float = Field(default=0.075, ge=0.025, le=0.15)
     color: str = Field(default="#F4F4F2", pattern=r"^#[0-9a-fA-F]{6}$")
+    # Omit new options from legacy snapshots so a revision cannot alter unrelated fields.
+    design: Literal["editorial", "pixel"] | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
+    accent_color: str | None = Field(
+        default=None, pattern=r"^#[0-9a-fA-F]{6}$", exclude_if=lambda value: value is None
+    )
 
 
 class SpotlightStyle(Contract):

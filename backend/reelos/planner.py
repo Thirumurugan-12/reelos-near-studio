@@ -27,6 +27,8 @@ class Change(Contract):
         "body",
         "accent",
         "template",
+        "design",
+        "accent_color",
     ]
     value: str | float
 
@@ -43,7 +45,11 @@ def apply_revision(parent: EditPlan, patch: Revision) -> EditPlan:
         if effect is None:
             raise ValueError("Requested effect is not present in this edit.")
         target = effect if change.field in {"start", "end"} else effect["params"]
-        if change.field not in target:
+        optional_text_field = (
+            effect["type"] in {"behind_subject_text", "tracked_label"}
+            and change.field in {"design", "accent_color"}
+        )
+        if change.field not in target and not optional_text_field:
             raise ValueError("This effect does not support the requested change.")
         target[change.field] = change.value
     return EditPlan.model_validate(data)
@@ -131,6 +137,11 @@ def create_plan(
             "Make the edit visibly intentional. Avoid titles hidden almost entirely by a face.",
             "For a close-up, use framing scale 0.82 and offset_y 0.16 to create title headroom.",
             "With that framing, place a short headline near y=0.10 and a label near y=0.88.",
+            "For designed animated titles use params.design='editorial' (bold) or 'pixel' "
+            "(Geist Pixel Square). These reveal words in sequence and accent the last line. "
+            "Use off-white color #F4F4F2 and accent_color for a reference palette. "
+            "Explicit user styling overrides the reference. Keep deliberate line breaks. "
+            "Use size around 0.07 for two-line titles in the available headroom.",
             (
                 "Full mode: source_in=0, source_out=source_duration. Never trim."
                 if output_mode == "full"
