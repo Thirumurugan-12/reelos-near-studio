@@ -100,6 +100,17 @@ A single small `muse-spark-1.3` inference then completed with HTTP 200 and outpu
 `OK` (13 input tokens, 137 output tokens). Diagnostic evidence is privately retained
 in `data/no-reference-review/new-key-check-2026-10-31.json`; it contains no key.
 
-This confirms fresh inference works with the updated runtime key. The full-source
-planning request has not yet been rerun with that key, and v20 remains correctly
+This confirms fresh inference works with the updated runtime key. At that checkpoint, the full-source
+planning request had not yet been rerun with that key; v20 remains correctly
 labelled as an assistant-authored source-only example.
+
+## Fresh Muse source-only edit completed
+
+A subsequent full-source request exposed an inaccessible cached provider upload.
+After implementing and verifying upload refresh, real Muse planning succeeded with
+no reference video or parent plan. Raw model version v21 and reviewed rendered v22
+are now saved separately from the earlier manual v20 example. v22 preserves Muse's
+layout, palette, effects and timing, with three explicit editorial copy corrections.
+The complete 167.9s 1080p export is verified, with original audio unchanged.
+See [provider upload recovery](PROVIDER_UPLOAD_RECOVERY.md) for call evidence, exact
+review changes, test results and output measurements.
