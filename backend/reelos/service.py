@@ -41,7 +41,7 @@ class Editor:
         return self.store.root / "versions" / id
 
     def provider_file(self, asset: dict) -> str:
-        if not asset.get("provider_file"):
+        if not asset.get("provider_file") or not self.meta.file_available(asset["provider_file"]):
             asset["provider_file"] = self.meta.upload(self.asset_dir(asset["id"]) / "proxy.mp4")
             self.store.put("asset", asset["id"], asset)
         return asset["provider_file"]

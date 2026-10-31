@@ -1,8 +1,10 @@
 """Small server-side Meta Responses client; never retries ambiguous paid requests."""
 
 import json
+import re
 import time
 from pathlib import Path
+from urllib.parse import quote
 
 import httpx
 
@@ -14,6 +16,51 @@ class MetaClient:
     def __init__(self, settings: Settings, store: Store):
         self.settings = settings
         self.store = store
+
+    def provider_error(self, response: httpx.Response, call: str | None = None) -> ValueError:
+        """Keep actionable provider reasons without copying headers, prompts or credentials."""
+        try:
+            data = response.json()
+            error = data.get("error", {}) if isinstance(data, dict) else {}
+            error = error if isinstance(error, dict) else {}
+        except ValueError:
+            error = {}
+
+        def clean(value, limit):
+            text = value if isinstance(value, str) else ""
+            if self.settings.api_key:
+                text = text.replace(self.settings.api_key, "[REDACTED]")
+            text = re.sub(r"LLM_[A-Za-z0-9_.-]+", "[REDACTED]", text)
+            return " ".join(text.split())[:limit]
+
+        details = {"http_status": response.status_code}
+        for field in ("type", "code"):
+            value = clean(error.get(field), 80)
+            if re.fullmatch(r"[A-Za-z0-9_.:-]{1,80}", value):
+                details[field] = value
+        details["message"] = clean(error.get("message"), 240) or "No provider reason was returned."
+        if call:
+            directory = self.store.root / "responses"
+            directory.mkdir(exist_ok=True)
+            (directory / f"{call}.error.json").write_text(json.dumps(details))
+        code = f", {details['code']}" if details.get("code") else ""
+        return ValueError(
+            f"Meta request failed (HTTP {response.status_code}{code}): {details['message']}"
+        )
+
+    def file_available(self, file_id: str) -> bool:
+        if not self.settings.api_key:
+            raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
+        with httpx.Client(timeout=30) as client:
+            response = client.get(
+                "https://api.meta.ai/v1/files/" + quote(file_id, safe=""),
+                headers={"Authorization": f"Bearer {self.settings.api_key}"},
+            )
+        if response.status_code == 404:
+            return False
+        if response.is_error:
+            raise self.provider_error(response)
+        return True
 
     def transcribe(self, path: Path) -> dict:
         if not self.settings.api_key:
@@ -92,10 +139,7 @@ class MetaClient:
                     },
                 )
                 if response.is_error:
-                    raise ValueError(
-                        f"Meta request failed (HTTP {response.status_code}). "
-                        "Check model access and account limits."
-                    )
+                    raise self.provider_error(response, call)
                 data = response.json()
                 # Keep private provider evidence before parsing/validation so a bad
                 # timeline can be repaired without repeating a paid model request.
