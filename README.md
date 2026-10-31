@@ -25,11 +25,11 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 1. Upload one MP4/MOV source up to five minutes and an optional reference up to 60 seconds, each up to 200 MB. Choose Full video (web default) to preserve the entire recording, or Short reel for a 15–30 second excerpt.
 2. Describe the edit and subject. Creating a draft sends a compressed source proxy to Meta; reference proxies preserve their original composition. Muse Voice transcribes source speech for topic selection, without generating exact-word captions.
 3. If SAM finds multiple subjects, choose the highlighted person from actual source thumbnails.
-4. Inspect the storyboard or play the draft. Effects include text behind the subject, spotlight with optional black/monochrome background and glowing outline, tracked labels, and original Remotion illustration cutaways when requested.
+4. Inspect the storyboard or play the draft. The Effects picker adds all 45 catalog recipes plus three named looks, with animated previews, editable settings and supporting-media cards. The original subject text, spotlight, labels and Remotion inserts remain available. See the [complete catalog](docs/EFFECT_CATALOG.md).
 5. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
 6. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
 
-Mobile uses a fitted workspace with Preview, Assets, Direction, and Storyboard tabs. Long forms scroll within their panels. Desktop displays assets, preview/timeline, and direction together.
+Mobile uses a fitted workspace with Preview, Assets, Effects, Direction, and Storyboard tabs. Long forms scroll within their panels. Desktop displays assets, preview/timeline, and direction together.
 
 The initial prototype used a 20-second excerpt. Full-video mode now validates source coverage from zero to the complete source duration; it rejects an excerpt instead of silently shortening the recording. The CLI selects this mode with `draft --full-length`. Originals and generated outputs are ignored by Git.
 
@@ -73,7 +73,7 @@ docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost
 docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost:8000 usage
 ```
 
-During local development, use `uv --directory backend run reelos --help`. Commands include `create`, `upload`, `draft`, `revise`, `render`, `job --wait`, and `plan`. Keep returned project, asset, version, and job IDs. A wait timeout does not mean a provider request failed; inspect the same job before retrying. The [skill](skills/reelos-effects/SKILL.md) documents the workflow.
+During local development, use `uv --directory backend run reelos --help`. Commands include `create`, `upload`, `draft`, `revise`, `render`, `job --wait`, `plan`, `effects` and `apply`. Keep returned project, asset, version, and job IDs. A wait timeout does not mean a provider request failed; inspect the same job before retrying. The [skill](skills/reelos-effects/SKILL.md) documents the workflow.
 
 ## Verification
 
@@ -93,7 +93,7 @@ Real model verification is documented in [the evaluation report](docs/EVALUATION
 
 ## Scope and provenance
 
-The implementation is original project code. The supplied Claude effects repository, Notion recipes, and video-editor agent informed the workflow and catalog; their renderer code was not copied. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles, retained package notices, and [dependency/media inventory](docs/DEPENDENCIES.md) for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
+The application and original illustration code are authored here. The complete catalog adapts all 45 actual MIT-licensed drawing recipes from Vibha Ramprakash’s Claude effects repository, with copyright, fonts and model notices retained in `backend/reelos/vendor/`. The Notion recipes and video-editor agent also informed the workflow. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles, retained package notices, and [dependency/media inventory](docs/DEPENDENCIES.md) for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
 
 Exact-word captions, elaborate transitions, full timeline manipulation, social publishing, and automatic video generation are outside the baseline. Muse outputs are validated data, never shell commands. Reference observations are proposed interpretations rather than a promise to recover a video's hidden editing settings.
 

@@ -15,7 +15,10 @@ export function Assets({
   referenceId: string;
   onSource: (id: string) => void;
   onReference: (id: string) => void;
-  onUpload: (file: File, role: "source" | "reference") => void;
+  onUpload: (
+    file: File,
+    role: "source" | "reference" | "supporting",
+  ) => void | Promise<void>;
   disabled: boolean;
 }) {
   return (
@@ -102,6 +105,38 @@ export function Assets({
               ))}
           </select>
         )}
+      </div>
+      <div className="reference-section">
+        <div className="panel-heading">
+          <h2>Supporting assets</h2>
+          <span className="optional">Optional</span>
+        </div>
+        <p className="muted small">
+          Images and clips for orbiting cards, phone fans, grids and B-roll.
+        </p>
+        <label className="reference-upload">
+          <Icon name="plus" size={16} /> Add images or clips
+          <input
+            type="file"
+            multiple
+            accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,.mov"
+            disabled={disabled}
+            onChange={async (e) => {
+              const files = Array.from(e.target.files || []);
+              e.target.value = "";
+              for (const file of files) await onUpload(file, "supporting");
+            }}
+          />
+        </label>
+        {assets
+          .filter((a) => a.role === "supporting")
+          .map((a) => (
+            <div className="supporting-asset" key={a.id}>
+              <Icon name="film" size={16} />
+              <span>{a.name}</span>
+              <small>{a.kind === "image" ? "Image" : time(a.duration)}</small>
+            </div>
+          ))}
       </div>
       <div className="asset-note">
         <Icon name="layers" size={17} />

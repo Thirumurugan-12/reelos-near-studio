@@ -1,0 +1,290 @@
+[
+  {
+    "fx": "noise",
+    "width": 360,
+    "seconds": 1.713,
+    "status": "rendered"
+  },
+  {
+    "fx": "lineup",
+    "width": 360,
+    "seconds": 0.489,
+    "status": "rendered"
+  },
+  {
+    "fx": "locked-on",
+    "width": 360,
+    "seconds": 0.9,
+    "status": "rendered"
+  },
+  {
+    "fx": "orbit",
+    "width": 360,
+    "seconds": 0.774,
+    "status": "rendered"
+  },
+  {
+    "fx": "lean-in",
+    "width": 360,
+    "seconds": 0.576,
+    "status": "rendered"
+  },
+  {
+    "fx": "backdrop-word",
+    "width": 360,
+    "seconds": 0.398,
+    "status": "rendered"
+  },
+  {
+    "fx": "spotlight",
+    "width": 360,
+    "seconds": 0.821,
+    "status": "rendered"
+  },
+  {
+    "fx": "the-bill",
+    "width": 360,
+    "seconds": 0.486,
+    "status": "rendered"
+  },
+  {
+    "fx": "moody",
+    "width": 360,
+    "seconds": 1.149,
+    "status": "rendered"
+  },
+  {
+    "fx": "swipe",
+    "width": 360,
+    "seconds": 1.503,
+    "status": "rendered"
+  },
+  {
+    "fx": "todo",
+    "width": 360,
+    "seconds": 0.595,
+    "status": "rendered"
+  },
+  {
+    "fx": "comment-box",
+    "width": 360,
+    "seconds": 0.947,
+    "status": "rendered"
+  },
+  {
+    "fx": "tap",
+    "width": 360,
+    "seconds": 0.435,
+    "status": "rendered"
+  },
+  {
+    "fx": "pause-point",
+    "width": 360,
+    "seconds": 1.197,
+    "status": "rendered"
+  },
+  {
+    "fx": "uninstall",
+    "width": 360,
+    "seconds": 0.632,
+    "status": "rendered"
+  },
+  {
+    "fx": "reel-frame",
+    "width": 360,
+    "seconds": 1.578,
+    "status": "rendered"
+  },
+  {
+    "fx": "shortcut-rain",
+    "width": 360,
+    "seconds": 0.978,
+    "status": "rendered"
+  },
+  {
+    "fx": "reject-stamp",
+    "width": 360,
+    "seconds": 0.475,
+    "status": "rendered"
+  },
+  {
+    "fx": "countdown-flip",
+    "width": 360,
+    "seconds": 0.478,
+    "status": "rendered"
+  },
+  {
+    "fx": "rabbit-hole",
+    "width": 360,
+    "seconds": 2.668,
+    "status": "rendered"
+  },
+  {
+    "fx": "cover-star",
+    "width": 360,
+    "seconds": 0.762,
+    "status": "rendered"
+  },
+  {
+    "fx": "scribble",
+    "width": 360,
+    "seconds": 0.788,
+    "status": "rendered"
+  },
+  {
+    "fx": "glass-widgets",
+    "width": 360,
+    "seconds": 2.183,
+    "status": "rendered"
+  },
+  {
+    "fx": "red-collage",
+    "width": 360,
+    "seconds": 1.021,
+    "status": "rendered"
+  },
+  {
+    "fx": "split-headline",
+    "width": 360,
+    "seconds": 0.736,
+    "status": "rendered"
+  },
+  {
+    "fx": "pastel-word",
+    "width": 360,
+    "seconds": 1.278,
+    "status": "rendered"
+  },
+  {
+    "fx": "check-pills",
+    "width": 360,
+    "seconds": 1.334,
+    "status": "rendered"
+  },
+  {
+    "fx": "timeline",
+    "width": 360,
+    "seconds": 1.666,
+    "status": "rendered"
+  },
+  {
+    "fx": "headline-box",
+    "width": 360,
+    "seconds": 0.69,
+    "status": "rendered"
+  },
+  {
+    "fx": "profile-wall",
+    "width": 360,
+    "seconds": 0.927,
+    "status": "rendered"
+  },
+  {
+    "fx": "tier-list",
+    "width": 360,
+    "seconds": 0.624,
+    "status": "rendered"
+  },
+  {
+    "fx": "broll-split",
+    "width": 360,
+    "seconds": 0.768,
+    "status": "rendered"
+  },
+  {
+    "fx": "phone-fan",
+    "width": 360,
+    "seconds": 1.212,
+    "status": "rendered"
+  },
+  {
+    "fx": "dot-reveal",
+    "width": 360,
+    "seconds": 0.957,
+    "status": "rendered"
+  },
+  {
+    "fx": "headline-wall",
+    "width": 360,
+    "seconds": 2.666,
+    "status": "rendered"
+  },
+  {
+    "fx": "checklist",
+    "width": 360,
+    "seconds": 1.395,
+    "status": "rendered"
+  },
+  {
+    "fx": "liquid-glass-graph",
+    "width": 360,
+    "seconds": 1.379,
+    "status": "rendered"
+  },
+  {
+    "fx": "carousel-spin",
+    "width": 360,
+    "seconds": 0.772,
+    "status": "rendered"
+  },
+  {
+    "fx": "match-cut",
+    "width": 360,
+    "seconds": 1.372,
+    "status": "rendered"
+  },
+  {
+    "fx": "apple-toggles",
+    "width": 360,
+    "seconds": 0.692,
+    "status": "rendered"
+  },
+  {
+    "fx": "led-sign",
+    "width": 360,
+    "seconds": 0.79,
+    "status": "rendered"
+  },
+  {
+    "fx": "slow-push",
+    "width": 360,
+    "seconds": 0.785,
+    "status": "rendered"
+  },
+  {
+    "fx": "over-the-shoulder-zoom",
+    "width": 360,
+    "seconds": 0.983,
+    "status": "rendered"
+  },
+  {
+    "fx": "messages",
+    "width": 360,
+    "seconds": 1.101,
+    "status": "rendered"
+  },
+  {
+    "fx": "place-in-grid",
+    "width": 360,
+    "seconds": 1.334,
+    "status": "rendered"
+  },
+  {
+    "fx": "glitter-spotlight",
+    "width": 360,
+    "seconds": 1.335,
+    "status": "rendered"
+  },
+  {
+    "fx": "editorial-cover",
+    "width": 360,
+    "seconds": 1.131,
+    "status": "rendered"
+  },
+  {
+    "fx": "glass-bento",
+    "width": 360,
+    "seconds": 2.252,
+    "status": "rendered"
+  }
+]

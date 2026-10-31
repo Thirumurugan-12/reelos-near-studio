@@ -4,6 +4,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from reelos.catalog_contracts import CatalogParams
+
 Identifier = Annotated[str, Field(pattern=r"^[a-f0-9]{32}$")]
 Seconds = Annotated[float, Field(ge=0, le=300, allow_inf_nan=False)]
 Unit = Annotated[float, Field(ge=0, le=1, allow_inf_nan=False)]
@@ -85,7 +87,14 @@ class GraphicInsert(EffectBase):
     params: GraphicStyle
 
 
-Effect = Annotated[Headline | Spotlight | Label | GraphicInsert, Field(discriminator="type")]
+class CatalogEffect(EffectBase):
+    type: Literal["catalog_effect"]
+    params: CatalogParams
+
+
+Effect = Annotated[
+    Headline | Spotlight | Label | GraphicInsert | CatalogEffect, Field(discriminator="type")
+]
 
 
 class EditPlan(Contract):
@@ -124,6 +133,12 @@ class EditPlan(Contract):
             )
         if any(b.start < a.end for a, b in zip(inserts, inserts[1:])):
             raise ValueError("Graphic inserts must not overlap.")
+        recipes = [e for e in self.effects if e.type == "catalog_effect"]
+        for e in recipes:
+            if len({r.subject_id for r in recipes if r.start <= e.start < r.end}) > 1:
+                raise ValueError("Overlapping catalog effects must use the same tracked subject.")
+            if sum(r.start <= e.start < r.end for r in recipes) > 3:
+                raise ValueError("Use at most three simultaneous catalog effects.")
         return self
 
     def storyboard(self) -> list[dict]:
@@ -137,6 +152,7 @@ class EditPlan(Contract):
                 "source_end": self.source_in + e.end,
                 "reason": e.reason,
                 "text": getattr(e.params, "text", None),
+                **({"fx": e.params.fx} if e.type == "catalog_effect" else {}),
             }
             for e in sorted(self.effects, key=lambda e: e.start)
         ]
@@ -145,6 +161,16 @@ class EditPlan(Contract):
 def validate_assets(plan: EditPlan, assets: dict) -> None:
     if plan.asset_id not in assets:
         raise ValueError("source asset not found")
+    if assets[plan.asset_id].get("role") not in (None, "source"):
+        raise ValueError("Choose source footage for the main recording.")
+    for effect in plan.effects:
+        if effect.type == "catalog_effect":
+            for id in effect.params.media_ids:
+                if id not in assets or assets[id].get("role") not in {"supporting", "source"}:
+                    raise ValueError(
+                        "Choose supporting media from this project; "
+                        "style references cannot be reused as content."
+                    )
     if plan.source_out > assets[plan.asset_id]["duration"] + 0.001:
         raise ValueError("source interval exceeds asset duration")
     if plan.output_mode == "full" and (

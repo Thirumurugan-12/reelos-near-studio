@@ -208,6 +208,11 @@ class Editor:
                     speech,
                     req.get("output_mode", "reel"),
                     reference_duration=reference_duration,
+                    supporting_assets=[
+                        {k: a.get(k) for k in ("id", "name", "kind", "duration")}
+                        for a in self.store.list("asset", pid)
+                        if a["role"] == "supporting"
+                    ],
                 )
                 version = self.version(
                     pid,
@@ -231,7 +236,14 @@ class Editor:
                 parent = self.store.get("version", req["version_id"], pid)
                 stage("Muse is applying your direction")
                 plan, summary = revise_plan(
-                    self.meta, EditPlan.model_validate(parent["plan"]), req["instruction"]
+                    self.meta,
+                    EditPlan.model_validate(parent["plan"]),
+                    req["instruction"],
+                    supporting_assets=[
+                        {k: a.get(k) for k in ("id", "name", "kind", "duration")}
+                        for a in self.store.list("asset", pid)
+                        if a["role"] == "supporting"
+                    ],
                 )
                 version = self.version(
                     pid, plan, parent["id"], summary, parent["track_key"], parent["observations"]
@@ -261,6 +273,7 @@ class Editor:
                     progress=lambda p: stage("Rendering your " + quality, p),
                     font_family=version.get("render_profile", {}).get("font", "system"),
                     graphics=graphics,
+                    asset_root=self.store.root,
                 )
             version["has_" + quality] = True
             self.store.put("version", version["id"], version)

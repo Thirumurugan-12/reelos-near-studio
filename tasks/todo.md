@@ -1,0 +1,7 @@
+- [x] Freeze/inventory upstream and licences
+- [x] Validated catalog contract and tests
+- [x] SAM rendering bridge, all recipes and named looks
+- [x] Supporting media, API/CLI/Muse integration
+- [x] Effect browser and editable application UI
+- [x] Render/inspect every effect and demonstration
+- [x] Compose deploy, browser verification and documentation

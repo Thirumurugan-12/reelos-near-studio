@@ -16,12 +16,23 @@ def main():
     commands.add_parser("health")
     commands.add_parser("usage")
     commands.add_parser("projects")
+    commands.add_parser("effects", help="List all catalog effects, options and preview URLs")
+    apply = commands.add_parser("apply", help="Apply a catalog effect as a new edit version")
+    apply.add_argument("project")
+    apply.add_argument("version")
+    apply.add_argument("effect")
+    apply.add_argument("--start", type=float, required=True)
+    apply.add_argument("--end", type=float, required=True)
+    apply.add_argument("--text", default="")
+    apply.add_argument("--options-file", type=Path)
+    apply.add_argument("--media", nargs="*", default=[])
+
     create = commands.add_parser("create")
     create.add_argument("name")
     upload = commands.add_parser("upload")
     upload.add_argument("project")
     upload.add_argument("file", type=Path)
-    upload.add_argument("--role", choices=["source", "reference"], default="source")
+    upload.add_argument("--role", choices=["source", "reference", "supporting"], default="source")
     draft = commands.add_parser("draft")
     draft.add_argument("project")
     draft.add_argument("asset")
@@ -51,8 +62,24 @@ def main():
     args = parser.parse_args()
     try:
         with httpx.Client(base_url=args.url.rstrip("/") + "/api/", timeout=180) as client:
-            if args.command in {"health", "usage", "projects"}:
+            if args.command in {"health", "usage", "projects", "effects"}:
                 result = client.get(args.command)
+            elif args.command == "apply":
+                options = json.loads(args.options_file.read_text()) if args.options_file else {}
+                result = client.post(
+                    f"projects/{args.project}/effects",
+                    json={
+                        "version_id": args.version,
+                        "start": args.start,
+                        "end": args.end,
+                        "params": {
+                            "fx": args.effect,
+                            "text": args.text,
+                            "options": options,
+                            "media_ids": args.media,
+                        },
+                    },
+                )
             elif args.command == "create":
                 result = client.post("projects", json={"name": args.name})
             elif args.command == "upload":

@@ -7,6 +7,7 @@ from typing import Literal
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
+from PIL import Image, ImageOps, UnidentifiedImageError
 from pydantic import Field, model_validator
 
 from reelos.config import Settings
@@ -58,6 +59,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="ReelOS", version="0.1.0", lifespan=lifespan)
     app.state.editor = editor
+    from reelos.catalog_api import mount_catalog
+
+    mount_catalog(app, editor)
 
     @app.middleware("http")
     async def local_boundary(request: Request, call_next):
@@ -141,7 +145,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def asset_upload(
         project_id: Identifier,
         file: UploadFile = File(),
-        role: Literal["source", "reference"] = Form("source"),
+        role: Literal["source", "reference", "supporting"] = Form("source"),
     ):
         editor.store.get("project", project_id)
         id = new_id()
@@ -156,12 +160,37 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     if size > 200 * 1024 * 1024:
                         raise ValueError("Video exceeds the 200 MB upload limit.")
                     target.write(chunk)
-            metadata = inspect_media(source)
-            if metadata["duration"] > (300 if role == "source" else 60):
+            metadata = None
+            if role == "supporting":
+                try:
+                    with Image.open(source) as image:
+                        if image.format not in {"PNG", "JPEG", "WEBP"}:
+                            raise ValueError("Use a PNG, JPEG or WebP supporting image.")
+                        if image.width * image.height > 25_000_000:
+                            raise ValueError("Supporting images must be at most 25 megapixels.")
+                        image.load()
+                        normalized = ImageOps.exif_transpose(image).convert("RGB")
+                        normalized.thumbnail((2048, 2048))
+                        normalized.save(directory / "source.png")
+                        metadata = {
+                            "kind": "image",
+                            "duration": 0,
+                            "width": normalized.width,
+                            "height": normalized.height,
+                            "has_audio": False,
+                        }
+                    source.rename(directory / "original.upload")
+                except UnidentifiedImageError:
+                    pass  # Supporting videos use the same inspected media path below.
+                except (OSError, Image.DecompressionBombError) as exc:
+                    raise ValueError("Cannot decode this supporting image.") from exc
+            metadata = metadata or inspect_media(source)
+            if metadata["duration"] > (60 if role == "reference" else 300):
                 raise ValueError(
                     "Use source footage up to five minutes or a reference up to one minute."
                 )
-            make_proxy(source, directory / "proxy.mp4", portrait=role == "source")
+            if metadata.get("kind") != "image":
+                make_proxy(source, directory / "proxy.mp4", portrait=role == "source")
             return editor.store.put(
                 "asset",
                 id,
@@ -179,7 +208,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/projects/{project_id}/assets/{asset_id}/source")
     def asset_source(project_id: Identifier, asset_id: Identifier):
-        editor.store.get("asset", asset_id, project_id)
+        asset = editor.store.get("asset", asset_id, project_id)
+        if asset.get("kind") == "image":
+            return FileResponse(editor.asset_dir(asset_id) / "source.png", media_type="image/png")
         return FileResponse(editor.asset_dir(asset_id) / "source.mp4", media_type="video/mp4")
 
     @app.post("/api/projects/{project_id}/versions", status_code=201)

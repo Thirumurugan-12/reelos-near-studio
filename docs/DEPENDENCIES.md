@@ -1,11 +1,14 @@
 # Dependency and media provenance
 
-Inspected 30 October 2026 against installed package metadata and the deployed Docker image. This inventory covers major direct components; locked dependency trees and their bundled notices remain the authoritative inventory for transitive components.
+Updated 31 October 2026 against installed package metadata and the deployed Docker image. This inventory covers major direct components; locked dependency trees and their bundled notices remain the authoritative inventory for transitive components.
 
-ReelOS application, validation, compositing and original illustration code is authored in this repository. The Claude effects skill, supplied Notion guide and marketplace video-editor agent informed the workflow and supported catalog; their renderer/agent source was not copied. [Reference integration](EDITOR_REFERENCE_INTEGRATION.md).
+ReelOS application, validation, compositing and original illustration code is authored in this repository. The catalog reuses the 45 MIT-licensed Claude drawing recipes, fonts and YuNet model with retained attribution in `backend/reelos/vendor/`; the upstream tracker/CLI/private hook are excluded. The supplied Notion guide and marketplace video-editor agent informed the workflow. See [the catalog inventory](EFFECT_CATALOG.md). [Reference integration](EDITOR_REFERENCE_INTEGRATION.md).
 
 | Component | Installed version | Declared licence / notice source | Use |
 |---|---|---|---|
+| Claude effects renderer | commit `99c9a33` | MIT, copyright 2026 Vibha Ramprakash; retained licence | All 45 recipes + 3 looks |
+| OpenCV headless | 4.14.0.94 | Apache-2.0; package notices | Drawing, local face-anchor inference |
+| YuNet | upstream `yunet.onnx` | MIT, copyright 2020 Shiqi Yu; retained licence | Face anchor inside SAM person |
 | FastAPI | 0.162.0 | MIT; wheel `dist-info/licenses/LICENSE` | Backend API |
 | Pydantic | 2.14.2 | MIT; wheel licence | Validated edit contracts |
 | HTTPX | 0.28.1 | BSD-3-Clause; wheel `LICENSE.md` | Server-side API transport |

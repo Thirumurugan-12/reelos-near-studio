@@ -5,7 +5,7 @@ Updated 29 October 2026, following the user's observation that the initial effec
 ## References
 
 - [Jeremy Longshore's video-editor agent](https://github.com/jeremylongshore/tons-of-skills-marketplace/blob/main/plugins/packages/creator-studio-pack/plugins/video-production/video-editor-ai/agents/video-editor.md): describes footage analysis, editing opportunities, post-production, and final checks. Its sample scripts and platform recommendations are reference material, not independently verified APIs or universal editing rules.
-- [Vibha Ramprakash's Claude effects skill](https://github.com/Vibha-Ramprakash/claude-video-effects/blob/main/SKILL.md): provides concrete effect recipes, a structured plan, and representative-frame inspection before export. The inspected current guide lists 45 effects; our baseline is not a claim to implement the whole catalog.
+- [Vibha Ramprakash's Claude effects skill](https://github.com/Vibha-Ramprakash/claude-video-effects/blob/main/SKILL.md): provides concrete effect recipes, a structured plan, and representative-frame inspection before export. The inspected current guide lists 45 effects; the initial baseline implemented a subset. As of 31 October, [all 45 recipes plus three looks are integrated](EFFECT_CATALOG.md), using the actual MIT-licensed drawing functions and retained attribution.
 - The user-pasted Notion guide contributes explicit styling, layer order, and timed visual recipes.
 
 ## Product correction

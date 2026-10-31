@@ -6,6 +6,7 @@ const labels: Record<string, string> = {
   subject_spotlight: "Spotlight",
   tracked_label: "Tracked label",
   graphic_insert: "Graphic insert",
+  catalog_effect: "Effect",
 };
 export function Timeline({ version }: { version?: Version }) {
   const duration = version
@@ -34,7 +35,11 @@ export function Timeline({ version }: { version?: Version }) {
           {version.plan.effects.map((effect, i) => (
             <div className="track" key={effect.id}>
               <span className="track-label">
-                {labels[effect.type] || effect.type}
+                {effect.type === "catalog_effect"
+                  ? String(effect.params.fx || "Effect")
+                      .replaceAll("-", " ")
+                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                  : labels[effect.type] || effect.type}
               </span>
               <div className="track-line">
                 <div

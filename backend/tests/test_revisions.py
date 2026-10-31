@@ -98,3 +98,37 @@ def test_invalid_revision_fails_without_mutating_parent(change):
     with pytest.raises(ValueError):
         apply_revision(parent, Revision(summary="change", changes=[change]))
     assert parent.model_dump() == original
+
+
+def test_catalog_option_patch_preserves_other_options_and_parent():
+    parent = EditPlan.model_validate(
+        {
+            "asset_id": "a" * 32,
+            "source_out": 5,
+            "effects": [
+                {
+                    "id": "orbit",
+                    "type": "catalog_effect",
+                    "subject_id": "0",
+                    "start": 1,
+                    "end": 4,
+                    "params": {
+                        "fx": "orbit",
+                        "text": "Story",
+                        "options": {"count": 6, "speed": 1.2},
+                    },
+                }
+            ],
+        }
+    )
+    original = parent.model_dump()
+    child = apply_revision(
+        parent,
+        Revision(
+            summary="Slow orbit",
+            changes=[{"effect_id": "orbit", "field": "options", "value": {"speed": 0.5}}],
+        ),
+    )
+    expected = parent.model_dump()
+    expected["effects"][0]["params"]["options"]["speed"] = 0.5
+    assert child.model_dump() == expected and parent.model_dump() == original

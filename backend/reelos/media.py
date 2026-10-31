@@ -365,6 +365,7 @@ def render(
     progress=None,
     font_family: str = "aileron",
     graphics: dict | None = None,
+    asset_root: Path | None = None,
 ) -> None:
     if any(e.type != "graphic_insert" for e in plan.effects) and track is None:
         raise ValueError("Subject effects require a real tracking artifact.")
@@ -372,6 +373,11 @@ def render(
         raise ValueError("Selected subject is absent from tracking artifact.")
     height = width * 16 // 9
     count = round(plan.duration * plan.fps)
+    from reelos.catalog_renderer import prepare_catalog
+
+    catalog_renderer = prepare_catalog(
+        plan, source, asset_root, width, track, font_family, graphics
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     # Temporary output is promoted atomically only after decoder and encoder succeed.
     with tempfile.TemporaryDirectory(dir=output.parent) as temp:
@@ -472,9 +478,12 @@ def render(
                                     "The headline is mostly hidden by the subject. "
                                     "Move it into clear space or use a framed layout."
                                 )
-                    encoder.stdin.write(
-                        composite(image, plan, t, masks, font_family, graphics).tobytes()
+                    result = Image.fromarray(
+                        composite(image, plan, t, masks, font_family, graphics)
                     )
+                    if catalog_renderer:
+                        result = catalog_renderer.apply(result, t, masks)
+                    encoder.stdin.write(np.asarray(result).tobytes())
                     if progress and index % 15 == 0:
                         progress(index / count)
                 encoder.stdin.close()

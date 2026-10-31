@@ -1,0 +1,514 @@
+[
+  {
+    "id": "noise",
+    "label": "Noise",
+    "description": "reels pile up behind your head, one every quarter second",
+    "options": [
+      "images",
+      "size"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "lineup",
+    "label": "Lineup",
+    "description": "numbered tiles fan out in an arc above your head",
+    "options": [
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "locked-on",
+    "label": "Locked On",
+    "description": "corner brackets snap onto your face and the camera follows you",
+    "options": [
+      "text",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "orbit",
+    "label": "Orbit",
+    "description": "your reels circle your head: in front at the bottom, behind you at the top",
+    "options": [
+      "count",
+      "images",
+      "size",
+      "speed"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "lean-in",
+    "label": "Lean In",
+    "description": "a fast punch-in on one word",
+    "options": [
+      "speed",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "backdrop-word",
+    "label": "Backdrop Word",
+    "description": "a giant word drops in behind you",
+    "options": [
+      "color",
+      "font",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "spotlight",
+    "label": "Spotlight",
+    "description": "kill the lights, keep you lit",
+    "options": [
+      "color",
+      "font",
+      "look",
+      "push",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "the-bill",
+    "label": "The Bill",
+    "description": "prints every instruction like a ticket, into the wall above your head",
+    "options": [
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "moody",
+    "label": "Moody",
+    "description": "a moody colour grade: darker, softer, teal shadows",
+    "options": [
+      "grade"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "swipe",
+    "label": "Swipe",
+    "description": "a before and after slider that sweeps across you",
+    "options": [
+      "grade"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "todo",
+    "label": "Todo",
+    "description": "a checklist card beside your head that ticks off as you talk",
+    "options": [
+      "text",
+      "ticks",
+      "title"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "comment-box",
+    "label": "Comment Box",
+    "description": "an Instagram comments sheet above your head types your word, posts it, gets a heart and your reply",
+    "options": [
+      "chip",
+      "handle",
+      "look",
+      "reply",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "tap",
+    "label": "Tap",
+    "description": "a Follow button pops up and flips to Following",
+    "options": [
+      "at",
+      "color",
+      "x",
+      "y"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "pause-point",
+    "label": "Pause Point",
+    "description": "freeze the frame and point at something with a hand-drawn arrow",
+    "options": [
+      "color",
+      "label_x",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "uninstall",
+    "label": "Uninstall",
+    "description": "a glitchy uninstall bar that breaks the frame apart",
+    "options": [
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "reel-frame",
+    "label": "Reel Frame",
+    "description": "your video shrinks into an Instagram reel card",
+    "options": [
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "shortcut-rain",
+    "label": "Shortcut Rain",
+    "description": "keyboard keys rain down behind you",
+    "options": [
+      "count",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "reject-stamp",
+    "label": "Reject Stamp",
+    "description": "a big red stamp slams onto the screen",
+    "options": [
+      "angle",
+      "color",
+      "text",
+      "y"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "countdown-flip",
+    "label": "Countdown Flip",
+    "description": "a 3, 2, 1 flip clock above your head",
+    "options": [
+      "from"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "rabbit-hole",
+    "label": "Rabbit Hole",
+    "description": "the frame tunnels into itself, spinning",
+    "options": [
+      "ratio",
+      "speed",
+      "spin"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "cover-star",
+    "label": "Cover Star",
+    "description": "you become a magazine cover, with the title behind your head",
+    "options": [
+      "accent",
+      "color",
+      "issue",
+      "lines",
+      "lines_y",
+      "look",
+      "right",
+      "right_y",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "scribble",
+    "label": "Scribble",
+    "description": "marker doodles draw themselves around you",
+    "options": [
+      "color",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "glass-widgets",
+    "label": "Glass Widgets",
+    "description": "frosted glass phone widgets and mini artifacts float around your head, with an Edited with ReelOS pill",
+    "options": [
+      "dark",
+      "date",
+      "day",
+      "event",
+      "grade",
+      "handle",
+      "label",
+      "look",
+      "name",
+      "pill",
+      "song",
+      "sub",
+      "text",
+      "title"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "red-collage",
+    "label": "Red Collage",
+    "description": "black and white you, a giant red word behind, kinetic type stacked beside you",
+    "options": [
+      "color",
+      "lines",
+      "tag",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "split-headline",
+    "label": "Split Headline",
+    "description": "a clean headline card slides down and pushes you into the bottom of the frame",
+    "options": [
+      "color",
+      "height",
+      "hl",
+      "pill",
+      "push",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "pastel-word",
+    "label": "Pastel Word",
+    "description": "a soft lavender backdrop, a giant word behind you and a profile card that gets followed",
+    "options": [
+      "handle",
+      "name",
+      "role",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "check-pills",
+    "label": "Check Pills",
+    "description": "grid-paper room, your reels pinned behind you and blue pills that get clicked",
+    "options": [
+      "board",
+      "handle",
+      "text"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "timeline",
+    "label": "Timeline",
+    "description": "a dark red cinematic grade with an editing timeline, a REC timecode and a glowing playhead",
+    "options": [
+      "color",
+      "look",
+      "sub",
+      "tc",
+      "text"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "headline-box",
+    "label": "Headline Box",
+    "description": "a punch-in with a clean two-line headline, the second line in a white box",
+    "options": [
+      "text",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "profile-wall",
+    "label": "Profile Wall",
+    "description": "your profile grid fills the wall behind you while a counter ticks up",
+    "options": [
+      "count",
+      "label",
+      "name",
+      "sub"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "tier-list",
+    "label": "Tier List",
+    "description": "a tier list drops in front of you and ReelOS flies into S tier",
+    "options": [
+      "item",
+      "others",
+      "title"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "broll-split",
+    "label": "Broll Split",
+    "description": "split screen: b-roll on top with a price-tag sticker, you on the bottom",
+    "options": [
+      "pick",
+      "text"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "phone-fan",
+    "label": "Phone Fan",
+    "description": "your reels fan out like a hand of phones in front of you, under a two-line headline",
+    "options": [
+      "images",
+      "text"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "dot-reveal",
+    "label": "Dot Reveal",
+    "description": "your shot builds itself out of glowing dots, then snaps into the full picture",
+    "options": [
+      "bg",
+      "cell",
+      "color"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "headline-wall",
+    "label": "Headline Wall",
+    "description": "a wall of your own reel headlines piles up behind your head, then your total views pop in front",
+    "options": [
+      "count",
+      "gap",
+      "label",
+      "text",
+      "total"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "checklist",
+    "label": "Checklist",
+    "description": "a ReelOS task list builds under your chin: each step spins, then ticks green",
+    "options": [
+      "text",
+      "title"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "liquid-glass-graph",
+    "label": "Liquid Glass Graph",
+    "description": "a liquid glass card floats under your chin while a graph climbs and the number counts up",
+    "options": [
+      "bars",
+      "color",
+      "donut",
+      "from",
+      "kpi",
+      "look",
+      "text",
+      "to"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "carousel-spin",
+    "label": "Carousel Spin",
+    "description": "your reels spin around you in a 3D carousel, then slow to a stop",
+    "options": [
+      "count",
+      "images",
+      "size",
+      "turns"
+    ],
+    "uses_media": true
+  },
+  {
+    "id": "match-cut",
+    "label": "Match Cut",
+    "description": "news pages cut on one word, locked in place behind your head",
+    "options": [
+      "color",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "apple-toggles",
+    "label": "Apple Toggles",
+    "description": "an iPhone settings card under your chin flips its switches on, one line at a time",
+    "options": [
+      "color",
+      "overlap",
+      "pos",
+      "text",
+      "ticks",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "led-sign",
+    "label": "Led Sign",
+    "description": "the lights drop and a glowing LED sign types itself out behind you",
+    "options": [
+      "color",
+      "push",
+      "text"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "slow-push",
+    "label": "Slow Push",
+    "description": "a slow cinematic push-in from the wide shot to your face, the room melting out of focus",
+    "options": [
+      "blur",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "over-the-shoulder-zoom",
+    "label": "Over The Shoulder Zoom",
+    "description": "the camera pushes into one top corner, a liquid glass graph pops beside your head, then the other corner with a second graph",
+    "options": [
+      "text",
+      "to",
+      "zoom"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "messages",
+    "label": "Messages",
+    "description": "iMessage notifications pop in one after another, creamy glass with a soft glow, stacking up above the bottom of the frame",
+    "options": [
+      "text",
+      "title",
+      "y"
+    ],
+    "uses_media": false
+  },
+  {
+    "id": "place-in-grid",
+    "label": "Place In Grid",
+    "description": "you shrink into the centre tile of your 3x3 profile grid on frosted glass, then 8 of your reels pop in around you, one per frame, view counts on every tile",
+    "options": [
+      "images",
+      "views"
+    ],
+    "uses_media": true
+  }
+]

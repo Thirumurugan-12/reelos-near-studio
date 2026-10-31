@@ -1,7 +1,8 @@
 export type Asset = {
   id: string;
   name: string;
-  role: "source" | "reference";
+  role: "source" | "reference" | "supporting";
+  kind?: "image" | "video";
   duration: number;
   width: number;
   height: number;
@@ -13,7 +14,7 @@ export type Effect = {
   end: number;
   subject_id: string;
   reason: string;
-  params: { text?: string };
+  params: { text?: string; fx?: string };
 };
 export type Plan = {
   asset_id: string;
@@ -89,3 +90,27 @@ export function time(seconds: number) {
     .toString()
     .padStart(2, "0")}`;
 }
+
+export type CatalogParams = {
+  fx: string;
+  text: string;
+  options: Record<string, string | number>;
+  media_ids: string[];
+};
+export type CatalogItem = {
+  id: string;
+  label: string;
+  description: string;
+  options: string[];
+  numeric_options: Record<string, [number, number]>;
+  enum_options: Record<string, string[]>;
+  preview_url: string;
+  poster_url: string;
+  preview_ready: boolean;
+  multiline_text: boolean;
+  accepts_text: boolean;
+  uses_media: boolean;
+  example: CatalogParams;
+  looks: string[];
+  requires_values: boolean;
+};

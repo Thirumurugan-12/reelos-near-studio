@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   api,
   post,
   type Asset,
+  type CatalogParams,
   type Health,
   type Job,
   type Project,
@@ -13,6 +14,7 @@ import {
 export function useStudio() {
   const [health, setHealth] = useState<Health | null>(null);
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
+  const currentProject = useRef<Project | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [versionId, setVersionId] = useState("");
   const [sourceId, setSourceId] = useState("");
@@ -26,6 +28,7 @@ export function useStudio() {
 
   const load = useCallback(async (id: string) => {
     const next = await api<Project>(`/projects/${id}`);
+    currentProject.current = next;
     setProject(next);
     return next;
   }, []);
@@ -131,9 +134,12 @@ export function useStudio() {
       window.history.replaceState(null, "", `?project=${id}`);
     });
   }
-  async function upload(file: File, role: "source" | "reference") {
+  async function upload(
+    file: File,
+    role: "source" | "reference" | "supporting",
+  ) {
     await attempt(async () => {
-      let p = project;
+      let p = project || currentProject.current;
       if (!p) {
         const record = await post<Project>("/projects", {
           name: file.name.replace(/\.[^.]+$/, ""),
@@ -152,7 +158,7 @@ export function useStudio() {
       if (role === "source") {
         setSourceId(asset.id);
         setVersionId("");
-      } else {
+      } else if (role === "reference") {
         setReferenceId(asset.id);
       }
       setSubjectId("");
@@ -166,6 +172,24 @@ export function useStudio() {
       const next = await post<Job>(`/projects/${project.id}/jobs`, data);
       setJob(next);
     });
+  }
+  async function applyEffect(
+    params: CatalogParams,
+    start: number,
+    end: number,
+  ) {
+    if (!project || !versionId) return false;
+    const result = await attempt(async () => {
+      const next = await post<Job>(`/projects/${project.id}/effects`, {
+        version_id: versionId,
+        params,
+        start,
+        end,
+      });
+      setJob(next);
+      return true;
+    });
+    return result === true;
   }
   async function restore() {
     if (!project || !versionId) return;
@@ -203,5 +227,6 @@ export function useStudio() {
     upload,
     start,
     restore,
+    applyEffect,
   };
 }

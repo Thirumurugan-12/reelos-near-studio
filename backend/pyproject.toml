@@ -13,6 +13,7 @@ dependencies = [
   "pillow>=11,<13",
   "numpy>=2,<3",
   "meta-sam-parser==0.1.0",
+  "opencv-python-headless>=4.11,<5",
 ]
 
 [dependency-groups]
@@ -30,6 +31,7 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["reelos/vendor"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

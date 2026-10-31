@@ -6,10 +6,12 @@ import { Assets } from "../components/assets";
 import { Direction } from "../components/direction";
 import { Preview } from "../components/preview";
 import { Timeline } from "../components/timeline";
+import { EffectBrowser } from "../components/effect-browser";
 import { Icon } from "../components/icons";
 
 export default function Studio() {
   const s = useStudio();
+  const [leftMode, setLeftMode] = useState("assets");
   const [original, setOriginal] = useState(false);
   const [mobileTab, setMobileTab] = useState("preview");
   const version = s.project?.versions.find((v) => v.id === s.versionId);
@@ -136,28 +138,59 @@ export default function Studio() {
         </div>
       )}
       <nav className="mobile-tabs" aria-label="Workspace sections">
-        {["preview", "assets", "direction", "storyboard"].map((tab) => (
-          <button
-            key={tab}
-            className={mobileTab === tab ? "active" : ""}
-            onClick={() => setMobileTab(tab)}
-            aria-pressed={mobileTab === tab}
-          >
-            {tab[0].toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
+        {["preview", "assets", "effects", "direction", "storyboard"].map(
+          (tab) => (
+            <button
+              key={tab}
+              className={mobileTab === tab ? "active" : ""}
+              onClick={() => {
+                setMobileTab(tab);
+                if (tab === "assets" || tab === "effects") setLeftMode(tab);
+              }}
+              aria-pressed={mobileTab === tab}
+            >
+              {tab[0].toUpperCase() + tab.slice(1)}
+            </button>
+          ),
+        )}
       </nav>
       <div className={`workspace mobile-${mobileTab}`}>
         <div className="assets-slot">
-          <Assets
-            assets={s.project?.assets || []}
-            sourceId={s.sourceId}
-            referenceId={s.referenceId}
-            onSource={s.setSourceId}
-            onReference={s.setReferenceId}
-            onUpload={s.upload}
-            disabled={s.busy}
-          />
+          <nav className="side-modes" aria-label="Assets and effects">
+            {["assets", "effects"].map((mode) => (
+              <button
+                key={mode}
+                className={leftMode === mode ? "active" : ""}
+                aria-pressed={leftMode === mode}
+                onClick={() => setLeftMode(mode)}
+              >
+                {mode === "assets" ? "Assets" : "45 Effects"}
+              </button>
+            ))}
+          </nav>
+          {leftMode === "effects" ? (
+            <EffectBrowser
+              version={version}
+              assets={s.project?.assets || []}
+              busy={s.busy}
+              onDirection={() => setMobileTab("direction")}
+              onApply={async (params, start, end) => {
+                const ok = await s.applyEffect(params, start, end);
+                if (ok) setMobileTab("preview");
+                return ok;
+              }}
+            />
+          ) : (
+            <Assets
+              assets={s.project?.assets || []}
+              sourceId={s.sourceId}
+              referenceId={s.referenceId}
+              onSource={s.setSourceId}
+              onReference={s.setReferenceId}
+              onUpload={s.upload}
+              disabled={s.busy}
+            />
+          )}
         </div>
         <div className="preview-slot">
           <Preview
