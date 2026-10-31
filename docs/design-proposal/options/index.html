@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>ReelOS · Ten directions</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <dialog id="brief-dialog" aria-labelledby="brief-heading">
+      <button class="close" aria-label="Close brief">×</button>
+      <h2 id="brief-heading">Give the edit a direction.</h2>
+      <label for="brief-input">What should change?</label
+      ><textarea id="brief-input">
+Keep the speaker visible. Add animated titles and supporting B-roll cards.</textarea>
+      <p class="muted">
+        Design exploration only. This does not start a render.
+      </p>
+      <button class="primary" id="save-brief">Save example brief</button>
+    </dialog>
+    <div id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
