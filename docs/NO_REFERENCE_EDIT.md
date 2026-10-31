@@ -86,7 +86,20 @@ Private outputs:
 - `data/no-reference-review/source-only-review.png`
 - `data/no-reference-review/no-reference-selection.png`
 
-No production code was changed for this example. The automatic Muse path remains
-blocked by the provider's HTTP 402 until billing/credit access is resolved; the
+No production code was changed for this example. At creation, the automatic Muse path was
+blocked by the provider's HTTP 402; the
 completed manually planned example must not be presented as a successful fresh
 Muse planning run.
+
+## Access restored after key update — 31 October 2026
+
+The user updated the API key. A secret-safe comparison showed that the running
+Compose backend still held the previous key while the local `.env` held the new one.
+With no jobs active, the backend was recreated to load the updated environment.
+A single small `muse-spark-1.3` inference then completed with HTTP 200 and output
+`OK` (13 input tokens, 137 output tokens). Diagnostic evidence is privately retained
+in `data/no-reference-review/new-key-check-2026-10-31.json`; it contains no key.
+
+This confirms fresh inference works with the updated runtime key. The full-source
+planning request has not yet been rerun with that key, and v20 remains correctly
+labelled as an assistant-authored source-only example.
