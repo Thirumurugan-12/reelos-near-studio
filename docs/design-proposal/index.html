@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>ReelOS · Canvas concept</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #111214;
+        --panel: #1a1b1e;
+        --raised: #24262a;
+        --line: #323439;
+        --muted: #a5a8b0;
+        --ink: #f4f4f5;
+        --accent: #e9ff7b;
+        --accent-ink: #172006;
+        --radius: 10px;
+        --unit: 4px;
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        font-size: 13px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+      button,
+      a,
+      input,
+      textarea {
+        touch-action: manipulation;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid transparent;
+        background: transparent;
+        color: inherit;
+        border-radius: 7px;
+        min-height: 40px;
+        padding: 8px 12px;
+      }
+      button:hover {
+        background: var(--raised);
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      button[aria-pressed="true"] {
+        background: var(--raised);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 11px;
+      }
+      .primary {
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-weight: 650;
+      }
+      .primary:hover {
+        background: #f1ffaa;
+      }
+      .border {
+        border-color: var(--line);
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, monospace;
+      }
+      .shell {
+        height: 100svh;
+        display: grid;
+        grid-template-rows: 64px 1fr 24px;
+        overflow: hidden;
+      }
+      header {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .brand {
+        font-size: 23px;
+        letter-spacing: -1.5px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .brand span {
+        color: var(--accent);
+      }
+      .project {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+      .project strong {
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .divider {
+        width: 1px;
+        height: 20px;
+        background: var(--line);
+      }
+      .top-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .saved {
+        color: var(--muted);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr) 320px;
+        min-height: 0;
+      }
+      .rail {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 20px 8px;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .rail button {
+        display: grid;
+        gap: 7px;
+        place-items: center;
+        padding: 10px 4px;
+        font-size: 10px;
+      }
+      .rail svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.5;
+      }
+      .rail .bottom {
+        margin-top: auto;
+      }
+      .main {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) 176px;
+        min-width: 0;
+        min-height: 0;
+      }
+      .viewer {
+        display: grid;
+        grid-template-rows: 48px minmax(0, 1fr) 48px;
+        min-height: 0;
+        background: #101113;
+      }
+      .viewer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        gap: 12px;
+      }
+      .segmented {
+        display: flex;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 3px;
+        gap: 2px;
+      }
+      .segmented button {
+        min-height: 28px;
+        padding: 4px 12px;
+        font-size: 11px;
+      }
+      .canvas {
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 24px;
+        background-image: radial-gradient(#ffffff0a 0.7px, transparent 0.7px);
+        background-size: 16px 16px;
+        position: relative;
+      }
+      .film {
+        height: 100%;
+        max-height: 640px;
+        aspect-ratio: 9/16;
+        position: relative;
+        background: #080909;
+        overflow: hidden;
+        border: 1px solid #ffffff12;
+        border-radius: 8px;
+      }
+      .film video {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+      }
+      .canvas-note {
+        position: absolute;
+        left: 24px;
+        bottom: 16px;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        color: #a2a5ac;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+      }
+      .viewer-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+      .viewer-controls button {
+        font-size: 16px;
+        padding: 4px 12px;
+      }
+      .timeline {
+        border-top: 1px solid var(--line);
+        padding: 12px 20px;
+        background: #17181b;
+        min-width: 0;
+      }
+      .timeline-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .timeline-head strong {
+        font-weight: 500;
+      }
+      .timeline-head small {
+        color: var(--muted);
+      }
+      .ruler {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 8px 54px;
+        color: #9b9ea6;
+        font-size: 9px;
+      }
+      .track-row {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .clips {
+        height: 34px;
+        display: flex;
+        gap: 2px;
+        overflow: hidden;
+        border: 1px solid #667347;
+        border-radius: 6px;
+        background: #363c29;
+      }
+      .clips i {
+        flex: 1;
+        background: url("footage.jpg") center 33% / cover;
+        opacity: 0.7;
+        min-width: 28px;
+      }
+      .effects {
+        display: flex;
+        gap: 8px;
+        min-width: 0;
+      }
+      .effects button {
+        min-height: 28px;
+        padding: 4px 10px;
+        font-size: 10px;
+        background: #283034;
+        color: #c1e0df;
+        border: 1px solid #486364;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+      .effects button:nth-child(2) {
+        background: #343229;
+        color: #e0d9b9;
+        border-color: #655e41;
+      }
+      .effects button.active {
+        outline: 1px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .seek {
+        width: 100%;
+        height: 4px;
+        accent-color: var(--accent);
+        margin: 6px 0 0;
+        display: block;
+      }
+      .inspector {
+        min-height: 0;
+        border-left: 1px solid var(--line);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+      }
+      .inspector-head {
+        padding: 24px 20px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        font-size: 18px;
+        font-weight: 550;
+        margin: 0 0 8px;
+        letter-spacing: -0.5px;
+      }
+      p {
+        line-height: 1.6;
+        margin: 0 0 12px;
+      }
+      .panel-scroll {
+        padding: 20px;
+        overflow-y: auto;
+        min-height: 0;
+        flex: 1;
+        scrollbar-width: thin;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: 550;
+        margin: 0 0 12px;
+      }
+      .look-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .look {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        border: 1px solid var(--line);
+        padding: 4px;
+        min-width: 0;
+        gap: 8px;
+        font-size: 10px;
+        text-align: left;
+      }
+      .look img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      .look[aria-pressed="true"] {
+        border-color: var(--accent);
+      }
+      .look span {
+        padding: 0 3px 5px;
+      }
+      .group {
+        margin-bottom: 24px;
+      }
+      .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .section-heading h2 {
+        margin: 0;
+      }
+      .text-link {
+        font-size: 10px;
+        color: var(--muted);
+        padding: 0;
+        min-height: 24px;
+      }
+      label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        background: #111214;
+        border: 1px solid var(--line);
+        padding: 12px;
+        color: var(--ink);
+        border-radius: 8px;
+        resize: vertical;
+        line-height: 1.6;
+      }
+      textarea {
+        min-height: 96px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .chips button {
+        min-height: 28px;
+        font-size: 10px;
+        border: 1px solid var(--line);
+        padding: 4px 8px;
+      }
+      .checks {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin: 14px 0;
+        font-size: 11px;
+      }
+      .checks input {
+        accent-color: var(--accent);
+      }
+      .inspector-foot {
+        padding: 16px 20px;
+        border-top: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .wide {
+        width: 100%;
+      }
+      .mobile-tools {
+        display: none;
+      }
+      footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        color: var(--muted);
+        font-size: 10px;
+        border-top: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .close-sheet {
+        display: none;
+      }
+      .status {
+        color: var(--accent);
+        font-size: 11px;
+        min-height: 20px;
+        margin-top: 8px;
+      }
+      .asset-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .asset-row img {
+        width: 40px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      .asset-row span {
+        display: block;
+        margin-top: 5px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .look-mode .direction-section,
+      .look-mode .reference-section {
+        display: none;
+      }
+      dialog {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        border-radius: 16px;
+        padding: 28px;
+        width: min(540px, calc(100% - 32px));
+        max-height: 88svh;
+        overflow: auto;
+      }
+      dialog::backdrop {
+        background: #000a;
+        backdrop-filter: blur(4px);
+      }
+      .dialog-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: start;
+        margin-bottom: 24px;
+      }
+      .dialog-top h1 {
+        font-size: 24px;
+      }
+      .steps {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+      .steps b {
+        color: var(--accent);
+        font-weight: 500;
+      }
+      .upload-zone {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 40px 24px;
+        border: 1px dashed #626770;
+        margin-bottom: 20px;
+      }
+      .upload-zone strong {
+        display: block;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 12px 0;
+      }
+      .reference-list {
+        display: grid;
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .reference-list a {
+        text-decoration: none;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 12px;
+      }
+      .reference-list span {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 24px;
+      }
+      .sheet-grip {
+        display: none;
+      }
+      @media (max-width: 1099px) {
+        .layout {
+          grid-template-columns: 60px minmax(0, 1fr) 280px;
+        }
+        .rail {
+          padding: 16px 4px;
+        }
+        .inspector-head {
+          padding: 20px 16px;
+        }
+        .panel-scroll,
+        .inspector-foot {
+          padding: 16px;
+        }
+        header {
+          padding: 0 16px;
+          gap: 16px;
+        }
+        .saved {
+          display: none;
+        }
+      }
+      @media (max-width: 767px) {
+        .shell {
+          grid-template-rows: 56px minmax(0, 1fr) 64px 20px;
+        }
+        header {
+          padding: 0 12px;
+          gap: 12px;
+        }
+        .brand {
+          font-size: 21px;
+        }
+        .project .divider {
+          display: none;
+        }
+        .project strong {
+          max-width: 140px;
+          font-size: 12px;
+        }
+        .top-actions {
+          gap: 4px;
+        }
+        .top-actions .border {
+          display: none;
+        }
+        .top-actions .primary {
+          font-size: 11px;
+          padding: 8px 12px;
+          min-height: 36px;
+        }
+        .layout {
+          display: block;
+          position: relative;
+          overflow: hidden;
+        }
+        .rail {
+          display: none;
+        }
+        .main {
+          height: 100%;
+          grid-template-rows: minmax(0, 1fr) 120px;
+        }
+        .viewer {
+          grid-template-rows: 40px minmax(0, 1fr) 40px;
+        }
+        .viewer-head {
+          padding: 0 12px;
+          font-size: 10px;
+        }
+        .viewer-head .small {
+          font-size: 10px;
+        }
+        .segmented button {
+          min-height: 26px;
+          padding: 4px 10px;
+        }
+        .canvas {
+          padding: 8px 12px;
+        }
+        .canvas-note {
+          left: 12px;
+          bottom: 12px;
+          font-size: 8px;
+        }
+        .film {
+          border-radius: 5px;
+        }
+        .viewer-controls {
+          gap: 16px;
+        }
+        .viewer-controls .small {
+          font-size: 10px;
+        }
+        .timeline {
+          padding: 10px 12px;
+        }
+        .timeline-head {
+          margin-bottom: 8px;
+        }
+        .timeline-head small {
+          font-size: 9px;
+        }
+        .ruler {
+          margin-left: 0;
+          margin-bottom: 6px;
+          font-size: 8px;
+        }
+        .track-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+          margin: 0 0 6px;
+        }
+        .track-label {
+          display: none;
+        }
+        .clips {
+          height: 24px;
+        }
+        .effects {
+          gap: 6px;
+        }
+        .effects button {
+          min-height: 24px;
+          padding: 3px 6px;
+          font-size: 9px;
+        }
+        .seek {
+          margin-top: 3px;
+        }
+        .inspector {
+          display: none;
+          position: absolute;
+          left: 8px;
+          right: 8px;
+          bottom: 8px;
+          max-height: 68%;
+          border: 1px solid #4c4e55;
+          border-radius: 16px;
+          box-shadow: 0 -12px 64px #0008;
+          z-index: 5;
+        }
+        .inspector.open {
+          display: flex;
+        }
+        .sheet-grip {
+          display: block;
+          width: 32px;
+          height: 3px;
+          background: #63666d;
+          border-radius: 4px;
+          margin: 8px auto 0;
+        }
+        .inspector-head {
+          padding: 12px 16px 8px;
+        }
+        .inspector-head p {
+          margin: 0;
+          font-size: 10px;
+        }
+        .close-sheet {
+          display: block;
+          float: right;
+          min-height: 32px;
+          padding: 4px 10px;
+        }
+        .inspector h1 {
+          font-size: 16px;
+          margin-bottom: 4px;
+        }
+        .panel-scroll {
+          padding: 16px;
+        }
+        .inspector-foot {
+          padding: 12px 16px;
+        }
+        .look img {
+          aspect-ratio: 5/3;
+          object-position: center 30%;
+        }
+        .group {
+          margin-bottom: 16px;
+        }
+        .mobile-tools {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          background: var(--panel);
+          border-top: 1px solid var(--line);
+          padding: 4px 8px;
+        }
+        .mobile-tools button {
+          display: grid;
+          place-items: center;
+          gap: 3px;
+          font-size: 10px;
+          padding: 4px 16px;
+          min-height: 48px;
+        }
+        .mobile-tools svg {
+          width: 18px;
+          height: 18px;
+          stroke: currentColor;
+          fill: none;
+          stroke-width: 1.5;
+        }
+        .mobile-tools button[aria-pressed="true"] {
+          color: var(--accent);
+        }
+        footer {
+          padding: 0 12px;
+          font-size: 9px;
+        }
+        .status {
+          margin-top: 4px;
+        }
+        .dialog-top h1 {
+          font-size: 22px;
+        }
+        .upload-zone {
+          padding: 28px 16px;
+        }
+        textarea {
+          min-height: 80px;
+        }
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .inspector.open {
+          animation: enter 0.18s ease-out;
+        }
+        @keyframes enter {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a href="#" class="brand" aria-label="ReelOS design concept"
+          >reel<span>os</span></a
+        >
+        <div class="project">
+          <i class="divider"></i><strong>A different perspective</strong
+          ><span class="muted small">⌄</span>
+        </div>
+        <div class="top-actions">
+          <span class="saved">Concept · example edit</span
+          ><button class="border" id="history">Versions ⌄</button
+          ><button class="primary" id="export">Export ↗</button>
+        </div>
+      </header>
+      <div class="layout">
+        <nav class="rail" aria-label="Editor tools">
+          <button data-tool="edit" aria-pressed="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v14H4zM4 10h16M9 10v9" /></svg
+            >Edit
+          </button>
+          <button data-tool="looks">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"
+              /></svg
+            >Looks
+          </button>
+          <button data-tool="media">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="m3 16 6-5 4 3 3-2 5 4" /></svg
+            >Media
+          </button>
+          <button class="bottom" id="new-project">
+            <svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" /></svg>New
+          </button>
+        </nav>
+        <main class="main" aria-label="Edit workspace">
+          <section class="viewer" aria-label="Video preview">
+            <div class="viewer-head">
+              <span class="muted small"
+                >PREVIEW <span class="mono">· 9:16</span></span
+              >
+              <div class="segmented" aria-label="Compare">
+                <button id="original" aria-pressed="false">Original</button
+                ><button id="edited" aria-pressed="true">Edit</button>
+              </div>
+              <span class="muted mono small">Fit ⌄</span>
+            </div>
+            <div class="canvas">
+              <div class="film">
+                <video
+                  id="video"
+                  poster="footage.jpg"
+                  playsinline
+                  preload="none"
+                  aria-label="Actual ReelOS catalog sampler"
+                  src="http://127.0.0.1:3000/api/projects/d2ce7b1de35f4b748fc4f7f85de701c6/versions/fefd338000bd45929b522479bad068f8/preview"
+                ></video>
+              </div>
+              <span class="canvas-note">YOUR STORY, IN FOCUS</span>
+            </div>
+            <div class="viewer-controls">
+              <button id="back" aria-label="Back five seconds">↶</button
+              ><button id="play" aria-label="Play preview">▶</button
+              ><button id="forward" aria-label="Forward five seconds">↷</button
+              ><span class="mono small"
+                ><span id="clock">00:22</span
+                ><span class="muted"> / 02:48</span></span
+              >
+            </div>
+          </section>
+          <section class="timeline" aria-label="Compact edit timeline">
+            <div class="timeline-head">
+              <strong class="small">Your edit</strong
+              ><small>Full video · original speech</small>
+            </div>
+            <div class="ruler mono">
+              <span>00:00</span><span>00:42</span><span>01:24</span
+              ><span>02:06</span><span>02:48</span>
+            </div>
+            <div class="track-row">
+              <span class="track-label">Video</span>
+              <div class="clips" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                ><i></i><i></i><i></i>
+              </div>
+            </div>
+            <div class="track-row">
+              <span class="track-label">Effects</span>
+              <div class="effects">
+                <button data-effect="Opening title">Opening title</button
+                ><button data-effect="B-roll cards">B-roll cards</button
+                ><button class="active" data-effect="Spotlight">
+                  Spotlight</button
+                ><button data-effect="Closing title">Closing title</button>
+              </div>
+            </div>
+            <input
+              class="seek"
+              id="seek"
+              aria-label="Preview position"
+              type="range"
+              min="0"
+              max="167.9"
+              step=".1"
+              value="22.4"
+            />
+          </section>
+        </main>
+        <aside class="inspector" aria-label="Edit controls">
+          <div class="sheet-grip"></div>
+          <div class="inspector-head">
+            <button class="close-sheet" aria-label="Close controls">✕</button>
+            <h1 id="panel-title">Shape your edit</h1>
+            <p class="muted small" id="panel-subtitle">
+              Start with a look. Make it your own.
+            </p>
+          </div>
+          <div class="panel-scroll">
+            <div id="edit-panel">
+              <section class="group">
+                <div class="section-heading">
+                  <h2>Overall feel</h2>
+                  <button class="text-link" data-tool="looks">
+                    Browse all →
+                  </button>
+                </div>
+                <div class="look-grid">
+                  <button
+                    class="look"
+                    aria-pressed="true"
+                    data-look="Editorial"
+                  >
+                    <img
+                      src="http://127.0.0.1:3000/api/effects/editorial-cover/poster"
+                      alt="Editorial typography example"
+                    /><span>Editorial</span></button
+                  ><button class="look" aria-pressed="false" data-look="Glass">
+                    <img
+                      src="http://127.0.0.1:3000/api/effects/glass-bento/poster"
+                      alt="Glass graphics example"
+                    /><span>Glass</span></button
+                  ><button
+                    class="look"
+                    aria-pressed="false"
+                    data-look="Spotlight"
+                  >
+                    <img
+                      src="http://127.0.0.1:3000/api/effects/glitter-spotlight/poster"
+                      alt="Spotlight example"
+                    /><span>Spotlight</span>
+                  </button>
+                </div>
+              </section>
+              <section class="group direction-section">
+                <h2>Creative direction</h2>
+                <label for="brief">What should this edit feel like?</label
+                ><textarea id="brief">
+Keep me visible. Add bold titles and use B-roll cards to support the story.</textarea>
+                <div class="chips">
+                  <button data-prompt="Make the opening stronger.">
+                    Stronger opening</button
+                  ><button
+                    data-prompt="Use fewer effects and let the story breathe."
+                  >
+                    Fewer effects
+                  </button>
+                </div>
+                <label class="checks"
+                  ><input type="checkbox" checked /> Preserve the full
+                  video</label
+                >
+              </section>
+              <section class="group reference-section">
+                <div class="section-heading">
+                  <h2>Style reference</h2>
+                  <span class="muted small">Optional</span>
+                </div>
+                <button class="wide border" id="reference">
+                  ＋ Add a reference clip
+                </button>
+              </section>
+            </div>
+            <div id="media-panel" class="hidden">
+              <h2>Project media</h2>
+              <div class="asset-row">
+                <img src="footage.jpg" alt="Source footage" />
+                <div>
+                  Source recording<span class="muted small"
+                    >02:48 · portrait video</span
+                  >
+                </div>
+              </div>
+              <p class="muted small" style="margin-top: 16px">
+                Keep your source, style reference and supporting images together
+                here.
+              </p>
+              <button class="border wide" id="add-media">
+                ＋ Add supporting media
+              </button>
+            </div>
+            <div id="effect-panel" class="hidden">
+              <h2 id="effect-name">Spotlight</h2>
+              <p class="muted small">
+                Select a moment in the timeline to change its text, look and
+                timing.
+              </p>
+              <label for="effect-copy">Title</label
+              ><input
+                type="text"
+                id="effect-copy"
+                value="A different perspective"
+              /><label for="strength" style="margin-top: 20px">Intensity</label
+              ><input
+                type="range"
+                id="strength"
+                min="0"
+                max="100"
+                value="65"
+                style="width: 100%; accent-color: var(--accent)"
+              />
+            </div>
+          </div>
+          <div class="inspector-foot">
+            <button class="primary wide" id="generate">
+              Generate preview →
+            </button>
+            <div class="status" role="status" id="feedback"></div>
+            <span class="small muted">Concept controls · no model calls</span>
+          </div>
+        </aside>
+      </div>
+      <nav class="mobile-tools" aria-label="Mobile editor tools">
+        <button data-tool="edit" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v14H4zM4 10h16M9 10v9" /></svg
+          >Edit</button
+        ><button data-tool="looks" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"
+            /></svg
+          >Looks</button
+        ><button data-tool="media" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="m3 16 6-5 4 3 3-2 5 4" /></svg
+          >Media</button
+        ><button id="mobile-new">
+          <svg viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" /></svg>New
+        </button>
+      </nav>
+      <footer>
+        <span>DESIGN CONCEPT · REELOS CANVAS</span
+        ><button class="text-link" id="sources">Design references ↗</button>
+      </footer>
+    </div>
+    <dialog id="dialog" aria-labelledby="dialog-title">
+      <div class="dialog-top">
+        <h1 id="dialog-title">Start with your story.</h1>
+        <button id="close-dialog" aria-label="Close dialog">✕</button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+    <script>
+      const $ = (s) => document.querySelector(s),
+        $$ = (s) => document.querySelectorAll(s),
+        video = $("#video"),
+        inspector = $(".inspector");
+      let lastFocus = null;
+      const time = (n) =>
+        `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(Math.floor(n % 60)).padStart(2, "0")}`;
+      function notice(text) {
+        $("#feedback").textContent = text;
+      }
+      function openTool(tool) {
+        inspector.classList.add("open");
+        inspector.classList.toggle("look-mode", tool === "looks");
+        $$("[data-tool]").forEach((b) =>
+          b.setAttribute("aria-pressed", String(b.dataset.tool === tool)),
+        );
+        $("#edit-panel").classList.toggle("hidden", tool === "media");
+        $("#media-panel").classList.toggle("hidden", tool !== "media");
+        $("#effect-panel").classList.add("hidden");
+        $("#panel-title").textContent =
+          tool === "media"
+            ? "Your media"
+            : tool === "looks"
+              ? "Choose a look"
+              : "Shape your edit";
+        $("#panel-subtitle").textContent =
+          tool === "looks"
+            ? "Visual previews first. Fine controls when needed."
+            : "Start with a look. Make it your own.";
+      }
+      $$("[data-tool]").forEach(
+        (b) => (b.onclick = () => openTool(b.dataset.tool)),
+      );
+      $(".close-sheet").onclick = () => {
+        inspector.classList.remove("open");
+        $$(".mobile-tools [data-tool]").forEach((b) =>
+          b.setAttribute("aria-pressed", "false"),
+        );
+      };
+      $$("[data-look]").forEach(
+        (b) =>
+          (b.onclick = () => {
+            $$("[data-look]").forEach((x) =>
+              x.setAttribute("aria-pressed", String(x === b)),
+            );
+            notice(`${b.dataset.look} selected in the concept.`);
+          }),
+      );
+      $$("[data-prompt]").forEach(
+        (b) =>
+          (b.onclick = () => {
+            $("#brief").value = b.dataset.prompt;
+            $("#brief").focus();
+          }),
+      );
+      $$("[data-effect]").forEach(
+        (b) =>
+          (b.onclick = () => {
+            inspector.classList.add("open");
+            $("#edit-panel").classList.add("hidden");
+            $("#media-panel").classList.add("hidden");
+            $("#effect-panel").classList.remove("hidden");
+            $("#effect-name").textContent = b.dataset.effect;
+            $("#panel-title").textContent = "Edit this moment";
+            $("#panel-subtitle").textContent =
+              "Only the selected moment changes.";
+            $$("[data-effect]").forEach((x) =>
+              x.classList.toggle("active", x === b),
+            );
+            notice("Example inspector. No edit is rendered.");
+          }),
+      );
+      $("#play").onclick = () => {
+        if (video.paused)
+          video.play().catch(() => notice("Could not load the local demo."));
+        else video.pause();
+      };
+      video.onplay = () => {
+        $("#play").textContent = "Ⅱ";
+        $("#play").setAttribute("aria-label", "Pause preview");
+      };
+      video.onpause = () => {
+        $("#play").textContent = "▶";
+        $("#play").setAttribute("aria-label", "Play preview");
+      };
+      video.onloadedmetadata = () => {
+        video.currentTime = Number($("#seek").value);
+      };
+      video.ontimeupdate = () => {
+        $("#clock").textContent = time(video.currentTime);
+        $("#seek").value = video.currentTime;
+      };
+      $("#seek").oninput = (e) => {
+        if (video.readyState) video.currentTime = Number(e.target.value);
+        $("#clock").textContent = time(Number(e.target.value));
+      };
+      $("#back").onclick = () => {
+        if (video.readyState)
+          video.currentTime = Math.max(0, video.currentTime - 5);
+      };
+      $("#forward").onclick = () => {
+        if (video.readyState)
+          video.currentTime = Math.min(167.9, video.currentTime + 5);
+      };
+      for (const id of ["original", "edited"])
+        $("#" + id).onclick = () => {
+          $("#original").setAttribute(
+            "aria-pressed",
+            String(id === "original"),
+          );
+          $("#edited").setAttribute("aria-pressed", String(id === "edited"));
+          video.pause();
+          video.src =
+            id === "original"
+              ? "http://127.0.0.1:3000/api/projects/d2ce7b1de35f4b748fc4f7f85de701c6/assets/b558c80d78054c2483074eb9557e2977/source"
+              : "http://127.0.0.1:3000/api/projects/d2ce7b1de35f4b748fc4f7f85de701c6/versions/fefd338000bd45929b522479bad068f8/preview";
+          video.load();
+        };
+      function dialog(title, html) {
+        lastFocus = document.activeElement;
+        $("#dialog-title").textContent = title;
+        $("#dialog-content").innerHTML = html;
+        $("#dialog").showModal();
+      }
+      $("#close-dialog").onclick = () => $("#dialog").close();
+      $("#dialog").onclose = () => lastFocus?.focus();
+      function start() {
+        dialog(
+          "Start with your story.",
+          `<div class="steps"><b>1 · Upload</b><span>—</span><span>2 · Brief</span><span>—</span><span>3 · Edit</span></div><button class="upload-zone" id="sample-upload"><span class="muted">＋</span><strong>Drop in your footage</strong><span class="muted small">MP4 or MOV · up to 5 minutes</span></button><p class="muted small">Use a sample to explore the proposed flow. This concept does not upload files.</p>`,
+        );
+        $("#sample-upload").onclick = brief;
+      }
+      function brief() {
+        dialog(
+          "Give it a direction.",
+          `<div class="steps"><span>1 · Upload ✓</span><span>—</span><b>2 · Brief</b><span>—</span><span>3 · Edit</span></div><label for="new-brief">What are we making?</label><textarea id="new-brief">An editorial talking-head reel, with animated titles and B-roll cards.</textarea><label class="checks"><input type="checkbox" checked> Keep the complete recording</label><button class="border wide" id="sample-reference">＋ Add a style reference · optional</button><div class="dialog-actions"><button id="flow-back">Back</button><button class="primary" id="flow-create">See example edit →</button></div>`,
+        );
+        $("#flow-back").onclick = start;
+        $("#sample-reference").onclick = () => {
+          $("#sample-reference").textContent =
+            "Reference step stays optional in the proposed flow";
+        };
+        $("#flow-create").onclick = () => {
+          $("#brief").value = $("#new-brief").value;
+          $("#dialog").close();
+          openTool("edit");
+          notice("Example loaded. No processing was started.");
+        };
+      }
+      $("#new-project").onclick = start;
+      $("#mobile-new").onclick = start;
+      $("#generate").onclick = () =>
+        notice("Concept only — your live edit stays unchanged.");
+      $("#export").onclick = () =>
+        dialog(
+          "One clear export step.",
+          `<p>This is the proposed export review. The actual sampler is already rendered.</p><div class="asset-row"><img src="footage.jpg" alt="Export thumbnail"><div>Portrait MP4<span class="muted small">1080 × 1920 · full recording · source speech</span></div></div><p class="muted small" style="margin-top:16px">The working product would render here, then show a download action in the same place.</p>`,
+        );
+      $("#history").onclick = () =>
+        dialog(
+          "Version history",
+          `<p>Versions belong in a compact history drawer. Selecting one should update the preview and its timeline together.</p><p class="muted small">Production versions are unchanged by this concept.</p>`,
+        );
+      for (const id of ["reference", "add-media"])
+        $("#" + id).onclick = () =>
+          dialog(
+            "Add media when you need it.",
+            `<p>The working product will keep source footage, a style reference and supporting assets distinct.</p><p class="muted small">This proposal uses your existing local demo; no new files are uploaded.</p>`,
+          );
+      $("#sources").onclick = () =>
+        dialog(
+          "References for this direction",
+          `<p class="muted small">Visual inspiration; the proposed ReelOS flow is an original adaptation.</p><div class="reference-list"><a href="https://minimal.gallery/diffusion-studio-2/" target="_blank" rel="noreferrer">Diffusion Studio · Minimal Gallery<span>Video and motion workspace, prominent canvas, compact controls.</span></a><a href="https://supahero.io/hero/linear" target="_blank" rel="noreferrer">Linear · Supahero<span>Dark surfaces, precise hierarchy, restrained controls.</span></a><a href="https://www.seesaw.website/websites/atlas-for-mac" target="_blank" rel="noreferrer">Atlas · SEESAW<span>Thumbnail-led media browsing and collections.</span></a><a href="https://supahero.io/hero/weavy" target="_blank" rel="noreferrer">Weavy · Supahero<span>Creative output leads; supporting tools stay secondary.</span></a></div>`,
+        );
+    </script>
+  </body>
+</html>
