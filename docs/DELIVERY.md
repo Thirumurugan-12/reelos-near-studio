@@ -46,6 +46,7 @@ The local master rebuild retained all 70 ledger entries, including 48 gallery cl
 - [Description draft](SUBMISSION_DRAFT.md): problem, intended users, actual Meta contributions, reuse and limitations.
 - [Three footage sets](THREE_SET_EVALUATION.md), [nine targeted revisions and rehearsals](REHEARSALS.md), [original reliability cohort](RELIABILITY_RESULTS.md), and [separate framing follow-up](LAYOUT_FOLLOWUP_RESULTS.md).
 - [Setup and commands](../README.md), [architecture and canonical plan](REELOS_PID.md), [dependencies/media provenance](DEPENDENCIES.md), and retained upstream notices in `backend/reelos/vendor/`.
+- [Audio alignment results and reproducible checker](AUDIO_TIMING_RESULTS.md): current main, catalog and fresh framed output pass designated beginning/middle/end source-audio checks; human listening/lip-sync review is separate.
 - [Completion audit](COMPLETION_AUDIT.md): the 9/10 reliability target, creator usefulness/time savings, human listening review and portal acceptance are still unproven. The recorded cohort remains seven pipeline exports and four visual passes. No failed run was replaced.
 
 The local cap remains fully reserved at $75; the known estimate is $1.87104170 plus seven unpriced calls. These are local accounting figures, not confirmed Meta billing or remaining credit balance. This preparation used no paid requests. External publication or submission needs the user's authorization after reviewing the concrete artifacts and actual portal requirements.

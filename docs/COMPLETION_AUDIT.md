@@ -48,3 +48,7 @@ Saved camera failures exposed a midpoint-only visibility blind spot. The rendere
 ## Delivery integrity and next evaluation
 
 The [local delivery index](DELIVERY.md) now identifies the 101.4-second recording, 193.4-second master and full-size sampler with verified metadata/hashes. Gallery rebuilds reject same-size footage substitutions, and the master preparer retains all 48 gallery provenance entries. Both projects’ actual assets match their ledgers; all prior media hashes are preserved. The full backend suite now passes 171 tests. A [fixed framing-permitted ten-attempt protocol](RELIABILITY_FOLLOWUP_PROTOCOL.md) is prepared but has not started: the approved $75 local cap is fully allocated, so a new allowance decision is required before paid dispatch. Original reliability and human/portal gates remain unchanged.
+
+## Source/output speech timing follow-up
+
+The [local timing checker and measured results](AUDIO_TIMING_RESULTS.md) now verify beginning/middle/end decoded audio alignment on the actual selected main v22, catalog sampler and fresh framed main draft. All nine designated windows measure 0 ms lag at 24 kHz with correlation above 0.998; the historical export also passes three windows. Six calibrated checker cases and the 177-test full suite pass. This supports the designated source/output audio timing target, while visual lip sync, human listening and creator/portal gates remain unverified. No new paid calls or project pointer changes were made.
