@@ -22,10 +22,10 @@ Use one source up to five minutes and an optional style reference up to 60 secon
 | Problem | Show raw footage with Original selected | An ordinary talking-head recording and its creator task |
 | Intent | Add the style reference and describe the desired treatment | Red/black palette, contour, typography and illustration direction |
 | Subject | Create a draft; select the highlighted speaker if SAM finds several tracks | Actual source thumbnails, including background photo detections |
-| Plan | Show Storyboard/Edit overview | Supported timed operations and explanations |
+| Plan | Open Edit, then expand Edit decisions; select a timeline moment for details | Supported timed operations and explanations |
 | Result | Play Edit at normal speed | SAM foreground separation, text behind the real subject, original Remotion graphics and preserved speech |
 | Control | Request one clear revision | A new immutable version and a visibly targeted change |
-| Recovery | Select an earlier version and Restore | Earlier preview/export remains playable |
+| Recovery | Open header Version history, select an earlier version, then Restore selected version | Earlier preview/export remains playable |
 | Output | Export and download | Actual H.264/AAC 1080 × 1920 MP4 |
 
 Suggested prompt for the provided source/reference: “Adapt this reference's red/black palette, glowing speaker outline, bold typography and illustration cutaways to my story. Use original graphics relevant to the source, preserve my speech, and edit the complete recording without trimming.” Automatic interpretations still require review; the measured main example used explicit timing and styling instructions to direct the result.
@@ -34,10 +34,14 @@ Useful revision prompts are “Move only the headline lower to y=0.11,” “Sof
 
 ## Measured example and backup
 
-The main project `25ec54f2c76e4b87b9357927edf8d6a9` selects full version `673e9071da774bbcb3e00444dbb6d576`: 167.9 seconds, 1080 × 1920 H.264/AAC. Preview processing took 148.70 seconds and export 567.84 seconds with cached graphics. [Exact full-recording evidence](FULL_VIDEO_VERIFICATION.md).
+As of 1 November, the main project `25ec54f2c76e4b87b9357927edf8d6a9` selects `7d7cc51f54a3460fb7cc8b59597490fc` (v22), “Muse source-only · reviewed copy”: a 167.9-second edit with 12 operations, completed preview and export. This is the source-only treatment with reviewed copy; see [its provenance and limits](NO_REFERENCE_EDIT.md). The earlier reference-directed full version `673e9071da774bbcb3e00444dbb6d576` remains in history. Its measured preview/export times were 148.70 / 567.84 seconds with cached graphics; those timings do not describe v22. [Earlier full-recording evidence](FULL_VIDEO_VERIFICATION.md).
 
 The earlier 19.5-second reference cut `6f45a4247574489bbcac3d432681e93f` remains a clearly labelled short backup. Do not show it as the complete source. [Three fresh 20-second excerpt rehearsals](REHEARSALS.md) passed planning, precise revision, restore and 1080p export; [three independent footage sets](THREE_SET_EVALUATION.md) passed functional checks with documented quality limits. These are measured individual runs, not guarantees.
 
 If a provider call fails during rehearsal, show the previously generated export and say it is previously generated. Inspect the same job before retrying; unknown paid outcomes retain their budget allowance. Never present a saved result as a fresh live generation.
 
 The original source, reference, plan, preview, export and request ledger provide the local evidence trail. See [evaluation](EVALUATION.md) and [reference implementation](REFERENCE_STYLE_IMPLEMENTATION.md) for current limits, exact output metadata, dependency provenance and usage estimates. Do not claim arbitrary style reconstruction, word-aligned captions, music synchronization, creator time savings or general reliability from these limited tests.
+
+## Current interface and remaining preparation
+
+The live app now uses [Canvas Pro](CANVAS_PRO.md): Edit, Looks and Media tools, a compact timeline, mobile control sheets and header history/export. The 30 October composed walkthrough contains real captures of the earlier interface; refresh those captures and re-render before treating it as a current-interface presentation. Do not relabel historical captures as current. [Completion audit](COMPLETION_AUDIT.md).
