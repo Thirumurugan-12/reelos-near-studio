@@ -17,6 +17,7 @@ export type Effect = {
   params: { text?: string; fx?: string };
 };
 export type Plan = {
+  framing?: { scale: number; offset_y: number };
   asset_id: string;
   source_in: number;
   source_out: number;

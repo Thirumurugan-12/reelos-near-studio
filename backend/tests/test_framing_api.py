@@ -13,7 +13,39 @@ def test_reframe_creates_child_preserves_plan_and_reuses_tracking(tmp_path, monk
         editor = app.state.editor
         pid = client.post("/api/projects", json={"name": "Framing"}).json()["id"]
         editor.store.put("asset", "a" * 32, {"project_id": pid, "role": "source", "duration": 20})
-        parent = editor.version(pid, EditPlan(asset_id="a" * 32, source_out=20), track_key="cached")
+        plan = EditPlan.model_validate(
+            {
+                "asset_id": "a" * 32,
+                "source_out": 20,
+                "effects": [
+                    {
+                        "id": "h",
+                        "type": "behind_subject_text",
+                        "start": 0,
+                        "end": 4,
+                        "subject_id": "0",
+                        "params": {"text": "MY STORY", "y": 0.09},
+                    },
+                    {
+                        "id": "s",
+                        "type": "subject_spotlight",
+                        "start": 4,
+                        "end": 8,
+                        "subject_id": "0",
+                        "params": {"intensity": 0.3},
+                    },
+                    {
+                        "id": "l",
+                        "type": "tracked_label",
+                        "start": 9,
+                        "end": 13,
+                        "subject_id": "0",
+                        "params": {"text": "Context", "y": 0.86},
+                    },
+                ],
+            }
+        )
+        parent = editor.version(pid, plan, track_key="cached")
         monkeypatch.setattr(editor.worker, "submit", lambda *args: None)
         result = client.post(
             f"/api/projects/{pid}/versions/{parent['id']}/framing",

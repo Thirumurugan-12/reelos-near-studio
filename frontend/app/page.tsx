@@ -367,6 +367,38 @@ export default function Studio() {
                   </button>
                 </div>
               )}
+              {version && (
+                <fieldset className="framing-controls" disabled={s.busy}>
+                  <legend>Framing</legend>
+                  <p>
+                    Make space above the speaker. Text and timing stay the same.
+                  </p>
+                  <div className="segmented">
+                    {[
+                      { label: "Room for titles", scale: 0.82, offset: 0.16 },
+                      { label: "Original framing", scale: 1, offset: 0 },
+                    ].map((choice) => {
+                      const active =
+                        (version.plan.framing?.scale ?? 1) === choice.scale &&
+                        (version.plan.framing?.offset_y ?? 0) === choice.offset;
+                      return (
+                        <button
+                          key={choice.label}
+                          type="button"
+                          aria-pressed={active}
+                          disabled={active}
+                          onClick={() => {
+                            s.reframe(choice.scale, choice.offset);
+                            setSheetOpen(false);
+                          }}
+                        >
+                          {choice.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              )}
               <Direction
                 key={`${s.project?.id}-${version?.id || "draft"}`}
                 projectId={s.project?.id}

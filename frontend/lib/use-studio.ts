@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { initialVersion } from "./initial-version";
 import {
   api,
   post,
@@ -50,7 +51,7 @@ export function useStudio() {
         const id = new URLSearchParams(window.location.search).get("project");
         if (id && list.some((p) => p.id === id)) {
           const p = await load(id);
-          setVersionId(p.current_version_id || "");
+          setVersionId(initialVersion(p));
           setSourceId(p.assets.find((a) => a.role === "source")?.id || "");
           setReferenceId(
             p.assets.find((a) => a.role === "reference")?.id || "",
@@ -122,7 +123,7 @@ export function useStudio() {
   async function select(id: string) {
     await attempt(async () => {
       const p = await load(id);
-      setVersionId(p.current_version_id || "");
+      setVersionId(initialVersion(p));
       setSourceId(p.assets.find((a) => a.role === "source")?.id || "");
       setReferenceId(p.assets.find((a) => a.role === "reference")?.id || "");
       setJob(
@@ -191,6 +192,16 @@ export function useStudio() {
     });
     return result === true;
   }
+  async function reframe(scale: number, offset_y: number) {
+    if (!project || !versionId) return;
+    await attempt(async () => {
+      const next = await post<Job>(
+        `/projects/${project.id}/versions/${versionId}/framing`,
+        { scale, offset_y },
+      );
+      setJob(next);
+    });
+  }
   async function restore() {
     if (!project || !versionId) return;
     await attempt(async () => {
@@ -228,5 +239,6 @@ export function useStudio() {
     start,
     restore,
     applyEffect,
+    reframe,
   };
 }
