@@ -56,3 +56,26 @@ def test_cli_applies_parameters_and_supporting_media(tmp_path, capsys):
         },
     }
     assert json.loads(capsys.readouterr().out)["job_id"] == "job"
+
+
+def test_cli_framing_uses_the_shared_version_operation(capsys):
+    requests = []
+
+    def handle(request):
+        requests.append(request)
+        return httpx.Response(202, json={"id": "queued", "version_id": "child"})
+
+    client = httpx.Client(base_url="http://localhost/api/", transport=httpx.MockTransport(handle))
+    with (
+        patch("reelos.cli.httpx.Client", return_value=client),
+        patch.object(
+            sys,
+            "argv",
+            ["reelos", "frame", "project", "version", "--scale", ".82", "--offset-y", ".16"],
+        ),
+    ):
+        main()
+    assert len(requests) == 1
+    assert requests[0].url.path == "/api/projects/project/versions/version/framing"
+    assert json.loads(requests[0].content) == {"scale": 0.82, "offset_y": 0.16}
+    assert json.loads(capsys.readouterr().out)["version_id"] == "child"

@@ -27,6 +27,12 @@ def main():
     apply.add_argument("--options-file", type=Path)
     apply.add_argument("--media", nargs="*", default=[])
 
+    frame = commands.add_parser("frame", help="Reframe a version without changing its effects")
+    frame.add_argument("project")
+    frame.add_argument("version")
+    frame.add_argument("--scale", type=float, required=True)
+    frame.add_argument("--offset-y", type=float, required=True)
+
     create = commands.add_parser("create")
     create.add_argument("name")
     upload = commands.add_parser("upload")
@@ -79,6 +85,11 @@ def main():
                             "media_ids": args.media,
                         },
                     },
+                )
+            elif args.command == "frame":
+                result = client.post(
+                    f"projects/{args.project}/versions/{args.version}/framing",
+                    json={"scale": args.scale, "offset_y": args.offset_y},
                 )
             elif args.command == "create":
                 result = client.post("projects", json={"name": args.name})

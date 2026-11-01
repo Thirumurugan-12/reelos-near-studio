@@ -15,7 +15,7 @@ from reelos.media import inspect_media, make_proxy
 from reelos.segmentation import subject_thumbnail
 from reelos.service import Editor
 from reelos.store import new_id
-from reelos.timeline import Contract, EditPlan, Identifier
+from reelos.timeline import Contract, EditPlan, Framing, Identifier
 
 
 class ProjectInput(Contract):
@@ -217,6 +217,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def version_create(project_id: Identifier, data: VersionInput):
         editor.store.get("project", project_id)
         return editor.version(project_id, data.plan, data.parent_id)
+
+    @app.post("/api/projects/{project_id}/versions/{version_id}/framing", status_code=202)
+    def reframe(project_id: Identifier, version_id: Identifier, data: Framing):
+        parent = editor.store.get("version", version_id, project_id)
+        if any(j["status"] in {"queued", "running"} for j in editor.store.list("job", project_id)):
+            raise ValueError("Wait for this project’s current job before changing framing.")
+        plan = EditPlan.model_validate(parent["plan"] | {"framing": data.model_dump()})
+        version = editor.version(project_id, plan, parent=version_id, summary="Reframed speaker")
+        job = editor.queue(
+            project_id, {"action": "render", "version_id": version["id"], "quality": "preview"}
+        )
+        return job | {"version_id": version["id"]}
 
     @app.post("/api/projects/{project_id}/versions/{version_id}/restore")
     def restore(project_id: Identifier, version_id: Identifier):
