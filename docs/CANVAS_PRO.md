@@ -25,3 +25,7 @@ Original/edit playback, upload, subject selection, storyboard review, catalog as
 ## Scope
 
 This is the editing workspace redesign, not a new rendering engine. It uses native video controls and approved effects; timeline dragging, freeform trimming and a full professional NLE are not added. No fresh paid Muse planning request was made for this UI verification. Creator usability evaluation remains deferred at the user’s request.
+
+## Title headroom follow-up
+
+Edit now has explicit Room for titles / Original framing controls and first-failed-plan recovery selection. Both preserve immutable history and use the shared API/CLI renderer. [Verified recovery outputs and limits](TITLE_LAYOUT_RECOVERY.md).

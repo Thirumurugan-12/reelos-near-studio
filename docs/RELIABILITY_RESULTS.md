@@ -36,3 +36,7 @@ Ledger after this batch: **$70 reserved against the approved $75 cap**, **$1.753
 Private IDs, returned jobs, request markers, output hashes, source-selection notes, metadata and frames remain under ignored `data/reliability/`. This test has only three underlying recordings with repeats, explicit effect timings, no reference video and eight silent attempts. It does not establish independent creator usefulness, broad visual quality, autonomous edit selection or a cold upload-to-preview percentile. Worker times in retained jobs exclude queue/selection wait; resumed client polling times are not used as latency benchmarks.
 
 Existing main v22 and earlier successful three-set evidence are preserved. Those earlier successes do not erase this failed reliability target. Next work should address title-layout feasibility before a new preregistered quality/reliability run; do not spend the remaining allowance on repeated attempts merely to obtain a passing score.
+
+## Recovery follow-up
+
+An explicit [title-headroom operation](TITLE_LAYOUT_RECOVERY.md) now recovers the failed main layout and an occluded camera title using cached tracking, without new model calls. Both 1080p child exports are verified and only framing changes. These are manual recovery demonstrations; all ten original outcomes and the four-of-ten visual score remain unchanged.

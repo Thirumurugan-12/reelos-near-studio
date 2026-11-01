@@ -26,8 +26,9 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 2. Describe the edit and subject. Creating a draft sends a compressed source proxy to Meta; reference proxies preserve their original composition. Muse Voice transcribes source speech for topic selection, without generating exact-word captions.
 3. If SAM finds multiple subjects, choose the highlighted person from actual source thumbnails.
 4. Inspect the storyboard or play the draft. The Effects picker adds all 45 catalog recipes plus three named looks, with animated previews, editable settings and supporting-media cards. The original subject text, spotlight, labels and Remotion inserts remain available. See the [complete catalog](docs/EFFECT_CATALOG.md).
-5. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
-6. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
+5. Use Edit → Framing → Room for titles when a headline needs clear space. This creates a new version using existing tracking. [Recovery workflow and evidence](docs/TITLE_LAYOUT_RECOVERY.md).
+6. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
+7. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
 
 Canvas Pro keeps the video and compact timeline in a fitted workspace. Edit, Looks and Media open contextual controls: a side inspector on desktop and a bottom sheet on mobile. Long forms scroll inside the controls without scrolling the page. Version history and export stay in the header. See [the Canvas Pro implementation and validation](docs/CANVAS_PRO.md).
 

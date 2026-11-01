@@ -32,3 +32,7 @@ $51 conservative reservations against the user-approved $75 local cap; $1.301351
 5. Public access and external submission require the user’s authorization. Neither has occurred. The local app is a controlled single-user service.
 
 The original goal stays active. Technical tests and a polished interface do not establish every PID gate.
+
+## Title-layout follow-up
+
+The [explicit framing recovery](TITLE_LAYOUT_RECOVERY.md) now produces readable, verified main/camera child exports without paid model calls. The live API/CLI/UI share the operation; first-failed-plan reload recovery is tested. This resolves the missing manual recovery path, not the original cohort’s reliability result. Current budget remains $70 reserved of $75; four visual passes out of ten remain the recorded batch result.
