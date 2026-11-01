@@ -104,3 +104,54 @@ def test_file_availability_distinguishes_missing_file_from_access_error(tmp_path
     with pytest.raises(ValueError, match="403"):
         client.file_available("file-private")
     assert client.store.budget()["calls"] == []
+
+
+@pytest.mark.parametrize(
+    "failure", [httpx.ReadTimeout, httpx.ConnectError, httpx.RemoteProtocolError]
+)
+def test_transport_failure_is_actionable_redacted_and_never_retried(tmp_path, monkeypatch, failure):
+    real = httpx.Client
+    key = "LLM_transport_secret"
+    attempts = []
+
+    def respond(request):
+        attempts.append(request)
+        raise failure("Do not expose " + key, request=request)
+
+    monkeypatch.setattr(
+        httpx, "Client", lambda **kw: real(transport=httpx.MockTransport(respond), **kw)
+    )
+    store = Store(tmp_path)
+    with pytest.raises(ValueError, match="outcome is unknown") as exc:
+        MetaClient(Settings(api_key=key), store).response("test", [])
+    assert key not in str(exc.value)
+    assert len(attempts) == 1
+    call = store.budget()["calls"][0]
+    assert call["status"] == "failed_or_unknown" and call["reserved_usd"] == 1
+    record = json.loads((tmp_path / "responses" / (call["id"] + ".error.json")).read_text())
+    assert record["code"] == (
+        "transport_timeout" if failure is httpx.ReadTimeout else "transport_error"
+    )
+    assert key not in json.dumps(record)
+
+
+def test_invalid_json_response_keeps_reservation_without_exposing_body(tmp_path, monkeypatch):
+    real = httpx.Client
+    key = "LLM_invalid_body_secret"
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, text=key)
+
+    monkeypatch.setattr(
+        httpx, "Client", lambda **kw: real(transport=httpx.MockTransport(respond), **kw)
+    )
+    store = Store(tmp_path)
+    with pytest.raises(ValueError, match="unreadable response") as exc:
+        MetaClient(Settings(api_key=key), store).response("test", [])
+    assert key not in str(exc.value) and len(requests) == 1
+    call = store.budget()["calls"][0]
+    assert call["status"] == "failed_or_unknown"
+    record = (tmp_path / "responses" / (call["id"] + ".error.json")).read_text()
+    assert "invalid_json" in record and key not in record

@@ -26,7 +26,7 @@ $51 conservative reservations against the user-approved $75 local cap; $1.301351
 ## Open requirements and next actions
 
 1. Canvas Pro capture refresh, re-render and final decode/frame inspection are now complete; see DEMO_ARTIFACT.md. The PID also proposes a three-minute master; the current artifact is only 75 seconds.
-2. The PID’s 9-of-10 end-to-end reliability target is not proved by three rehearsals or nine targeted revisions. Retain the distinction; a planned representative ten-attempt evaluation must include failures rather than cherry-pick successes.
+2. The fixed ten-attempt evaluation is complete: seven decodable exports and four sampled visual passes. The PID’s 9-of-10 target was not met. See RELIABILITY_RESULTS.md for all failures, limits and the updated budget checkpoint.
 3. Creator usefulness (2 of 3), active-time savings and human listening/presentation review remain unverified. Creator tasks were explicitly deferred by the user until the end; do not invent feedback or repeatedly request it.
 4. Current participant portal requirements, eligibility/declarations, access format and deadline remain unverified. The event details URL was inaccessible through the web tool again on 1 November. Account-only facts require the participant’s view; do not infer them from the old pasted summary.
 5. Public access and external submission require the user’s authorization. Neither has occurred. The local app is a controlled single-user service.

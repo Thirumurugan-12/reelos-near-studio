@@ -35,3 +35,7 @@ Both stock projects have their baseline restored as the durable current version 
 ## Remaining gates
 
 Follow-up evidence now includes [three fresh-project rehearsals](REHEARSALS.md) and a [verified local demo MP4](DEMO_ARTIFACT.md). Creator task feedback, current official portal requirements and human presentation review remain open. Three playable inputs and nine precise revisions do not prove the PID's 9/10 end-to-end reliability target or its 2/3 creator usefulness target.
+
+## Subsequent reliability batch
+
+The separate [1 November fixed ten-attempt test](RELIABILITY_RESULTS.md) produced seven exports and four sampled visual passes. Two main-source attempts failed, and camera titles were obscured in three exports. The 9/10 target was not met; the earlier successes above must not be presented as overriding these failures.

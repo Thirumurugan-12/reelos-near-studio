@@ -10,7 +10,8 @@
 
 - [x] Refresh the composed walkthrough with the deployed Canvas Pro interface; re-render and verify actual output.
 - [ ] Resolve three-minute master/portal delivery requirements without assuming a duration limit.
-- [ ] Establish a representative 10-attempt reliability protocol and record failures as well as successes.
+- [x] Run a fixed 10-attempt reliability protocol and retain failures: 7 pipeline exports, 4 visual passes; target not met.
+- [ ] Address title-layout feasibility and verify improvement without rewriting the failed cohort.
 - [ ] Creator tasks and human listening review, deferred until the end by the user.
 - [ ] Verify participant portal fields, eligibility, access requirements and deadline.
 - [ ] Obtain explicit authorization before external publication/submission.

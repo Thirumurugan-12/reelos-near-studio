@@ -48,6 +48,23 @@ class MetaClient:
             f"Meta request failed (HTTP {response.status_code}{code}): {details['message']}"
         )
 
+    def response_failure(self, code: str, call: str) -> ValueError:
+        """Record only a fixed category; transport exceptions can contain secrets."""
+        messages = {
+            "transport_timeout": "Meta request timed out; its outcome is unknown. "
+            "Inspect the existing job before retrying.",
+            "transport_error": "Meta connection failed; its outcome is unknown. "
+            "Inspect the existing job before retrying.",
+            "invalid_json": "Meta returned an unreadable response; its outcome is unknown. "
+            "Inspect the existing job before retrying.",
+        }
+        directory = self.store.root / "responses"
+        directory.mkdir(exist_ok=True)
+        (directory / f"{call}.error.json").write_text(
+            json.dumps({"code": code, "message": messages[code]})
+        )
+        return ValueError(messages[code])
+
     def file_available(self, file_id: str) -> bool:
         if not self.settings.api_key:
             raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
@@ -160,6 +177,17 @@ class MetaClient:
                 call, "completed", data.get("usage", {}), time.monotonic() - started
             )
             return data
+        except httpx.RequestError as exc:
+            self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
+            code = (
+                "transport_timeout"
+                if isinstance(exc, httpx.TimeoutException)
+                else "transport_error"
+            )
+            raise self.response_failure(code, call) from None
+        except json.JSONDecodeError:
+            self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
+            raise self.response_failure("invalid_json", call) from None
         except Exception:
             if not recorded:
                 self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
