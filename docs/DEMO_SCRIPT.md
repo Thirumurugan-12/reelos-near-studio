@@ -1,6 +1,6 @@
 # ReelOS evidence-led demo script
 
-The initial script below has now produced a [verified 75-second composed walkthrough](DEMO_ARTIFACT.md). Its editable source and review notes are in `demo-showcase/`.
+The initial script below produced the historical 75-second walkthrough. Current deliverables are the [101.4-second complete-effects recording and 193.4-second extended master](EFFECT_DEMO.md). Use their chapter maps and [delivery index](DELIVERY.md) for recording; this table retains the original plan. Editable sources and review notes are in `demo-showcase/` and `demo-master/`.
 
 Initial draft: 75–90 second showcase. Final length and format depend on the participant portal requirements. This section retains the original script and capture plan; use the artifact report for the actual delivered timing and verification.
 

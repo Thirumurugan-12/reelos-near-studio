@@ -44,3 +44,7 @@ Two fresh initial drafts now pass sampled visual checks, complete native preview
 ## Moving-subject validation follow-up
 
 Saved camera failures exposed a midpoint-only visibility blind spot. The renderer now checks three positions across each behind-person title interval; see TITLE_VISIBILITY_CHECK.md. This is an additional local quality guard, not a new paid model cohort or evidence of the unmet 9/10 target.
+
+## Delivery integrity and next evaluation
+
+The [local delivery index](DELIVERY.md) now identifies the 101.4-second recording, 193.4-second master and full-size sampler with verified metadata/hashes. Gallery rebuilds reject same-size footage substitutions, and the master preparer retains all 48 gallery provenance entries. Both projects’ actual assets match their ledgers; all prior media hashes are preserved. The full backend suite now passes 171 tests. A [fixed framing-permitted ten-attempt protocol](RELIABILITY_FOLLOWUP_PROTOCOL.md) is prepared but has not started: the approved $75 local cap is fully allocated, so a new allowance decision is required before paid dispatch. Original reliability and human/portal gates remain unchanged.

@@ -14,6 +14,8 @@
 - [x] Run a fixed 10-attempt reliability protocol and retain failures: 7 pipeline exports, 4 visual passes; target not met.
 - [x] Add explicit title-headroom recovery and verify two actual child exports without rewriting the failed cohort.
 - [x] Verify two framing-permitted fresh initial drafts without manual layout repair.
+- [x] Verify demo asset identity, reproducible gallery provenance and current delivery documentation.
+- [x] Prepare a fixed framing-permitted ten-attempt protocol; paid dispatch not started.
 - [ ] Broader 9/10 reliability remains unmet; do not replace the failed cohort with the two-case follow-up.
 - [ ] Creator tasks and human listening review, deferred until the end by the user.
 - [ ] Verify participant portal fields, eligibility, access requirements and deadline.
