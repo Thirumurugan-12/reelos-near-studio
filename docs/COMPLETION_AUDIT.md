@@ -36,3 +36,7 @@ The original goal stays active. Technical tests and a polished interface do not 
 ## Title-layout follow-up
 
 The [explicit framing recovery](TITLE_LAYOUT_RECOVERY.md) now produces readable, verified main/camera child exports without paid model calls. The live API/CLI/UI share the operation; first-failed-plan reload recovery is tested. This resolves the missing manual recovery path, not the original cohort’s reliability result. Current budget remains $70 reserved of $75; four visual passes out of ten remain the recorded batch result.
+
+## Framing-permitted first-draft follow-up
+
+Two fresh initial drafts now pass sampled visual checks, complete native preview playback and 1080p export without manual layout repair; see LAYOUT_FOLLOWUP_RESULTS.md. This is a different direction condition and does not overwrite the failed ten-attempt result or establish its 9/10 target. Current local reservation cap is fully allocated: $75/$75, $1.87104170 known estimate, seven unpriced calls. Official portal details were rechecked in the real browser and redirect to sign-in; participant requirements have been requested.

@@ -45,3 +45,7 @@ The original source, reference, plan, preview, export and request ledger provide
 ## Current interface and remaining preparation
 
 The live app now uses [Canvas Pro](CANVAS_PRO.md): Edit, Looks and Media tools, a compact timeline, mobile control sheets and header history/export. The refreshed `data/reelos-hackathon-demo-canvas-pro.mp4` now shows actual Canvas Pro captures and has passed full decode/frame inspection. The 30 October artifact is retained as historical evidence. [Completion audit](COMPLETION_AUDIT.md).
+
+## Fresh source-only layout example
+
+The [two-case framing-permitted follow-up](LAYOUT_FOLLOWUP_RESULTS.md) now provides a fresh 20-second main-speaker result with animated designed titles, chosen by Muse with no manual layout repair. Its project is `b8d22a5601b84aa4b77e45827555b711`; its verified export is `data/layout-followup/run-01-export.mp4`. This is a short input derivative, not the full recording. It is useful fresh planning evidence; do not present two successes as meeting the earlier 9/10 reliability target. The current paid reservation allowance is fully allocated.

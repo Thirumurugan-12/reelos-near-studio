@@ -12,7 +12,8 @@
 - [ ] Resolve three-minute master/portal delivery requirements without assuming a duration limit.
 - [x] Run a fixed 10-attempt reliability protocol and retain failures: 7 pipeline exports, 4 visual passes; target not met.
 - [x] Add explicit title-headroom recovery and verify two actual child exports without rewriting the failed cohort.
-- [ ] Establish any broader first-draft reliability improvement with new evidence; the recorded 9/10 target remains unmet.
+- [x] Verify two framing-permitted fresh initial drafts without manual layout repair.
+- [ ] Broader 9/10 reliability remains unmet; do not replace the failed cohort with the two-case follow-up.
 - [ ] Creator tasks and human listening review, deferred until the end by the user.
 - [ ] Verify participant portal fields, eligibility, access requirements and deadline.
 - [ ] Obtain explicit authorization before external publication/submission.
