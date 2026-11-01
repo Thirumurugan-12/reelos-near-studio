@@ -1,0 +1,963 @@
+/* Self-hosted, licensed faces from backend/reelos/vendor/fonts. */
+@font-face {
+  font-family: Reel Sans;
+  src: url("../fonts/Montserrat.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel UI;
+  src: url("../fonts/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel Display;
+  src: url("../fonts/ArchivoBlack-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel Editorial;
+  src: url("../fonts/InstrumentSerif-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel Book;
+  src: url("../fonts/PlayfairDisplay.ttf") format("truetype");
+  font-weight: 400 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel Book;
+  src: url("../fonts/PlayfairDisplay-Italic.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: Reel Mono;
+  src: url("../fonts/SpaceMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+:root {
+  font-family: "Reel Sans", sans-serif;
+  font-synthesis: none;
+}
+.brand {
+  font-family: "Reel Display", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -1.7px;
+}
+.project-name {
+  font-weight: 550;
+  letter-spacing: -0.025em;
+}
+.muted {
+  letter-spacing: 0;
+}
+h1,
+h2 {
+  font-family: "Reel Sans", sans-serif;
+  letter-spacing: -0.045em;
+}
+.eyebrow,
+.node-type {
+  font-family: "Reel Mono", monospace;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.mono,
+time {
+  font-family: "Reel Mono", monospace;
+  font-weight: 700;
+}
+button,
+.button {
+  font-weight: 550;
+  letter-spacing: -0.025em;
+  border-radius: 999px;
+  transition:
+    background 0.16s,
+    color 0.16s,
+    transform 0.16s;
+}
+button.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 7px 6px 18px;
+  min-height: 42px;
+  font-family: "Reel Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  box-shadow: none;
+}
+.button-copy {
+  flex: 1;
+  text-align: left;
+  white-space: normal;
+  line-height: 1.3;
+}
+.button-arrow {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.button-arrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.primary:hover .button-arrow {
+  transform: rotate(-35deg);
+}
+.button-arrow {
+  transition: transform 0.16s;
+}
+.primary:active {
+  transform: translateY(1px);
+}
+button.round-action {
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 18px;
+}
+.header-actions .primary {
+  min-height: 38px;
+  padding: 4px 5px 4px 16px;
+  font-size: 10px;
+}
+.header-actions .button-arrow {
+  width: 28px;
+  height: 28px;
+}
+.border {
+  border-color: color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 999px;
+  font-size: 10px;
+}
+.tags button {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 4px 0;
+  margin-right: 12px;
+  font-weight: 500;
+}
+.tags {
+  gap: 8px;
+}
+.tools {
+  gap: 20px;
+}
+.tools button {
+  border: 0 !important;
+  border-radius: 0;
+  color: var(--muted);
+  position: relative;
+}
+.tools button.selected {
+  background: none;
+  color: var(--ink);
+}
+.tools button.selected:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+.effect-track button {
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 8px;
+}
+.look-cards button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 12px 12px 0 0;
+  background: none;
+  padding: 4px 4px 10px;
+}
+.look-cards button.selected {
+  background: none;
+  border-color: var(--accent);
+}
+.look-cards img {
+  border-radius: 10px;
+}
+.look-cards span {
+  font-weight: 550;
+}
+.filter-tabs {
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+}
+.filter-tabs button {
+  border: 0;
+  border-radius: 0;
+  padding: 6px 0 10px;
+  background: none;
+  font-size: 10px;
+}
+.filter-tabs button.selected {
+  background: none;
+  border-bottom: 2px solid var(--ink);
+}
+textarea,
+input:not([type="range"]) {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--panel) 60%, var(--bg));
+  font-family: "Reel UI", sans-serif;
+  font-size: 12px;
+}
+.compose-line {
+  border-radius: 999px;
+  padding: 5px 6px 5px 12px;
+}
+.compose-line input {
+  border-radius: 999px !important;
+}
+.player button {
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+}
+.player button[data-action="preview"] {
+  background: var(--ink);
+  color: var(--bg);
+  width: 36px;
+  height: 36px;
+}
+.player {
+  gap: 12px;
+}
+.concept-bar,
+.gallery-header > .muted {
+  font-family: "Reel UI", sans-serif;
+  font-size: 10px;
+}
+/* Each direction has its own typographic voice. */
+.canvas h1 {
+  font-family: "Reel Display", sans-serif;
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.05;
+  letter-spacing: -1.1px;
+  text-transform: uppercase;
+}
+.canvas h2 {
+  font-size: 12px;
+  font-weight: 650;
+}
+.canvas .primary {
+  font-weight: 700;
+}
+.paper h1,
+.paper h2,
+.paper .paper-note h2,
+.paper .outline h1 {
+  font-family: "Reel Editorial", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+.paper .outline h1 {
+  font-size: clamp(40px, 4.5vw, 64px);
+  line-height: 0.95;
+}
+.paper .outline h1 em {
+  font-style: inherit;
+}
+.paper .paper-note h2 {
+  font-size: 36px;
+  line-height: 1;
+}
+.paper .paper-swatch {
+  font-family: "Reel Editorial", serif;
+  font-style: italic;
+  font-size: 64px;
+}
+.paper .primary {
+  font-family: "Reel Editorial", serif;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 400;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 0;
+  border-bottom: 1px solid var(--accent);
+  padding: 8px 0;
+  min-height: 48px;
+}
+.paper .primary .button-arrow {
+  border-color: var(--accent);
+  color: var(--accent);
+  width: 32px;
+  height: 32px;
+}
+.paper .header-actions .primary {
+  font-size: 20px;
+  min-height: 38px;
+  padding: 0 0 2px;
+  gap: 20px;
+}
+.paper .header-actions .button-arrow {
+  width: 28px;
+  height: 28px;
+}
+.paper .outline li button {
+  font-family: "Reel UI", sans-serif;
+  font-size: 12px;
+  border-radius: 0;
+  letter-spacing: -0.025em;
+}
+.paper .outline li span {
+  font-family: "Reel Editorial", serif;
+  font-size: 21px;
+  font-weight: 400;
+}
+.paper .outline li small {
+  font-family: "Reel Mono", monospace;
+  font-size: 8px;
+}
+.paper .border {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 8px 0;
+}
+.director {
+  font-family: "Reel UI", sans-serif;
+}
+.director h1 {
+  font-family: "Reel Sans", sans-serif;
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -1.2px;
+}
+.director .assistant-message strong {
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.director .user-message {
+  border-radius: 18px 18px 4px 18px;
+}
+.director .primary .button-arrow {
+  background: #fff;
+  color: var(--accent);
+  border: 0;
+}
+.director .composer .primary {
+  background: var(--accent);
+  color: white;
+}
+.director .messages .border {
+  border: 0;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  padding: 4px 0;
+  color: var(--accent);
+}
+.pocket .pocket-guidance h1 {
+  font-family: "Reel Display", sans-serif;
+  letter-spacing: -0.065em;
+  font-size: clamp(36px, 4.5vw, 64px);
+  font-weight: 400;
+  line-height: 1;
+}
+.pocket .pocket-guidance h1 em {
+  font-family: "Reel Editorial", serif;
+  font-weight: 400;
+  font-size: 1.25em;
+  letter-spacing: -0.04em;
+}
+.pocket .pocket-side h2 {
+  font-family: "Reel Sans", sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+.pocket-dock {
+  gap: 4px;
+}
+.pocket-dock button {
+  border-radius: 999px;
+  font-family: "Reel UI", sans-serif;
+  font-size: 10px;
+  color: #c6d3c8;
+}
+.pocket-dock button:first-child {
+  background: #e8efdf;
+  color: #173628;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.pocket .primary .button-arrow {
+  background: white;
+  border-color: transparent;
+  color: var(--accent);
+}
+.pocket .task-card .border {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding-left: 0;
+}
+.story h1,
+.story .board-heading h1 {
+  font-family: "Reel Book", serif;
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -1.3px;
+  line-height: 1.1;
+}
+.story .scene-detail h2 {
+  font-family: "Reel Book", serif;
+  font-weight: 500;
+  font-size: 26px;
+}
+.story .scene {
+  border: 0;
+  border-radius: 12px;
+  background: var(--panel);
+  padding: 8px;
+}
+.story .scene.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.story .scene strong {
+  font-family: "Reel Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+.story .scene-image b {
+  font-family: "Reel Editorial", serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 28px;
+}
+.story .primary .button-arrow {
+  background: #fff;
+  color: var(--accent);
+  border: 0;
+}
+.script .script-page h1 {
+  font-family: "Reel Editorial", serif;
+  font-size: 43px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -1.2px;
+}
+.script-paragraph {
+  font-family: "Reel Book", serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+  border-radius: 0;
+}
+.script-paragraph small {
+  font-family: "Reel Sans", sans-serif;
+  font-weight: 550;
+}
+.script .inline-toolbar {
+  gap: 16px;
+}
+.script .inline-toolbar button {
+  border: 0;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  color: var(--accent);
+}
+.script .primary {
+  background: var(--ink);
+  color: var(--panel);
+}
+.script .primary .button-arrow {
+  color: var(--ink);
+  background: var(--panel);
+  border: 0;
+}
+.lab {
+  font-family: "Reel UI", sans-serif;
+}
+.lab h1,
+.lab .lab-heading h1 {
+  font-family: "Reel Mono", monospace;
+  font-weight: 700;
+  font-size: 25px;
+  letter-spacing: -1.3px;
+}
+.lab h2 {
+  font-family: "Reel Sans", sans-serif;
+  font-weight: 650;
+  font-size: 13px;
+}
+.lab .primary {
+  font-family: "Reel Mono", monospace;
+  font-size: 10px;
+  letter-spacing: -0.03em;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.lab .primary .button-arrow {
+  border: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.lab .node-type {
+  font-size: 8px;
+}
+.lab .border {
+  border: 0;
+  border-bottom: 1px dashed var(--line);
+  border-radius: 0;
+  text-align: left;
+  padding-left: 0;
+}
+.lookbook .library-heading h1 {
+  font-family: "Reel Editorial", serif;
+  font-size: 60px;
+  line-height: 0.95;
+  letter-spacing: -1.7px;
+  font-style: italic;
+  font-weight: 400;
+}
+.lookbook h2 {
+  font-family: "Reel Book", serif;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+.lookbook .primary {
+  font-family: "Reel Book", serif;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.lookbook .primary .button-arrow {
+  background: var(--panel);
+  color: var(--accent);
+  border: 0;
+}
+.lookbook .look-library .look-cards button {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  border-bottom: 1px solid transparent;
+}
+.lookbook .look-library .look-cards button.selected {
+  border-bottom-color: var(--accent);
+}
+.lookbook .look-cards span {
+  font-family: "Reel Book", serif;
+  font-size: 15px;
+  font-weight: 500;
+}
+.lookbook .filter-tabs button {
+  font-size: 10px;
+}
+.lookbook .border {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding-left: 0;
+  padding-right: 0;
+}
+.cinema .cinema-label h1 {
+  font-family: "Reel Book", serif;
+  font-weight: 400;
+  font-size: 48px;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+}
+.cinema .cinema-label h1:first-line {
+  font-style: italic;
+}
+.cinema .primary {
+  font-family: "Reel Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 650;
+}
+.cinema .primary .button-arrow {
+  background: var(--accent-ink);
+  border: 0;
+  color: var(--accent);
+}
+.cinema .floating-tools {
+  border: 0;
+  background: transparent;
+  gap: 14px;
+  padding: 0;
+}
+.cinema .floating-tools button {
+  border: 1px solid #ffffff25;
+  background: #171719;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}
+.cinema .cinema-composer label {
+  font-family: "Reel Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+.cinema .cinema-composer .compose-line {
+  border-radius: 999px;
+}
+.cinema .cinema-composer .round-action {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+.review .review-heading h1 {
+  font-family: "Reel Editorial", serif;
+  font-weight: 400;
+  font-size: 46px;
+  font-style: italic;
+  letter-spacing: -1.4px;
+  line-height: 1;
+}
+.review .change-notes h2 {
+  font-family: "Reel Sans", sans-serif;
+  font-weight: 650;
+  letter-spacing: -1px;
+  font-size: 24px;
+}
+.review .change-notes li > b {
+  font-family: "Reel Editorial", serif;
+  font-size: 24px;
+  font-style: italic;
+  line-height: 1;
+}
+.review .primary .button-arrow {
+  background: #fff;
+  color: var(--accent);
+  border: 0;
+}
+.review .review-decision .border {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+.review .review-note textarea {
+  border-radius: 0;
+}
+.gallery {
+  font-family: "Reel UI", sans-serif;
+}
+.gallery-intro h1,
+.board .gallery-intro h1 {
+  font-family: "Reel Editorial", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 64px;
+  letter-spacing: -1.6px;
+  line-height: 1;
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+.gallery-intro .eyebrow {
+  font-family: "Reel Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.gallery-header .button {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  font-family: "Reel Sans", sans-serif;
+  padding: 8px 0;
+  font-size: 10px;
+}
+.concept-caption h2 {
+  font-family: "Reel Sans", sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.05em;
+}
+.concept-number {
+  font-family: "Reel Mono", monospace;
+  font-size: 10px;
+}
+.concept-caption p {
+  font-family: "Reel UI", sans-serif;
+  font-size: 11px;
+}
+.preview-link {
+  border-radius: 12px;
+  border-color: #00000012;
+}
+.concept-card .open-preview {
+  border-radius: 999px;
+  font-family: "Reel Sans", sans-serif;
+  font-size: 9px;
+  font-weight: 650;
+}
+.gallery-note {
+  font-family: "Reel Mono", monospace;
+  font-size: 9px;
+  line-height: 1.7;
+}
+@media (max-width: 767px) {
+  .brand {
+    font-size: 18px;
+  }
+  .project-name {
+    font-family: "Reel UI", sans-serif;
+    font-size: 10px;
+    letter-spacing: -0.02em;
+  }
+  .header-actions .primary {
+    padding: 3px 4px 3px 12px;
+    font-size: 9px;
+    min-height: 32px;
+    gap: 8px;
+  }
+  .header-actions .button-arrow {
+    width: 24px;
+    height: 24px;
+  }
+  .header-actions .button-arrow svg {
+    width: 12px;
+    height: 12px;
+  }
+  .concept-bar,
+  .concept-bar button {
+    font-size: 8px;
+  }
+  .tools button {
+    font-size: 10px;
+  }
+  .tools button.selected:before {
+    left: 20%;
+    right: 20%;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 2px;
+  }
+  .pocket-dock button {
+    font-size: 10px;
+    min-height: 40px;
+  }
+  .paper .outline h1 {
+    font-size: 36px;
+    letter-spacing: -1px;
+  }
+  .paper .outline li button {
+    font-size: 0;
+    padding: 4px;
+  }
+  .paper .outline li span {
+    font-size: 18px;
+  }
+  .paper .outline li small {
+    font-size: 7px;
+  }
+  .paper .header-actions .primary {
+    font-size: 16px;
+    gap: 8px;
+    min-height: 32px;
+  }
+  .paper .header-actions .button-arrow {
+    width: 22px;
+    height: 22px;
+  }
+  .director .conversation h1 {
+    font-size: 19px;
+    letter-spacing: -0.7px;
+  }
+  .director .composer .round-action {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+  .story .board-heading h1 {
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+  .story .scene strong {
+    font-size: 9px;
+  }
+  .story .scene-image b {
+    font-size: 24px;
+  }
+  .script .script-page h1 {
+    font-size: 30px;
+    letter-spacing: -1px;
+    max-width: 230px;
+  }
+  .script .script-paragraph {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  .script .script-page .row .pill {
+    font-size: 7px;
+  }
+  .script .inline-toolbar button {
+    font-size: 10px;
+  }
+  .lab .lab-heading h1 {
+    font-size: 19px;
+    letter-spacing: -1px;
+  }
+  .lab .node h2 {
+    font-size: 12px;
+  }
+  .lab .primary {
+    font-size: 9px;
+  }
+  .lookbook .library-heading h1 {
+    font-size: 37px;
+    line-height: 1;
+    letter-spacing: -1px;
+    margin: 6px 0 12px;
+  }
+  .lookbook .look-cards span {
+    font-size: 12px;
+  }
+  .lookbook .header-actions .primary {
+    font-size: 12px;
+  }
+  .lookbook .look-library .look-cards button {
+    padding: 4px 0 8px;
+  }
+  .lookbook .look-library {
+    padding: 12px 16px;
+  }
+  .lookbook .filter-tabs {
+    margin: 10px 0 12px;
+    gap: 20px;
+  }
+  .lookbook .filter-tabs button {
+    font-size: 9px;
+  }
+  .cinema .floating-tools button {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+  .cinema .cinema-composer .round-action {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+  .review .review-heading h1 {
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin-top: 8px;
+  }
+  .review .review-decision .primary {
+    min-height: 36px;
+    font-size: 10px;
+  }
+  .review .review-decision .button-arrow {
+    width: 24px;
+    height: 24px;
+  }
+  .review .review-note .primary {
+    padding: 4px 5px 4px 12px;
+    min-width: 112px;
+    gap: 6px;
+    font-size: 9px;
+  }
+  .review .review-note .button-arrow {
+    width: 22px;
+    height: 22px;
+  }
+  .review .change-notes h2 {
+    font-size: 17px;
+    letter-spacing: -0.6px;
+  }
+  .review .change-notes li > b {
+    font-size: 20px;
+  }
+  .gallery-intro h1,
+  .board .gallery-intro h1 {
+    font-size: 48px;
+    letter-spacing: -1.5px;
+  }
+  .gallery-intro p {
+    font-size: 12px;
+  }
+  .gallery-header > .muted {
+    font-size: 8px;
+  }
+  .concept-caption h2 {
+    font-size: 19px;
+  }
+  .concept-caption p {
+    font-size: 12px;
+  }
+  .gallery-note {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .button,
+  .button-arrow {
+    transition: none !important;
+  }
+}
+
+/* Keep the canvas and its timeline within the editor after fonts load. */
+.canvas-center {
+  min-height: 0;
+}
+.canvas .stage {
+  display: grid;
+  grid-template-rows: 16px minmax(0, 1fr) 44px;
+  justify-items: center;
+}
+.canvas .stage .portrait {
+  height: 100%;
+  max-width: 100%;
+}
+@media (max-width: 767px) {
+  .canvas .stage {
+    grid-template-rows: 14px minmax(0, 1fr) 36px;
+  }
+  .canvas .stage .portrait {
+    height: 100%;
+  }
+}

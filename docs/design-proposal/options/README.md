@@ -36,3 +36,11 @@ Copy index.html, app.js and styles.css into `data/design-concept/options/`. Put 
 - Visually inspected all ten mobile designs and the complete desktop comparison. Fixed Cinema Focus's intrinsic-width clipping and mobile editorial heading spacing.
 - No console errors observed in browser checks. `node --check app.js` passes. Native buttons, links, form controls and a dialog with focus return are used. This is not a full WCAG audit or production touch/keyboard usability certification.
 - Proof screenshots are under ignored `data/design-concept/options/`; the full comparison is `data/design-concept/ten-designs.png`.
+
+## Typography and button refinement — 1 November 2026
+
+All ten concepts now use self-hosted licensed typefaces instead of a shared system-font treatment. `typography.css` defines the combinations: Archivo Black display headings for Canvas/Pocket, Instrument Serif Italic for Paper/Lookbook and selected narrative headings, Playfair Display for Story Grid/Script/Cinema, Montserrat for geometric UI text, Inter for longer UI copy, and Space Mono for Motion Lab and time labels. These font files and licences already live in `backend/reelos/vendor/fonts/`; copy the `.ttf` and notice files into `data/design-concept/fonts/` when recreating the isolated preview. No external font service is required.
+
+Primary controls now combine tailored text, rounded silhouettes and decorative circular arrow/check details. Paper uses an editorial underline action instead of a filled box; tool rails use a selection mark; filter tabs and secondary text actions use underlines; playback/send controls are circular. Arrow details are hidden from assistive technology so button names remain clear. Focus outlines and reduced-motion behavior remain enabled.
+
+The style layer is linked after `styles.css`. Copy it alongside the other prototype files. Rechecked all ten concepts at 390×844 and 1280×800; checked primary-button bounds, native brief-dialog interaction and keyboard focus return. Fixed Canvas Pro's stage sizing so its timeline remains visible after font loading. `node --check app.js` passes; no console errors observed. These checks are scoped to the prototype, not a complete accessibility certification.

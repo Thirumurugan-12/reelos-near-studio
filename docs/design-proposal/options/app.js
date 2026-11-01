@@ -149,6 +149,25 @@ if (!chosen) {
   document.body.className = `design ${chosen.theme} ${params.has("embed") ? "embedded" : ""}`;
   root.innerHTML = `<div class="concept-bar"><a href="./">← All 10 designs</a><span>${chosen.id} / ${chosen.name} <span class="bar-tag">· ${chosen.tag}</span></span><button data-action="about">Concept only ⓘ</button></div><div class="editor">${layouts[chosen.theme]()}</div>`;
 }
+// Buttons keep their visible text and accessible name; decorative arrows are hidden.
+document.querySelectorAll("button.primary").forEach((button) => {
+  const original = button.textContent.trim();
+  const copy = original.replace(/[↗→↑✓]$/u, "").trim();
+  if (!copy) {
+    button.classList.add("round-action");
+    return;
+  }
+  const label = document.createElement("span");
+  label.className = "button-copy";
+  label.textContent = copy;
+  const arrow = document.createElement("span");
+  arrow.className = "button-arrow";
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.innerHTML = original.endsWith("✓")
+    ? '<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>';
+  button.replaceChildren(label, arrow);
+});
 const dialog = document.querySelector("#brief-dialog"),
   toast = document.querySelector("#toast");
 let toastTimer, priorFocus;
