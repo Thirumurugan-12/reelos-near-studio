@@ -1,0 +1,9 @@
+# Extended master review
+
+Selected the existing result-then-evidence direction and extended it to include the complete treatment gallery requested by the user. The continuous live-generation narrative and new voiceover alternatives were not produced. Saved outputs, separate examples and actual captured UI are explicitly labelled.
+
+HyperFrames 0.8.220 runtime/layout/motion/craft/audio checks pass; 24/24 measured text contrast checks pass. Snapshot sheets cover each scene, real revision comparisons, recovery controls, the original failed reliability score and the separate successful follow-up. Actual encoded gallery entry/last group and the failed-cohort score were also inspected. All 45 recipes plus three looks are the same gallery verified across twelve encoded groups in the shorter recording. Nonzero media start warnings are intentionally composition-local; they match the checked scene timing.
+
+The delivered master is 193.4 seconds / 5,802 frames, 1920×1080 H.264/AAC, 109,038,618 bytes. The entire file decodes without error. Audio measures −13.1 LUFS integrated / −1.9 dBFS true peak, not personally heard. Opening speech is preserved as a presentation excerpt; the score uses finite segments of the earlier original recording and a final fade. No music-sync feature is implied.
+
+The weakest visual evidence is the enlarged low-resolution SAM thumbnail. Camera mask edges and unproven creator usefulness remain explicit. UI crops are actual captures, not invented controls. The 9/10 target is not claimed: the original cohort stays at seven exports/four visual passes, with two separate framing-permitted successes. The duration grew 13.4 seconds to fit every treatment at normal speed; official portal format and human listening/presentation review remain pending. No paid Meta call, public hosting or external submission.

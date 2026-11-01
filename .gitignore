@@ -23,3 +23,12 @@ coverage/
 /demo-showcase/.hyperframes/
 /demo-showcase/.media/
 /demo-showcase/*.mp4
+
+# Private media and runtime state for the three-minute master
+/demo-master/assets/
+/demo-master/.hyperframes/
+/demo-master/.media/
+/demo-master/*.mp4
+
+/demo-master/.thumbnails/
+/demo-showcase/.thumbnails/

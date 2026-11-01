@@ -1,5 +1,9 @@
 # Local hackathon demo MP4
 
+## Current complete-effects recording
+
+The current recording artifact is `data/reelos-hackathon-demo-all-effects.mp4`: **101.4 seconds, 3,042 frames, 1920×1080 H.264/AAC, 83,346,888 bytes**. All 45 recipes plus 3 extra looks appear in the labelled normal-speed gallery at 20.0–58.4 seconds, on the identical authorized source. Full decode and actual encoded frames from all twelve groups passed inspection. Earlier 75-second files remain preserved. [Chapter map, full-size sequential showcase and measured checks](EFFECT_DEMO.md).
+
 ## Canvas Pro refresh — 1 November 2026
 
 The current review artifact is `data/reelos-hackathon-demo-canvas-pro.mp4`: **75.000 seconds, 1920 × 1080, 30 fps, 2,250 frames, H.264/AAC, 26,559,617 bytes**. It replaces the earlier workspace/media/history images with actual Canvas Pro browser captures. The earlier `data/reelos-hackathon-demo.mp4` is preserved as historical evidence.

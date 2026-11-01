@@ -1,0 +1,5 @@
+# Delivery specification
+
+1920×1080, 30 fps, 193.4 seconds / 5,802 frames after the complete-gallery request. Cream #F5F5F0 ground, dark green #19392C copy, Inter presentation type; real dark Canvas Pro screens. Titles 76–92px, body 32–38px, disclosure 28px. Put key copy inside 110px horizontal margins and below 90px top. Right evidence region begins at x820 except the complete desktop workspace at x550. Use contained real screenshots, never recreated controls. Standard portrait evidence is 420×747 at y165. Hold detail images for reading; only short .4s title arrivals, no decorative drifting. Real video owns scene motion. Source media is ungraded by the presentation. No new voiceover or word-aligned captions.
+
+Keep the original ten-run score (7 exported, 4 visual passes) separate from the two successful framing-permitted follow-ups. Do not claim 9/10 reliability, creator usefulness, public hosting or official compliance. Explicitly disclose 45 adapted MIT recipes + three looks and original Remotion illustrations. Reuse the earlier licensed dependency/footage context. No paid request is permitted for this rendering task.

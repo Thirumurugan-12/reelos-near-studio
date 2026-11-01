@@ -16,3 +16,5 @@ docs/design-references
 
 # Presentation-only assets are not part of the app deployment
 demo-showcase
+
+demo-master

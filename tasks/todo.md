@@ -9,7 +9,8 @@
 ## Remaining hackathon completion gates (1 November audit)
 
 - [x] Refresh the composed walkthrough with the deployed Canvas Pro interface; re-render and verify actual output.
-- [ ] Resolve three-minute master/portal delivery requirements without assuming a duration limit.
+- [x] Render the complete effects recording (101.4 seconds) and extended master (193.4 seconds), retaining all 48 catalogue entries at normal speed.
+- [ ] Confirm portal duration/file limits before selecting a submission cut; no official limit assumed.
 - [x] Run a fixed 10-attempt reliability protocol and retain failures: 7 pipeline exports, 4 visual passes; target not met.
 - [x] Add explicit title-headroom recovery and verify two actual child exports without rewriting the failed cohort.
 - [x] Verify two framing-permitted fresh initial drafts without manual layout repair.
