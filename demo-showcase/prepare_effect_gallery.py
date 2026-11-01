@@ -77,7 +77,14 @@ def build(row):
     )["streams"][0]
     if metadata != {"width": 432, "height": 768, "nb_frames": "96"}:
         raise SystemExit(f"Invalid gallery clip: {output.name}")
-    return {"asset": row["asset"], "sha256": hashlib.sha256(output.read_bytes()).hexdigest()}
+    digest = hashlib.sha256(output.read_bytes()).hexdigest()
+    if digest != row["sha256"]:
+        raise SystemExit(
+            f"Gallery clip identity mismatch: {output.name}. "
+            "The file was preserved. Verify the footage and encoder version before replacing it "
+            "or reviewing a new manifest."
+        )
+    return {"asset": row["asset"], "sha256": digest}
 
 
 with ThreadPoolExecutor(max_workers=4) as pool:

@@ -20,7 +20,7 @@ Open `http://127.0.0.1:3020/#project/demo-master` while the managed preview runs
 
 ## Private assets
 
-`prepare_assets.py` derives/copies previously verified artifacts without model calls. Gallery intervals, exact source identity and all labels are frozen in EFFECT_GALLERY.json. Rebuild the private gallery files from the verified full sampler with:
+`python3 prepare_assets.py` derives/copies previously verified artifacts without model calls, verifies/rebuilds all 48 gallery clips, and retains their entries in ASSET_LEDGER.json. Gallery intervals, exact source identity and all labels are frozen in EFFECT_GALLERY.json. Rebuild the private gallery files from the verified full sampler with:
 
 ```sh
 python3 ../demo-showcase/prepare_effect_gallery.py --target .

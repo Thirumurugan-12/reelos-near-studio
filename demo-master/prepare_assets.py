@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,6 +41,14 @@ def cut(name, source, start, duration, audio=True):
     args += ["-c:a", "aac"] if audio else ["-an"]
     subprocess.run(args + [str(ASSETS / name)], check=True)
     ledger.append({"asset": name, "source": source, "source_in": start, "duration": duration})
+
+
+# Verify/rebuild the entire gallery before updating its provenance ledger.
+subprocess.run(
+    [sys.executable, str(ROOT / "demo-showcase/prepare_effect_gallery.py"), "--target", str(HERE)],
+    check=True,
+)
+gallery = json.loads((HERE / "EFFECT_GALLERY.json").read_text())
 
 
 copy("raw20.mp4", "data/demo-inputs/new-raw-20s.mp4", "Authorized 20-second source derivative")
@@ -108,6 +117,16 @@ ledger.append(
         "source": "original-bed.wav",
         "meaning": "First 47.4s with final 3s fade; no new music synthesis",
     }
+)
+ledger.extend(
+    {
+        "asset": "effect-gallery/" + row["asset"],
+        "source": "EFFECT_GALLERY.json",
+        "source_in": row["source_in"],
+        "source_out": row["source_out"],
+        "meaning": row["name"],
+    }
+    for row in gallery["tiles"]
 )
 for item in ledger:
     item["sha256"] = hashlib.sha256((ASSETS / item["asset"]).read_bytes()).hexdigest()

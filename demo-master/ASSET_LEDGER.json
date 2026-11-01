@@ -129,7 +129,7 @@
   {
     "asset": "bed-tail.wav",
     "source": "original-bed.wav",
-    "meaning": "First 47.4s with final 3s fade",
+    "meaning": "First 47.4s with final 3s fade; no new music synthesis",
     "sha256": "d70146967918c68ef59b4a54eea3ae79f8c2ed0d70a586fd1f5d14e1b8334f76"
   },
   {

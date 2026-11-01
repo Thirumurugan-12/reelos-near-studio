@@ -49,3 +49,5 @@ The 1 November review artifact uses actual captures named `canvas-workspace.png`
 ## Complete effects recording
 
 The user requested every treatment on the supplied video. The recording now includes all 45 recipes and 3 extra looks, labelled in four normal-speed panels from 20.0–58.4 seconds. EFFECT_GALLERY.json freezes source identity and all 48 intervals. Run `python3 prepare_effect_gallery.py` to rebuild missing private tiles from the verified full sampler; it leaves HTML unchanged. Read [the recording chapter map and verification](../docs/EFFECT_DEMO.md). Prior 75-second MP4s remain historical artifacts. The source assets include an additional finite original-score tail for the 101.4-second recording.
+
+Gallery verification checks the frozen clip SHA-256 as well as dimensions/frame count. Same-size footage replacements are rejected and preserved for review. A rebuild with another encoder version may require intentional visual review and new hashes; the helper does not silently bless changed bytes. See [the delivery index](../docs/DELIVERY.md).
