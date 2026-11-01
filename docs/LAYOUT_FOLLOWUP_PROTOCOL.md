@@ -1,0 +1,9 @@
+# Framing-permitted first-draft feasibility check
+
+Registered 1 November 2026 before dispatch. Two fixed attempts: main speaker, then camera occlusion, using fresh projects and freshly uploaded source derivatives. Unlike the earlier fixed-layout cohort, Muse may choose framing, text position and size to make titles readable. Request exactly the three P0 effects, preserving the full source derivative and original audio. The same rights-cleared sources and known occlusion limitations apply.
+
+The main input is the authorized 20-second derivative; the camera input inspects as 17.017 seconds. Required stock copy is STOCK FOOTAGE and TECHNICAL TEST, without invented speech or endorsement. Use the headline at 0–4 seconds, spotlight 4–8 and label 9–13; allow framing to create headroom. No reference, additional effects or illustration assets.
+
+Inspect actual SAM thumbnails before selecting the intended person when multiple candidates are returned. Reuse only that attempt's own discovery masks when resuming. A pass requires a real Muse plan, playable preview, 1080p export, complete decode, readable sampled title/label and preserved audio where present. Retain both attempts, failures and artifacts. No paid retries after unknown outcomes, no substitution of failed attempts, and no merging these results into the earlier ten-attempt score.
+
+This is a two-case feasibility follow-up, not a new 9/10 reliability measurement. Initial reservations are $70/$75 with a known-usage estimate of $1.75387155 and seven unpriced historical calls. Maximum expected additional calls: two SAM, two Muse and one speech request = five $1 reservations. Do not raise the cap automatically or repeat unknown dispatches. Render, export and manual framing remain local operations. Private execution state and media remain under ignored data/layout-followup/.
