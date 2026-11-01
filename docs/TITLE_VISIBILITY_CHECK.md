@@ -15,3 +15,5 @@ This is a detection improvement, not proof of universal readability: three sampl
 - Private measurements and replay results are retained in `data/title-visibility-audit/`. Replays operate on saved assets into temporary output files, without creating versions or changing project pointers.
 
 The historical ten-attempt cohort remains seven pipeline exports and four visual passes. Rejecting a previously accepted bad layout does not turn an original failed attempt into a success or meet the broader 9/10 target.
+
+The backend image was rebuilt and deployed after confirming no queued/running jobs. Compose reports both services healthy, and the running renderer contains the new checks. Read-only API comparisons before/after confirm main v22 and catalog v1 remain selected and usage is unchanged: $75 reserved, $1.87104170 known estimate, seven unpriced calls. These are local allowances/estimates, not confirmed Meta billing. No new model calls were made.
