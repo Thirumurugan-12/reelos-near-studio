@@ -1,49 +1,110 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStudio } from "../lib/use-studio";
+import { time } from "../lib/api";
 import { Assets } from "../components/assets";
 import { Direction } from "../components/direction";
 import { Preview } from "../components/preview";
-import { Timeline } from "../components/timeline";
+import { Timeline, effectLabel } from "../components/timeline";
 import { EffectBrowser } from "../components/effect-browser";
 import { Icon } from "../components/icons";
+import { VersionHistory } from "../components/version-history";
+
+type Tool = "edit" | "effects" | "media" | "moment";
+const toolItems = [
+  { id: "edit", label: "Edit", icon: "layers" },
+  { id: "effects", label: "Looks", icon: "sparkle" },
+  { id: "media", label: "Media", icon: "film" },
+] as const;
+const quickTreatments = [
+  { fx: "backdrop-word", label: "Bold type" },
+  { fx: "orbit", label: "Orbit cards" },
+  { fx: "spotlight", label: "Spotlight" },
+];
 
 export default function Studio() {
   const s = useStudio();
-  const [leftMode, setLeftMode] = useState("assets");
+  const [tool, setTool] = useState<Tool>("edit");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [initialFx, setInitialFx] = useState<string>();
+  const [selectedId, setSelectedId] = useState<string>();
+  const [focusedId, setFocusedId] = useState<string>();
   const [original, setOriginal] = useState(false);
-  const [mobileTab, setMobileTab] = useState("preview");
+  const [dismissedJobError, setDismissedJobError] = useState<string>();
+  const [playhead, setPlayhead] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const sheetCloseRef = useRef<HTMLButtonElement>(null);
+  const historyRef = useRef<HTMLDialogElement>(null);
+  const toolRef = useRef<HTMLElement | null>(null);
   const version = s.project?.versions.find((v) => v.id === s.versionId);
+  const selected = version?.plan.effects.find((e) => e.id === selectedId);
+  const focused = version?.plan.effects.find((e) => e.id === focusedId);
   const source = s.project?.assets.find(
     (a) => a.id === (version?.plan.asset_id || s.sourceId),
   );
+  const mode = tool === "moment" && !selected ? "edit" : tool;
   const prefix = s.project ? `/api/projects/${s.project.id}` : "";
-  const draft = (
-    instruction: string,
-    review: boolean,
-    subject: string,
-    outputMode: "full" | "reel",
-  ) =>
-    s.start({
-      action: "draft",
-      asset_id: s.sourceId,
-      reference_id: s.referenceId || null,
-      instruction,
-      subject_prompt: subject,
-      subject_id: s.subjectId || null,
-      review_storyboard: review,
-      output_mode: outputMode,
-    });
+  const versionNumber = version
+    ? s.project!.versions.length - s.project!.versions.indexOf(version)
+    : 0;
+  function openTool(next: Tool, trigger?: HTMLButtonElement) {
+    setTool(next);
+    setSheetOpen(true);
+    setInitialFx(undefined);
+    if (next === "edit") setFocusedId(undefined);
+    if (trigger) toolRef.current = trigger;
+  }
+  function closeSheet() {
+    setSheetOpen(false);
+    toolRef.current?.focus();
+  }
+  function seekTo(seconds: number) {
+    const video = videoRef.current;
+    if (!video) return;
+    const target = seconds + (original && version ? version.plan.source_in : 0);
+    const apply = () => {
+      video.currentTime = Math.min(
+        Math.max(0, target),
+        Number.isFinite(video.duration) ? video.duration : target,
+      );
+    };
+    if (video.readyState >= 1) apply();
+    else video.addEventListener("loadedmetadata", apply, { once: true });
+    setPlayhead(seconds);
+  }
+  useEffect(() => {
+    if (s.job?.status === "needs_subject") {
+      setTool("edit");
+      setSheetOpen(true);
+    }
+  }, [s.job?.status]);
+  useEffect(() => {
+    if (sheetOpen && window.matchMedia("(max-width: 767px)").matches)
+      sheetCloseRef.current?.focus();
+  }, [sheetOpen, mode]);
+  const visibleError =
+    s.error ||
+    (s.job?.status === "failed" && s.job.id !== dismissedJobError
+      ? s.job.error ||
+        "The last edit did not finish. Your saved versions are still available."
+      : "");
+  const status = s.busy
+    ? s.job && ["queued", "running"].includes(s.job.status)
+      ? s.job.stage
+      : "Preparing your media…"
+    : version?.has_preview
+      ? "Preview ready"
+      : version
+        ? "Storyboard ready"
+        : source
+          ? "Ready for your direction"
+          : "Add footage to begin";
   return (
     <main className="studio">
       <header className="app-header">
         <a href="/" className="wordmark" aria-label="ReelOS home">
-          <span className="brand-icon">
-            <Icon name="film" size={19} />
-          </span>
           reel<span>os</span>
-          <small>BETA</small>
         </a>
         <div className="project-picker">
           <label className="sr-only" htmlFor="project">
@@ -52,8 +113,13 @@ export default function Studio() {
           <select
             id="project"
             value={s.project?.id || ""}
-            onChange={(e) => s.select(e.target.value)}
             disabled={s.busy}
+            onChange={(e) => {
+              s.select(e.target.value);
+              setSelectedId(undefined);
+              setFocusedId(undefined);
+              setOriginal(false);
+            }}
           >
             <option value="" disabled>
               Your workspace
@@ -66,133 +132,99 @@ export default function Studio() {
           </select>
           <button
             className="icon-button"
-            onClick={s.create}
-            disabled={s.busy}
             aria-label="New project"
+            disabled={s.busy}
+            onClick={async () => {
+              await s.create();
+              openTool("media");
+            }}
           >
-            <Icon name="plus" />
+            <Icon name="plus" size={16} />
           </button>
         </div>
         <div className="header-end">
-          <span
-            className={`connection ${s.health?.meta_configured ? "connected" : ""}`}
-          >
-            <span />
-            {s.health?.meta_configured
-              ? "Meta connected"
-              : s.health
-                ? "Meta key needed"
-                : "Connecting"}
-          </span>
           <button
-            className="primary export-button"
-            aria-label="Export video"
-            disabled={!version?.has_preview || s.busy}
-            onClick={() =>
-              s.start({
-                action: "render",
-                version_id: version!.id,
-                quality: "export",
-              })
-            }
+            className="history-button"
+            aria-label="Version history"
+            onClick={() => historyRef.current?.showModal()}
+            disabled={!s.project}
           >
-            <Icon name="download" size={16} />
-            <span>Export</span>
+            <Icon name="clock" size={16} />
+            <span className="history-label">
+              {version ? `v${versionNumber} · History` : "History"}
+            </span>
           </button>
+          {version?.has_export ? (
+            <a
+              className="primary export-button"
+              href={`${prefix}/versions/${version.id}/export`}
+              aria-label="Download MP4"
+            >
+              <span>Download</span>
+              <Icon name="download" size={14} />
+            </a>
+          ) : (
+            <button
+              className="primary export-button"
+              aria-label="Export video"
+              disabled={!version?.has_preview || s.busy}
+              onClick={() =>
+                s.start({
+                  action: "render",
+                  version_id: version!.id,
+                  quality: "export",
+                })
+              }
+            >
+              <span>Export</span>
+              <Icon name="arrow" size={14} />
+            </button>
+          )}
         </div>
       </header>
-      <div className="workspace-heading">
-        <div>
-          <span className="eyebrow">YOUR CREATIVE STUDIO</span>
-          <h1>{s.project?.name || "Good footage. Great possibilities."}</h1>
-        </div>
-        <p>Make something worth watching.</p>
-      </div>
-      {s.error && (
+      <h1 className="sr-only">{s.project?.name || "ReelOS creative studio"}</h1>
+      {visibleError && (
         <div className="error-banner" role="alert">
-          <span>{s.error}</span>
-          <button onClick={() => s.setError("")} aria-label="Dismiss error">
+          <span>{visibleError}</span>
+          <button
+            aria-label="Dismiss error"
+            onClick={() => {
+              s.setError("");
+              setDismissedJobError(s.job?.id);
+            }}
+          >
             ×
           </button>
         </div>
       )}
-      {s.job && (
-        <div
-          className={`job-banner ${s.job.status}`}
-          role="status"
-          aria-live="polite"
-        >
-          <Icon
-            name={s.job.status === "completed" ? "check" : "clock"}
-            size={16}
-          />
-          <span>{s.job.stage}</span>
-          {s.job.progress !== null && s.job.progress !== undefined && (
+      {s.busy && (
+        <div className="job-banner" role="status" aria-live="polite">
+          <span className="activity-dot" />
+          <span>{status}</span>
+          {s.job?.progress != null && (
             <progress
               max={1}
               value={s.job.progress}
               aria-label="Render progress"
             />
           )}
-          {s.job.elapsed && <small>{s.job.elapsed.toFixed(1)}s elapsed</small>}
         </div>
       )}
-      <nav className="mobile-tabs" aria-label="Workspace sections">
-        {["preview", "assets", "effects", "direction", "storyboard"].map(
-          (tab) => (
+      <div className="workspace">
+        <nav className="tool-rail" aria-label="Editor tools">
+          {toolItems.map((item) => (
             <button
-              key={tab}
-              className={mobileTab === tab ? "active" : ""}
-              onClick={() => {
-                setMobileTab(tab);
-                if (tab === "assets" || tab === "effects") setLeftMode(tab);
-              }}
-              aria-pressed={mobileTab === tab}
+              key={item.id}
+              className={mode === item.id ? "active" : ""}
+              aria-pressed={mode === item.id}
+              onClick={(e) => openTool(item.id, e.currentTarget)}
             >
-              {tab[0].toUpperCase() + tab.slice(1)}
+              <Icon name={item.icon} size={20} />
+              <span>{item.label}</span>
             </button>
-          ),
-        )}
-      </nav>
-      <div className={`workspace mobile-${mobileTab}`}>
-        <div className="assets-slot">
-          <nav className="side-modes" aria-label="Assets and effects">
-            {["assets", "effects"].map((mode) => (
-              <button
-                key={mode}
-                className={leftMode === mode ? "active" : ""}
-                aria-pressed={leftMode === mode}
-                onClick={() => setLeftMode(mode)}
-              >
-                {mode === "assets" ? "Assets" : "45 Effects"}
-              </button>
-            ))}
-          </nav>
-          {leftMode === "effects" ? (
-            <EffectBrowser
-              version={version}
-              assets={s.project?.assets || []}
-              busy={s.busy}
-              onDirection={() => setMobileTab("direction")}
-              onApply={async (params, start, end) => {
-                const ok = await s.applyEffect(params, start, end);
-                if (ok) setMobileTab("preview");
-                return ok;
-              }}
-            />
-          ) : (
-            <Assets
-              assets={s.project?.assets || []}
-              sourceId={s.sourceId}
-              referenceId={s.referenceId}
-              onSource={s.setSourceId}
-              onReference={s.setReferenceId}
-              onUpload={s.upload}
-              disabled={s.busy}
-            />
-          )}
-        </div>
-        <div className="preview-slot">
+          ))}
+        </nav>
+        <div className="canvas-main">
           <Preview
             projectId={s.project?.id}
             source={source}
@@ -200,45 +232,30 @@ export default function Studio() {
             original={original}
             onOriginal={setOriginal}
             busy={s.busy}
+            videoRef={videoRef}
+            onTimeChange={(t) =>
+              setPlayhead(
+                t - (original && version ? version.plan.source_in : 0),
+              )
+            }
+            onAddFootage={() => openTool("media")}
           />
-          <div className="version-bar">
-            <label htmlFor="version">
-              <Icon name="clock" size={15} />
-              Version
-            </label>
-            <select
-              id="version"
-              value={s.versionId}
-              onChange={(e) => {
-                s.setVersionId(e.target.value);
-                setOriginal(false);
-              }}
-              disabled={s.busy || !s.project?.versions.length}
-            >
-              <option value="" disabled>
-                No drafts yet
-              </option>
-              {s.project?.versions.map((v, i) => (
-                <option value={v.id} key={v.id}>
-                  v{s.project!.versions.length - i} · {v.summary}
-                </option>
-              ))}
-            </select>
-            {version?.has_preview &&
-              s.project?.current_version_id !== version.id && (
-                <button
-                  className="text-button"
-                  onClick={s.restore}
-                  disabled={s.busy}
-                >
-                  Restore
-                </button>
-              )}
-          </div>
-          <Timeline version={version} />
+          <Timeline
+            version={version}
+            playhead={playhead}
+            selectedId={selectedId}
+            onSeek={seekTo}
+            onSelect={(effect, trigger) => {
+              toolRef.current = trigger;
+              setSelectedId(effect.id);
+              setTool("moment");
+              setSheetOpen(true);
+            }}
+          />
           {version && !version.has_preview && (
             <button
-              className="primary wide"
+              className="storyboard-render primary"
+              disabled={s.busy}
               onClick={() =>
                 s.start({
                   action: "render",
@@ -246,113 +263,271 @@ export default function Studio() {
                   quality: "preview",
                 })
               }
-              disabled={s.busy}
             >
-              Render this storyboard
-              <Icon name="arrow" size={17} />
-            </button>
-          )}
-          {version?.has_export && (
-            <div className="download-bar">
-              <span>
-                <Icon name="check" size={17} /> Your 1080p export is ready.
-              </span>
-              <a
-                className="primary"
-                href={`${prefix}/versions/${version.id}/export`}
-              >
-                Download MP4
-              </a>
-            </div>
-          )}
-          {version && (
-            <a
-              className="plan-link"
-              href={`${prefix}/versions/${version.id}/plan`}
-            >
-              Download editing plan ↗
-            </a>
-          )}
-          {!source && (
-            <button
-              className="mobile-upload-cta primary wide"
-              onClick={() => setMobileTab("assets")}
-            >
-              <Icon name="upload" size={17} /> Add your footage
+              Render storyboard <Icon name="arrow" size={14} />
             </button>
           )}
         </div>
-        <div className="direction-slot">
-          <Direction
-            projectId={s.project?.id}
-            version={version}
-            job={s.job}
-            busy={s.busy}
-            canDraft={!!s.sourceId && !!s.health?.meta_configured}
-            onDraft={draft}
-            onRevise={(instruction) =>
-              s.start({
-                action: "revise",
-                version_id: version?.id,
-                instruction,
-              })
-            }
-            subjectId={s.subjectId}
-            onSubject={s.setSubjectId}
-          />
-          {version && (
-            <button
-              className="text-button new-draft"
-              onClick={() => s.setVersionId("")}
-              disabled={s.busy}
-            >
-              Create a new direction
-            </button>
-          )}
-        </div>
-        <div className="storyboard-slot">
-          <Timeline version={version} />
-          {version ? (
-            <>
-              <ol className="storyboard-beats">
-                {version.storyboard.map((beat) => (
-                  <li key={beat.operation_id}>
-                    <span className="eyebrow">
-                      {beat.start.toFixed(1)}–{beat.end.toFixed(1)}s
-                    </span>
-                    <h2>{beat.text || beat.type.replaceAll("_", " ")}</h2>
-                    <p>{beat.reason}</p>
-                  </li>
-                ))}
-              </ol>
-              <a
-                className="plan-link"
-                href={`${prefix}/versions/${version.id}/plan`}
-              >
-                Download editing plan ↗
-              </a>
-            </>
-          ) : (
-            <div className="storyboard-hint">
-              <h2>Every edit starts with a plan.</h2>
+        <aside
+          className={`inspector ${sheetOpen ? "sheet-open" : ""}`}
+          aria-label="Editor controls"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") closeSheet();
+          }}
+        >
+          <div className="sheet-grip" />
+          <div className="inspector-heading">
+            <div>
+              <h2>
+                {mode === "media"
+                  ? "Your media."
+                  : mode === "effects"
+                    ? "Find your look."
+                    : mode === "moment"
+                      ? "This moment."
+                      : "Make it yours."}
+              </h2>
               <p>
-                Your beats and creative decisions will appear here after you
-                create a draft.
+                {mode === "media"
+                  ? "Footage, references and supporting cards."
+                  : mode === "effects"
+                    ? "45 treatments. One story: yours."
+                    : mode === "moment"
+                      ? "Inspect it. Change only what you need."
+                      : "A few good choices. Your own story."}
               </p>
             </div>
+            <button
+              ref={sheetCloseRef}
+              className="sheet-close icon-button"
+              aria-label="Close controls"
+              onClick={closeSheet}
+            >
+              ×
+            </button>
+          </div>
+          <div className="inspector-content">
+            <div hidden={mode !== "edit"}>
+              {version && (
+                <section
+                  className="quick-treatments"
+                  aria-label="Quick treatments"
+                >
+                  <div className="section-heading">
+                    <h3>Start with a treatment</h3>
+                    <button
+                      className="text-button"
+                      onClick={() => openTool("effects")}
+                    >
+                      Browse all →
+                    </button>
+                  </div>
+                  <div className="treatment-grid">
+                    {quickTreatments.map((p) => (
+                      <button
+                        key={p.fx}
+                        onClick={() => {
+                          setInitialFx(p.fx);
+                          setTool("effects");
+                          setSheetOpen(true);
+                        }}
+                      >
+                        <img src={`/api/effects/${p.fx}/poster`} alt="" />
+                        <span>{p.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+              {!source && (
+                <div className="setup-hint">
+                  <span className="eyebrow">
+                    01 FOOTAGE → 02 DIRECTION → 03 EDIT
+                  </span>
+                  <p>
+                    Add your recording in Media, then tell ReelOS what you want
+                    to make.
+                  </p>
+                  <button
+                    className="text-button"
+                    onClick={() => openTool("media")}
+                  >
+                    Add footage →
+                  </button>
+                </div>
+              )}
+              {focused && (
+                <div className="focus-note">
+                  Revising {effectLabel(focused)} · {time(focused.start)}
+                  <button
+                    className="text-button"
+                    onClick={() => setFocusedId(undefined)}
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+              <Direction
+                key={`${s.project?.id}-${version?.id || "draft"}`}
+                projectId={s.project?.id}
+                version={version}
+                job={s.job}
+                busy={s.busy}
+                canDraft={!!s.sourceId && !!s.health?.meta_configured}
+                onDraft={(instruction, review, subject, outputMode) => {
+                  s.start({
+                    action: "draft",
+                    asset_id: s.sourceId,
+                    reference_id: s.referenceId || null,
+                    instruction,
+                    subject_prompt: subject,
+                    subject_id: s.subjectId || null,
+                    review_storyboard: review,
+                    output_mode: outputMode,
+                  });
+                  setSheetOpen(false);
+                }}
+                onRevise={(instruction) => {
+                  s.start({
+                    action: "revise",
+                    version_id: version?.id,
+                    instruction: focused
+                      ? `Update only effect ${focused.id} (${effectLabel(focused)}, ${focused.start}–${focused.end}s). ${instruction}`
+                      : instruction,
+                  });
+                  setSheetOpen(false);
+                }}
+                focusedLabel={focused ? effectLabel(focused) : undefined}
+                subjectId={s.subjectId}
+                onSubject={s.setSubjectId}
+              />
+              {version && (
+                <button
+                  className="text-button new-draft"
+                  disabled={s.busy}
+                  onClick={() => {
+                    s.setVersionId("");
+                    setFocusedId(undefined);
+                  }}
+                >
+                  Create a new direction →
+                </button>
+              )}
+            </div>
+            {mode === "effects" && (
+              <EffectBrowser
+                key={initialFx || "all"}
+                initialFx={initialFx}
+                initialTime={playhead}
+                version={version}
+                assets={s.project?.assets || []}
+                busy={s.busy}
+                onDirection={() => openTool("edit")}
+                onApply={async (params, start, end) => {
+                  const ok = await s.applyEffect(params, start, end);
+                  if (ok) setSheetOpen(false);
+                  return ok;
+                }}
+              />
+            )}
+            {mode === "media" && (
+              <>
+                <Assets
+                  assets={s.project?.assets || []}
+                  sourceId={s.sourceId}
+                  referenceId={s.referenceId}
+                  onSource={s.setSourceId}
+                  onReference={s.setReferenceId}
+                  onUpload={s.upload}
+                  disabled={s.busy}
+                />
+              </>
+            )}
+            {mode === "moment" && selected && (
+              <section className="moment-detail">
+                <span className="eyebrow">
+                  {time(selected.start)}—{time(selected.end)}
+                </span>
+                <h3>{effectLabel(selected)}</h3>
+                {selected.params.text && (
+                  <p className="moment-copy">
+                    {selected.params.text.replaceAll("|", " / ")}
+                  </p>
+                )}
+                <p className="muted">
+                  {selected.reason ||
+                    "A visual treatment on your original recording."}
+                </p>
+                <button
+                  className="primary wide"
+                  disabled={s.busy}
+                  onClick={() => {
+                    setFocusedId(selected.id);
+                    setTool("edit");
+                  }}
+                >
+                  Revise this moment <Icon name="arrow" size={14} />
+                </button>
+                <button
+                  className="text-button"
+                  onClick={() => seekTo(selected.start)}
+                >
+                  Go to this moment →
+                </button>
+                <p className="privacy-note">
+                  Revisions create a new version. The original edit stays
+                  available.
+                </p>
+              </section>
+            )}
+          </div>
+          {mode === "media" && s.sourceId && !version && (
+            <div className="inspector-footer">
+              <button
+                className="primary wide"
+                disabled={s.busy}
+                onClick={() => openTool("edit")}
+              >
+                Continue to direction <Icon name="arrow" size={14} />
+              </button>
+            </div>
           )}
-        </div>
+        </aside>
       </div>
       <footer className="app-footer">
-        <span>Made with intention. Powered by Meta.</span>
-        <span>
-          Local API allowance reserved: ${s.reserved.toFixed(2)} / $
-          {s.limit.toFixed(0)}{" "}
-          <span title="Conservative request allowances, not confirmed provider billing">
-            ⓘ
-          </span>
+        <span className="studio-state">
+          <span className={`state-dot ${s.busy ? "working" : ""}`} />
+          {status}
         </span>
+        <details className="usage-details">
+          <summary>Usage & connection</summary>
+          <div>
+            <strong>
+              {s.health?.meta_configured ? "Meta connected" : "Meta key needed"}
+            </strong>
+            <p>
+              Local allowance reserved: ${s.reserved.toFixed(2)} / $
+              {s.limit.toFixed(0)}
+            </p>
+            <p className="muted">
+              Conservative request allowances, not confirmed Meta billing.
+            </p>
+          </div>
+        </details>
       </footer>
+      <VersionHistory
+        project={s.project}
+        version={version}
+        busy={s.busy}
+        dialogRef={historyRef}
+        onRestore={s.restore}
+        onSelect={(id) => {
+          s.setVersionId(id);
+          setOriginal(false);
+          setSelectedId(undefined);
+          setFocusedId(undefined);
+        }}
+      />
     </main>
   );
 }

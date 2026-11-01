@@ -12,6 +12,7 @@ export function Direction({
   subjectId,
   onSubject,
   projectId,
+  focusedLabel,
 }: {
   version?: Version;
   job: Job | null;
@@ -27,6 +28,7 @@ export function Direction({
   subjectId: string;
   onSubject: (id: string) => void;
   projectId?: string;
+  focusedLabel?: string;
 }) {
   const [instruction, setInstruction] = useState(
     "A clear, confident explainer. Give the opening a bold headline, keep the focus on me, and add a subtle tracked label.",
@@ -45,7 +47,7 @@ export function Direction({
           <Icon name="sparkle" size={16} />
         </span>
       </div>
-      <p className="muted small">A little intention goes a long way.</p>
+      <p className="muted small">Describe the result. Keep the story yours.</p>
       {!version ? (
         <form
           onSubmit={(e) => {
@@ -54,7 +56,7 @@ export function Direction({
           }}
         >
           <label className="field-label" htmlFor="direction">
-            What do you have in mind?
+            What should this edit feel like?
           </label>
           <textarea
             id="direction"
@@ -141,7 +143,7 @@ export function Direction({
             }
           >
             <Icon name="sparkle" size={17} />
-            {busy ? "Creating your edit…" : "Create draft"}
+            {busy ? "Creating your edit…" : "Generate preview"}
             <Icon name="arrow" size={17} />
           </button>
           <p className="privacy-note">
@@ -155,16 +157,19 @@ export function Direction({
             <span className="eyebrow">EDITOR’S NOTE</span>
             <p>{version.summary}</p>
           </div>
-          <div className="decisions">
-            {version.storyboard.map((beat) => (
-              <div className="decision" key={beat.operation_id}>
-                <span>{beat.start.toFixed(1)}s</span>
-                <p>
-                  {beat.reason || beat.text || beat.type.replaceAll("_", " ")}
-                </p>
-              </div>
-            ))}
-          </div>
+          <details className="decision-details">
+            <summary>View {version.storyboard.length} edit decisions</summary>
+            <div className="decisions">
+              {version.storyboard.map((beat) => (
+                <div className="decision" key={beat.operation_id}>
+                  <span>{beat.start.toFixed(1)}s</span>
+                  <p>
+                    {beat.reason || beat.text || beat.type.replaceAll("_", " ")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </details>
           <form
             className="revision-form"
             onSubmit={(e) => {
@@ -173,7 +178,9 @@ export function Direction({
             }}
           >
             <label className="field-label" htmlFor="revision">
-              Make it yours
+              {focusedLabel
+                ? `Change ${focusedLabel}`
+                : "What would you change?"}
             </label>
             <textarea
               id="revision"
@@ -204,7 +211,7 @@ export function Direction({
               className="primary wide"
               disabled={busy || !revision.trim()}
             >
-              Apply changes
+              Generate revised preview
               <Icon name="arrow" size={17} />
             </button>
           </form>

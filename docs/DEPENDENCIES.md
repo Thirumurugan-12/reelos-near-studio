@@ -1,6 +1,6 @@
 # Dependency and media provenance
 
-Updated 31 October 2026 against installed package metadata and the deployed Docker image. This inventory covers major direct components; locked dependency trees and their bundled notices remain the authoritative inventory for transitive components.
+Updated 1 November 2026 against installed package metadata and the deployed Docker image. This inventory covers major direct components; locked dependency trees and their bundled notices remain the authoritative inventory for transitive components.
 
 ReelOS application, validation, compositing and original illustration code is authored in this repository. The catalog reuses the 45 MIT-licensed Claude drawing recipes, fonts and YuNet model with retained attribution in `backend/reelos/vendor/`; the upstream tracker/CLI/private hook are excluded. The supplied Notion guide and marketplace video-editor agent informed the workflow. See [the catalog inventory](EFFECT_CATALOG.md). [Reference integration](EDITOR_REFERENCE_INTEGRATION.md).
 
@@ -38,3 +38,7 @@ Exact-word captions, music synchronization and arbitrary effects are not impleme
 ## Separate presentation project
 
 The local showcase uses HyperFrames 0.8.220, GSAP 3.14.2 and Inter; its [specific provenance](../demo-showcase/THIRD_PARTY.md) and [review record](../demo-showcase/REVIEW.md) are separate from the production editing engine. Its original locally authored score is presentation material, not an implemented ReelOS music-sync feature.
+
+## Live interface typography
+
+Canvas Pro self-hosts Montserrat, Inter, Archivo Black and Space Mono from the existing licensed font inventory. Copies and SIL Open Font License notices are retained in `frontend/public/fonts/`. These fonts style the web interface; this change does not alter recorded video render profiles.

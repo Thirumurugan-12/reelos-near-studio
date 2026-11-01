@@ -35,6 +35,8 @@ export function EffectBrowser({
   busy,
   onApply,
   onDirection,
+  initialFx,
+  initialTime = 0,
 }: {
   version?: Version;
   assets: Asset[];
@@ -45,6 +47,8 @@ export function EffectBrowser({
     end: number,
   ) => Promise<boolean>;
   onDirection: () => void;
+  initialFx?: string;
+  initialTime?: number;
 }) {
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [query, setQuery] = useState("");
@@ -55,6 +59,7 @@ export function EffectBrowser({
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(3);
   const [error, setError] = useState("");
+  const atLimit = !!version && version.plan.effects.length >= 48;
   const duration = version
     ? version.plan.source_out - version.plan.source_in
     : 0;
@@ -76,10 +81,20 @@ export function EffectBrowser({
     setText(item.accepts_text ? item.example.text.replaceAll("|", "\n") : "");
     setOptions({});
     setMedia([]);
-    setStart(0);
-    setEnd(Math.min(3, duration || 3));
+    const at =
+      Math.round(
+        Math.max(0, Math.min(initialTime, (duration || 3) - 0.1)) * 10,
+      ) / 10;
+    setStart(at);
+    setEnd(Math.min(at + 3, duration || 3));
     setError("");
   }
+  useEffect(() => {
+    if (initialFx && items.length) {
+      const item = items.find((r) => r.id === initialFx);
+      if (item) choose(item);
+    }
+  }, [initialFx, items]);
   function option(key: string, value: string) {
     setOptions((old) => {
       const next = { ...old };
@@ -324,10 +339,16 @@ export function EffectBrowser({
               </button>
             </p>
           )}
+          {atLimit && (
+            <p className="muted small">
+              This edit has reached its 48-moment limit. Select an existing
+              moment in the timeline to revise it, or create a new direction.
+            </p>
+          )}
           <button
             className="primary wide"
             type="submit"
-            disabled={busy || !version}
+            disabled={busy || !version || atLimit}
           >
             Apply and preview
           </button>

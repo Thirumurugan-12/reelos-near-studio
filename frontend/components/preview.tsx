@@ -1,3 +1,4 @@
+import { type RefObject } from "react";
 import { type Asset, type Version, time } from "../lib/api";
 import { Icon } from "./icons";
 
@@ -8,6 +9,9 @@ export function Preview({
   original,
   onOriginal,
   busy,
+  videoRef,
+  onTimeChange,
+  onAddFootage,
 }: {
   projectId?: string;
   source?: Asset;
@@ -15,6 +19,9 @@ export function Preview({
   original: boolean;
   onOriginal: (value: boolean) => void;
   busy: boolean;
+  videoRef: RefObject<HTMLVideoElement | null>;
+  onTimeChange: (time: number) => void;
+  onAddFootage: () => void;
 }) {
   const hasEdit = !!version?.has_preview;
   const src =
@@ -26,7 +33,7 @@ export function Preview({
   return (
     <section className="preview-area" aria-label="Video preview">
       <div className="stage-toolbar">
-        <span className="eyebrow">THE PREVIEW</span>
+        <span className="eyebrow">PREVIEW · 9:16</span>
         <div className="segmented" aria-label="Compare original and edit">
           <button
             onClick={() => onOriginal(true)}
@@ -47,6 +54,9 @@ export function Preview({
       <div className="video-stage">
         {src ? (
           <video
+            ref={videoRef}
+            onTimeUpdate={(e) => onTimeChange(e.currentTarget.currentTime)}
+            onLoadedMetadata={(e) => onTimeChange(e.currentTarget.currentTime)}
             key={src}
             src={src}
             controls
@@ -62,16 +72,18 @@ export function Preview({
               <Icon name="film" size={36} />
             </span>
             <h2>
-              Your next great edit
+              Start with
               <br />
-              starts here.
+              your story.
             </h2>
             <p>
-              Bring your footage.
+              Upload a recording, give it a direction,
               <br />
-              We’ll help it find its form.
+              and make the edit your own.
             </p>
-            <span className="stage-format">PORTRAIT · 9:16</span>
+            <button className="primary" onClick={onAddFootage}>
+              Add your footage <Icon name="arrow" size={16} />
+            </button>
           </div>
         )}
         {busy && (
@@ -96,7 +108,7 @@ export function Preview({
                   ? source.duration
                   : version!.plan.source_out - version!.plan.source_in,
               )
-            : "15–30s"}{" "}
+            : "9:16"}{" "}
           <span className="divider">/</span>{" "}
           {original || !hasEdit ? "Original" : "360p preview"}
         </span>

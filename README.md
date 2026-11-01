@@ -29,7 +29,7 @@ Provider keys are passed to the backend at runtime, excluded from image build co
 5. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
 6. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
 
-Mobile uses a fitted workspace with Preview, Assets, Effects, Direction, and Storyboard tabs. Long forms scroll within their panels. Desktop displays assets, preview/timeline, and direction together.
+Canvas Pro keeps the video and compact timeline in a fitted workspace. Edit, Looks and Media open contextual controls: a side inspector on desktop and a bottom sheet on mobile. Long forms scroll inside the controls without scrolling the page. Version history and export stay in the header. See [the Canvas Pro implementation and validation](docs/CANVAS_PRO.md).
 
 The initial prototype used a 20-second excerpt. Full-video mode now validates source coverage from zero to the complete source duration; it rejects an excerpt instead of silently shortening the recording. The CLI selects this mode with `draft --full-length`. Originals and generated outputs are ignored by Git.
 
