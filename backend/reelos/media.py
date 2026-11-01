@@ -467,8 +467,16 @@ def render(
                     masks = track.at(plan.source_in + t, image.size) if track else {}
                     image, masks = frame_subject(image, masks, plan.framing)
                     for effect in plan.effects:
-                        midpoint = round((effect.start + effect.end) * plan.fps / 2)
-                        if effect.type == "behind_subject_text" and index == midpoint:
+                        # Subject motion can hide a title after a clear midpoint.
+                        # Sample the held layout across the interval, not only its center.
+                        visibility_frames = {
+                            min(
+                                count - 1,
+                                round((effect.start + (effect.end - effect.start) * f) * plan.fps),
+                            )
+                            for f in (0.25, 0.5, 0.75)
+                        }
+                        if effect.type == "behind_subject_text" and index in visibility_frames:
                             mask = masks.get(effect.subject_id)
                             if (
                                 mask is not None

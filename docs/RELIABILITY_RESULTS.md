@@ -40,3 +40,7 @@ Existing main v22 and earlier successful three-set evidence are preserved. Those
 ## Recovery follow-up
 
 An explicit [title-headroom operation](TITLE_LAYOUT_RECOVERY.md) now recovers the failed main layout and an occluded camera title using cached tracking, without new model calls. Both 1080p child exports are verified and only framing changes. These are manual recovery demonstrations; all ten original outcomes and the four-of-ten visual score remain unchanged.
+
+## Moving-subject detection follow-up
+
+A [three-point title visibility check](TITLE_VISIBILITY_CHECK.md) now addresses the saved camera plans that passed midpoint-only validation while failing visual review. This improves rejection and exposes existing framing recovery; it does not change the original cohort outcomes or establish a new reliability rate.

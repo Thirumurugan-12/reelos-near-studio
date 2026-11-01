@@ -147,3 +147,39 @@ def test_full_video_preserves_audio_tail_after_last_camera_frame(tmp_path):
         check=True,
     )
     assert int(count.stdout.strip()) == round(duration * 30)
+
+
+@pytest.mark.parametrize("occlusion_fraction", [0.25, 0.75])
+def test_rejects_headline_hidden_away_from_midpoint(source, tmp_path, occlusion_fraction):
+    """A moving subject can clear the midpoint but cover the title earlier/later."""
+    plan = EditPlan.model_validate(
+        {
+            "asset_id": "a" * 32,
+            "source_in": 0.2,
+            "source_out": 0.8,
+            "effects": [
+                {
+                    "id": "title",
+                    "type": "behind_subject_text",
+                    "start": 0.1,
+                    "end": 0.5,
+                    "subject_id": "0",
+                    "params": {"text": "YOUR STORY", "y": 0.1},
+                }
+            ],
+        }
+    )
+
+    class MovingTrack:
+        subjects = ["0"]
+
+        def at(self, seconds, size):
+            covered_at = plan.source_in + 0.1 + 0.4 * occlusion_fraction
+            covered = abs(seconds - covered_at) < 1 / 60
+            return {"0": Image.new("L", size, 255 if covered else 0)}
+
+    output = tmp_path / "existing.mp4"
+    output.write_bytes(b"previous playable version")
+    with pytest.raises(ValueError, match="headline is mostly hidden"):
+        render(source, plan, output, width=180, track=MovingTrack())
+    assert output.read_bytes() == b"previous playable version"

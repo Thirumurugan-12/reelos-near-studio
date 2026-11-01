@@ -40,3 +40,7 @@ The [explicit framing recovery](TITLE_LAYOUT_RECOVERY.md) now produces readable,
 ## Framing-permitted first-draft follow-up
 
 Two fresh initial drafts now pass sampled visual checks, complete native preview playback and 1080p export without manual layout repair; see LAYOUT_FOLLOWUP_RESULTS.md. This is a different direction condition and does not overwrite the failed ten-attempt result or establish its 9/10 target. Current local reservation cap is fully allocated: $75/$75, $1.87104170 known estimate, seven unpriced calls. Official portal details were rechecked in the real browser and redirect to sign-in; participant requirements have been requested.
+
+## Moving-subject validation follow-up
+
+Saved camera failures exposed a midpoint-only visibility blind spot. The renderer now checks three positions across each behind-person title interval; see TITLE_VISIBILITY_CHECK.md. This is an additional local quality guard, not a new paid model cohort or evidence of the unmet 9/10 target.
