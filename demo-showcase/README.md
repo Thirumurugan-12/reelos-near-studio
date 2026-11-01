@@ -6,7 +6,7 @@ The existing video-editing app still uses its shared Python/FFmpeg engine and or
 
 ## Result and preview
 
-- Verified MP4 in this workspace: `../data/reelos-hackathon-demo.mp4` (media stays outside Git).
+- Verified MP4 in this workspace: `../data/reelos-hackathon-demo-canvas-pro.mp4` (media stays outside Git).
 - Editable local preview: `http://127.0.0.1:3017/#project/demo-showcase` while the managed preview is running.
 - Review notes and deliberate limits: `REVIEW.md`.
 - Shot/source evidence: `STORYBOARD.md`, `SPEC.md`, and `ASSET_LEDGER.json`.
@@ -20,7 +20,7 @@ cd demo-showcase
 npm run check
 npx hyperframes snapshot --review
 npx hyperframes preview --background --port 3017 --no-open
-HYPERFRAMES_NO_TELEMETRY=1 npm run render -- --quality delivery --output ../data/reelos-hackathon-demo.mp4
+HYPERFRAMES_NO_TELEMETRY=1 npm run render -- --quality delivery --output ../data/reelos-hackathon-demo-canvas-pro.mp4
 ```
 
 Review the snapshots before rendering. CLI scripts pin 0.8.220. No paid Meta or media-generation calls are required to re-render the frozen composition. The preview binds to 127.0.0.1. Do not publish private media or the project automatically.
@@ -41,3 +41,7 @@ Raw footage, source audio, captures, rendered movies, history and media cache ar
 ## Presentation status
 
 The local walkthrough can be reviewed now. Its 75-second length is a preparation choice; current official portal duration, hosting/access requirements and the final creator-feedback gate remain unverified. Nothing has been published or submitted externally. The two alternative directions in `STORYLINES.md` were considered but not produced.
+
+## Canvas Pro capture refresh
+
+The 1 November review artifact uses actual captures named `canvas-workspace.png`, `canvas-media.png`, `canvas-history-baseline.png` and `canvas-history-revision.png`. Capture dimensions/crop descriptions and hashes are in ASSET_LEDGER.json. Source is the restored rehearsal-3 project, not a mockup. Media/history are direct screenshot crops; text and states are not altered. Older captures and the October MP4 remain historical material. The asset preparation script preserves the new capture metadata when rebuilding derived media.

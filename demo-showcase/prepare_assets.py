@@ -13,6 +13,13 @@ ROOT = PROJECT.parent
 ASSETS = PROJECT / "assets"
 ASSETS.mkdir(exist_ok=True)
 ledger = []
+# Keep the separately captured Canvas Pro evidence descriptions on asset rebuild.
+prior_ledger = json.loads((PROJECT / "ASSET_LEDGER.json").read_text())
+capture_metadata = {
+    entry["asset"]: entry
+    for entry in prior_ledger
+    if entry["asset"].startswith("canvas-")
+}
 
 
 def cut(name, source, start, duration):
@@ -139,7 +146,7 @@ for asset in sorted(ASSETS.iterdir()):
         continue
     if asset.name not in known:
         ledger.append(
-            {
+            capture_metadata.get(asset.name) or {
                 "asset": asset.name,
                 "source": "compose_audio.py: original deterministic score"
                 if asset.name == "original-bed.wav"

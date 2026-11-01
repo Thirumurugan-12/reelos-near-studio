@@ -1,5 +1,15 @@
 # Local hackathon demo MP4
 
+## Canvas Pro refresh — 1 November 2026
+
+The current review artifact is `data/reelos-hackathon-demo-canvas-pro.mp4`: **75.000 seconds, 1920 × 1080, 30 fps, 2,250 frames, H.264/AAC, 26,559,617 bytes**. It replaces the earlier workspace/media/history images with actual Canvas Pro browser captures. The earlier `data/reelos-hackathon-demo.mp4` is preserved as historical evidence.
+
+Full HyperFrames check passed with zero runtime/layout/motion/craft/audio errors and **25/25 contrast checks**; the same nine intentional scene-local media warnings remain. Actual encoded frames at 10 and 53 seconds were inspected. The entire file decodes without error. Decoded PCM SHA-256 matches the previous demo exactly (`f3b9c978c3336f980f6b000068be0c43ab3ccacf076f10b5ed0d58b4d531aaa2`); no new listening claim is made. Delivery render took 26.4 seconds, measuring presentation rendering only.
+
+The captures show rehearsal project `5988d17cb3a34cf2967a0b442c6d6936`, its existing source/reference, current baseline v1 and retained revision v2. Selecting v2 for its capture did not restore it or change the durable baseline. Asset hashes and capture descriptions are retained in `demo-showcase/ASSET_LEDGER.json`. Verification logs/frames are ignored under `data/completion-audit/`. No model calls, external publication or submission occurred. Portal requirements, creator feedback and human listening review remain open.
+
+## Historical 30 October artifact
+
 Verified 30 October 2026. The composed walkthrough is ready for local review; nothing has been published or submitted. Current portal requirements, creator feedback (deferred by the user until the end) and human listening review remain open.
 
 ## Artifact

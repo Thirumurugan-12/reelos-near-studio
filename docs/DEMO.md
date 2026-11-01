@@ -44,4 +44,4 @@ The original source, reference, plan, preview, export and request ledger provide
 
 ## Current interface and remaining preparation
 
-The live app now uses [Canvas Pro](CANVAS_PRO.md): Edit, Looks and Media tools, a compact timeline, mobile control sheets and header history/export. The 30 October composed walkthrough contains real captures of the earlier interface; refresh those captures and re-render before treating it as a current-interface presentation. Do not relabel historical captures as current. [Completion audit](COMPLETION_AUDIT.md).
+The live app now uses [Canvas Pro](CANVAS_PRO.md): Edit, Looks and Media tools, a compact timeline, mobile control sheets and header history/export. The refreshed `data/reelos-hackathon-demo-canvas-pro.mp4` now shows actual Canvas Pro captures and has passed full decode/frame inspection. The 30 October artifact is retained as historical evidence. [Completion audit](COMPLETION_AUDIT.md).

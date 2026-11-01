@@ -148,5 +148,29 @@
     "asset": "workspace.png",
     "source": "Actual ReelOS UI capture or SAM thumbnail; see README.md",
     "sha256": "07183beb043afb7ca542bfef295b53365e3b369332a905e97819b477743cd6ac"
+  },
+  {
+    "asset": "canvas-workspace.png",
+    "source": "Actual browser capture on 1 November 2026, project 5988d17cb3a34cf2967a0b442c6d6936",
+    "meaning": "Actual Canvas Pro workspace, restored rehearsal baseline v1",
+    "sha256": "e288808603f921c88197c518fee2b192c9669cf07067e77f74aa4a2226b32a27"
+  },
+  {
+    "asset": "canvas-media.png",
+    "source": "Actual browser capture on 1 November 2026, project 5988d17cb3a34cf2967a0b442c6d6936",
+    "meaning": "Actual Canvas Pro media inspector, source and selected reference; screenshot crop x960 y64 w320 h628",
+    "sha256": "5039493a79104e6cc74570dc922ab630506e5e863d237a964718ca55990dd008"
+  },
+  {
+    "asset": "canvas-history-baseline.png",
+    "source": "Actual browser capture on 1 November 2026, project 5988d17cb3a34cf2967a0b442c6d6936",
+    "meaning": "Actual current baseline v1 and retained v2; screenshot crop x360 y190 w560 h340",
+    "sha256": "4397e04a7869d73ab5951222370d717a1ede9b392729051e8ed19417300680c2"
+  },
+  {
+    "asset": "canvas-history-revision.png",
+    "source": "Actual browser capture on 1 November 2026, project 5988d17cb3a34cf2967a0b442c6d6936",
+    "meaning": "Actual selected v2 preview while v1 remains Current; screenshot crop x360 y161 w560 h398",
+    "sha256": "e2251684cb02e42c2876cd59156d5348bf3d4c70c1ce83dad8608ba99a524285"
   }
 ]
