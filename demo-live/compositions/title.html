@@ -1,0 +1,15 @@
+<template><style>
+#root{position:absolute;inset:0;background:#0B0F0D;font-family:Inter,sans-serif;color:#F4F4F1}
+.name{position:absolute;left:0;right:0;top:330px;text-align:center;font-family:"Archivo Black",sans-serif;font-size:220px;letter-spacing:-.04em}
+.name span{color:#EAFF81}
+.roles{position:absolute;left:0;right:0;top:640px;text-align:center;font-family:"Space Mono",monospace;font-weight:700;font-size:30px;letter-spacing:.08em;color:#C9CEC9}
+</style><div id="root" data-composition-id="title" data-width="1920" data-height="1080">
+<div id="title-name" class="clip name" data-start="0" data-duration="3.2" data-track-index="0">reel<span>os</span></div>
+<div id="title-roles" class="clip roles" data-start="0" data-duration="3.2" data-track-index="1">MUSE SPARK PLANS · SAM 3.1 TRACKS · HYPERFRAMES RENDERS</div>
+</div><script>
+const tl = gsap.timeline({paused:true});
+tl.fromTo("#title-name", {opacity:0, scale:1.12, filter:"blur(14px)"}, {opacity:1, scale:1, filter:"blur(0px)", duration:0.5, ease:"expo.out"}, 0.05);
+tl.fromTo("#title-roles", {opacity:0, y:16}, {opacity:1, y:0, duration:0.4, ease:"expo.out"}, 0.45);
+tl.to(["#title-name", "#title-roles"], {opacity:0, duration:0.22, ease:"power2.in"}, 2.9000000000000004);
+window.__timelines["title"] = tl;
+</script></template>

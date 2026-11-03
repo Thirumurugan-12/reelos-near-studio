@@ -1,0 +1,14 @@
+<template><style>
+#root{position:absolute;inset:0;background:#0B0F0D;font-family:Inter,sans-serif;color:#F4F4F1}
+.num{position:absolute;left:160px;top:330px;font-family:"Archivo Black",sans-serif;font-size:240px;line-height:1;color:#EAFF81}
+.line{position:absolute;left:170px;top:610px;width:1500px;font-family:"Archivo Black",sans-serif;font-size:84px;line-height:1.05;letter-spacing:-.02em}
+</style><div id="root" data-composition-id="ch2" data-width="1920" data-height="1080">
+<div id="ch2-num" class="clip num" data-start="0" data-duration="2.5" data-track-index="0">02</div>
+<div id="ch2-line" class="clip line" data-start="0" data-duration="2.5" data-track-index="1">Many clips. One reel.</div>
+</div><script>
+const tl = gsap.timeline({paused:true});
+tl.fromTo("#ch2-num", {opacity:0, x:-60}, {opacity:1, x:0, duration:0.5, ease:"expo.out"}, 0.05);
+tl.fromTo("#ch2-line", {opacity:0, y:30, filter:"blur(10px)"}, {opacity:1, y:0, filter:"blur(0px)", duration:0.45, ease:"expo.out"}, 0.25);
+tl.to(["#ch2-num", "#ch2-line"], {opacity:0, duration:0.2, ease:"power2.in"}, 2.25);
+window.__timelines["ch2"] = tl;
+</script></template>

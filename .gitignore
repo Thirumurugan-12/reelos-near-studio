@@ -57,3 +57,9 @@ coverage/
 
 # HyperFrames audio waveform caches
 **/.waveform-cache/
+
+# Live-recording submission demo (links to private media)
+/demo-live/assets/
+/demo-live/.hyperframes/
+/demo-live/.thumbnails/
+/demo-live/*.mp4
