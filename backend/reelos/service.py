@@ -6,7 +6,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from reelos import montage
+from reelos import carousel, montage
 from reelos.config import Settings
 from reelos.graphics import prepare_graphics
 from reelos.media import MaskTrack, render
@@ -118,7 +118,12 @@ class Editor:
     ) -> dict:
         assets = {a["id"]: a for a in self.store.list("asset", project_id)}
         validate_assets(plan, assets)
-        profile = {"font": "aileron", "pillow": "12.3.0", "version": "1"}
+        profile = {
+            "font": "aileron",
+            "pillow": "12.3.0",
+            "version": "1",
+            "broll_art": self.settings.broll_art,
+        }
         if parent:
             previous = self.store.get("version", parent, project_id)
             profile = previous.get("render_profile", {"font": "system", "version": "legacy"})
@@ -244,6 +249,28 @@ class Editor:
             preview.hardlink_to(export)
         version.update(has_preview=True, has_export=True)
 
+    def broll_art(self, params, stage=None) -> Path:
+        """One Muse Image illustration per distinct insert, cached by its prompt."""
+        import hashlib
+
+        prompt = (
+            "Editorial illustration for a B-roll card in a short creator video. "
+            f"Subject: {params.title}. Detail: {params.body}. One clear focal subject, bold "
+            f"simple composition, cinematic light, rich colour with {params.accent} accents. "
+            "No text, letters, numbers, logos or watermarks. No real or recognisable people."
+        )
+        key = hashlib.sha256(("muse-image-1.0|1536x1024|" + prompt).encode()).hexdigest()[:32]
+        path = self.store.root / "broll-art" / f"{key}.png"
+        if not path.exists():
+            if stage:
+                stage("Muse Image is illustrating the story")
+            image = self.meta.images(prompt, "1536x1024")[0]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            partial = path.with_suffix(".partial")
+            partial.write_bytes(image)
+            partial.rename(path)
+        return path
+
     def queue(self, project_id: str, request: dict) -> dict:
         if any(j["status"] in {"queued", "running"} for j in self.store.list("job", project_id)):
             raise ValueError("This project already has a job running.")
@@ -341,6 +368,50 @@ class Editor:
             elif req["action"] == "restyle":
                 version = self.restyle(pid, req, stage)
                 job["version_id"] = version["id"]
+            elif req["action"] == "paint_broll":
+                parent = self.store.get("version", req["version_id"], pid)
+                if parent.get("kind") in {"montage", "trip"}:
+                    raise ValueError("Multi-clip reels have no B-roll inserts to paint.")
+                plan = EditPlan.model_validate(parent["plan"])
+                if not any(e.type == "graphic_insert" for e in plan.effects):
+                    raise ValueError("This edit has no B-roll inserts to paint.")
+                version = self.version(
+                    pid,
+                    plan,
+                    parent["id"],
+                    "B-roll painted by Muse Image",
+                    parent.get("track_key"),
+                    parent.get("observations"),
+                )
+                # Same plan and tracking; only the illustration source changes.
+                version["render_profile"] = dict(version["render_profile"]) | {
+                    "broll_art": "muse-image"
+                }
+                self.store.put("version", version["id"], version)
+                job["version_id"] = version["id"]
+            elif req["action"] == "carousel":
+                version = self.store.get("version", req["version_id"], pid)
+                if version.get("kind") not in {"montage", "trip"}:
+                    raise ValueError("Carousels are made from multi-clip reels.")
+                job["version_id"] = version["id"]
+                clips = [self.store.get("asset", cid, pid) for cid in version["clip_ids"]]
+                version["carousel"] = carousel.make(
+                    self.meta,
+                    version,
+                    {c["id"]: c for c in clips},
+                    {c["id"]: self.asset_dir(c["id"]) for c in clips},
+                    self.version_dir(version["id"]) / "carousel",
+                    stage,
+                )
+                self.store.put("version", version["id"], version)
+                job.update(
+                    status="completed",
+                    progress=1,
+                    stage="Carousel ready",
+                    elapsed=time.monotonic() - started,
+                )
+                self.store.put("job", id, job)
+                return
             elif req["action"] == "revise":
                 parent = self.store.get("version", req["version_id"], pid)
                 if parent.get("kind") in {"montage", "trip"}:
@@ -377,8 +448,14 @@ class Editor:
             if target is not None and not target.exists():
                 if any(e.type == "graphic_insert" for e in plan.effects):
                     stage("Illustrating the story")
+                art = {}
+                if version.get("render_profile", {}).get("broll_art") == "muse-image":
+                    inserts = [e for e in plan.effects if e.type == "graphic_insert"]
+                    with ThreadPoolExecutor(max_workers=3) as pool:
+                        paths = list(pool.map(lambda e: self.broll_art(e.params, stage), inserts))
+                    art = {e.id: path for e, path in zip(inserts, paths, strict=True)}
                 graphics = prepare_graphics(
-                    plan, self.store.root, renderer=self.settings.graphics_renderer
+                    plan, self.store.root, renderer=self.settings.graphics_renderer, art=art
                 )
                 track = None
                 if version.get("track_key"):

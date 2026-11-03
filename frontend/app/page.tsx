@@ -326,6 +326,11 @@ export default function Studio() {
                     s.makeReel(ids, title, direction, style, showTimes);
                     setSheetOpen(false);
                   }}
+                  projectId={s.project?.id}
+                  onCarousel={() => {
+                    s.makeCarousel();
+                    setSheetOpen(false);
+                  }}
                   onRestyle={(style, showTimes) => {
                     s.restyle(style, showTimes);
                     setSheetOpen(false);
@@ -392,6 +397,34 @@ export default function Studio() {
                   </button>
                 </div>
               )}
+              {version &&
+                !onReel &&
+                version.render_profile?.broll_art !== "muse-image" &&
+                version.plan.effects.some(
+                  (e) => e.type === "graphic_insert",
+                ) && (
+                  <section className="paint-broll" aria-label="Paint B-roll">
+                    <div className="section-heading">
+                      <h3>Paint the B-roll</h3>
+                      <span className="optional">Muse Image</span>
+                    </div>
+                    <p className="muted small">
+                      Muse Image illustrates each B-roll card from its own text.
+                      Same plan, new version.
+                    </p>
+                    <button
+                      className="secondary wide"
+                      disabled={s.busy}
+                      onClick={() => {
+                        s.paintBroll();
+                        setSheetOpen(false);
+                      }}
+                    >
+                      Paint B-roll with Muse Image{" "}
+                      <Icon name="sparkle" size={14} />
+                    </button>
+                  </section>
+                )}
               {version && !onReel && (
                 <fieldset className="framing-controls" disabled={s.busy}>
                   <legend>Framing</legend>

@@ -10,14 +10,14 @@
 .phone .note{margin-top:20px;font-size:24px;line-height:1.35;color:#C9CEC9}
 </style><div id="root" data-composition-id="single-result" data-width="1920" data-height="1080">
 <div class="chapter">01 · ONE VIDEO · RESULT</div>
-<div id="single-result-head" class="clip head" data-start="0" data-duration="8" data-track-index="5"><h2>Same voice.<br>New edit.</h2><p>Original, Muse's first edit, and the one-line revision.</p></div>
-<div class="phone" style="left:760px"><div class="label">Original</div><video id="single-result-p0" class="clip" src="assets/single-source.mp4" data-start="0" data-duration="8" data-media-start="1.0" data-track-index="0" muted playsinline></video><div class="note">Your recording</div></div>
-<div class="phone" style="left:1160px"><div class="label">First edit</div><video id="single-result-p1" class="clip" src="assets/single-draft.mp4" data-start="0" data-duration="8" data-media-start="1.0" data-track-index="1" muted playsinline></video><div class="note">Headline, spotlight, B-roll</div></div>
-<div class="phone" style="left:1560px"><div class="label">Revised</div><video id="single-result-p2" class="clip" src="assets/single-revised.mp4" data-start="0" data-duration="8" data-media-start="1.0" data-track-index="2" muted playsinline></video><div class="note">"Lower only the headline"</div></div>
+<div id="single-result-head" class="clip head" data-start="0" data-duration="5.5" data-track-index="5"><h2>Same voice.<br>New edit.</h2><p>Original, Muse's first edit, and the one-line revision.</p></div>
+<div class="phone" style="left:760px"><div class="label">Original</div><video id="single-result-p0" class="clip" src="assets/single-source.mp4" data-start="0" data-duration="5.5" data-media-start="1.0" data-track-index="0" muted playsinline></video><div class="note">Your recording</div></div>
+<div class="phone" style="left:1160px"><div class="label">First edit</div><video id="single-result-p1" class="clip" src="assets/single-draft.mp4" data-start="0" data-duration="5.5" data-media-start="1.0" data-track-index="1" muted playsinline></video><div class="note">Headline, spotlight, B-roll</div></div>
+<div class="phone" style="left:1560px"><div class="label">Revised</div><video id="single-result-p2" class="clip" src="assets/single-revised.mp4" data-start="0" data-duration="5.5" data-media-start="1.0" data-track-index="2" muted playsinline></video><div class="note">"Lower only the headline"</div></div>
 </div><script>
 const tl = gsap.timeline({paused:true});
 tl.fromTo("#single-result-head h2", {opacity:0, y:30, filter:"blur(8px)"}, {opacity:1, y:0, filter:"blur(0px)", duration:0.45, ease:"expo.out"}, 0.1);
 tl.fromTo("#root .phone", {opacity:0, y:60}, {opacity:1, y:0, duration:0.55, stagger:0.12, ease:"expo.out"}, 0.2);
-tl.set({}, {}, 8);
+tl.set({}, {}, 5.5);
 window.__timelines["single-result"] = tl;
 </script></template>

@@ -41,7 +41,12 @@ def frame_count(duration: float) -> int:
     return max(6, math.ceil(duration * FPS))
 
 
-def prepare_graphics(plan, root: Path, renderer: str = "hyperframes") -> dict:
+def prepare_graphics(
+    plan, root: Path, renderer: str = "hyperframes", art: dict[str, Path] | None = None
+) -> dict:
+    """Render each graphic insert once. ``art`` maps effect IDs to Muse Image illustrations
+    that replace the fixed template illustration (HyperFrames only)."""
+    art = art or {}
     if renderer not in RENDERER_IDS:
         raise ValueError(f"Unknown graphics renderer: {renderer}")
     directories, requests = {}, []
@@ -51,9 +56,16 @@ def prepare_graphics(plan, root: Path, renderer: str = "hyperframes") -> dict:
         props = effect.params.model_dump() | {"duration": effect.end - effect.start}
         # Layout is composited over the presenter; the underlying art is reusable.
         props.pop("presentation", None)
+        if renderer == "hyperframes" and effect.id in art:
+            props["art"] = hashlib.sha256(art[effect.id].read_bytes()).hexdigest()[:24]
+            props["art_path"] = str(art[effect.id])
         key = hashlib.sha256(
             json.dumps(
-                {"renderer": RENDERER_IDS[renderer], "props": props}, sort_keys=True
+                {
+                    "renderer": RENDERER_IDS[renderer],
+                    "props": {k: v for k, v in props.items() if k != "art_path"},
+                },
+                sort_keys=True,
             ).encode()
         ).hexdigest()
         directory = root / "graphics" / key
@@ -96,6 +108,8 @@ def _child_env() -> dict:
 
 def hyperframes_command(project: Path, output: Path, props: dict) -> list:
     variables = {key: props[key] for key in ("template", "title", "body", "accent")}
+    if props.get("art"):
+        variables["template"] = "generated"  # the Muse Image illustration replaces the template
     return [
         str(hyperframes_binary()),
         "render",
@@ -128,6 +142,8 @@ def _render_hyperframes(requests: list) -> None:
             if html.count(DURATION_MARKER) != 2:
                 raise ValueError(FAILED)
             index.write_text(html.replace(DURATION_MARKER, f'data-duration="{frames / FPS:.6f}"'))
+            if props.get("art_path"):
+                shutil.copyfile(props["art_path"], project / "assets" / "art.png")
             try:
                 subprocess.run(
                     hyperframes_command(project, output, props),

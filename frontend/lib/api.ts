@@ -28,6 +28,8 @@ export type Version = {
   id: string;
   kind?: "montage" | "trip";
   montage?: ReelPlan;
+  carousel?: { slides: string[]; style?: string; model?: string };
+  render_profile?: { broll_art?: string };
   trip?: ReelPlan;
   parent_id: string | null;
   created_at: number;

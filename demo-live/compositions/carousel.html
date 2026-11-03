@@ -1,0 +1,39 @@
+<template><style>
+#root{position:absolute;inset:0;overflow:hidden;background:#0B0F0D;font-family:Inter,sans-serif;color:#F4F4F1}
+.chapter{position:absolute;left:80px;top:72px;font-family:"Space Mono",monospace;font-weight:700;font-size:26px;letter-spacing:.12em;color:#EAFF81}
+.head{position:absolute;left:80px;top:250px;width:640px;right:auto;bottom:auto;height:auto}
+.head h2{margin:0;font-family:"Archivo Black",sans-serif;font-weight:400;font-size:76px;line-height:1;letter-spacing:-.02em}
+.head p{margin:26px 0 0;font-size:30px;line-height:1.35;color:#C9CEC9}
+.head b{color:#EAFF81;font-weight:700}
+.phone{position:absolute;left:1000px;top:110px;width:460px;height:860px;border-radius:52px;background:#1b1e21;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 2px #2a2f33}
+.phone .bar{position:absolute;left:20px;right:20px;top:34px;height:56px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:22px}
+.phone .bar span{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#EAFF81,#5fb3a1)}
+.view{position:absolute;left:20px;top:100px;width:420px;height:525px;overflow:hidden;border-radius:6px}
+#car-strip{position:absolute;left:0;top:0;height:525px;display:flex}
+#car-strip img{width:420px;height:525px;object-fit:cover;flex:none}
+.dots{position:absolute;left:0;right:0;top:648px;display:flex;justify-content:center;gap:9px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#3a3f44}
+#car-dot0{background:#EAFF81}
+.cap{position:absolute;left:20px;right:20px;top:690px;font-size:21px;line-height:1.4;color:#C9CEC9}
+</style><div id="root" data-composition-id="carousel" data-width="1920" data-height="1080">
+<div class="chapter">02 · MANY CLIPS · RESULT</div>
+<div id="car-head" class="clip head" data-start="0" data-duration="6.5" data-track-index="0"><h2>Swipe-ready<br>carousel.</h2><p><b>Muse Image</b> restyles real frames from Muse's shots. ReelOS typesets your title, captions and camera times.</p></div>
+<div id="car-phone" class="clip phone" data-start="0" data-duration="6.5" data-track-index="1">
+<div class="bar"><span></span>bluesense</div>
+<div class="view"><div id="car-strip"><img src="assets/slides/slide-01.png" alt="" /><img src="assets/slides/slide-02.png" alt="" /><img src="assets/slides/slide-03.png" alt="" /><img src="assets/slides/slide-04.png" alt="" /><img src="assets/slides/slide-05.png" alt="" /><img src="assets/slides/slide-06.png" alt="" /></div></div>
+<div class="dots"><i id="car-dot0"></i><i id="car-dot1"></i><i id="car-dot2"></i><i id="car-dot3"></i><i id="car-dot4"></i><i id="car-dot5"></i></div>
+<div class="cap"><b>bluesense</b> Nandi Hills, 29 Aug · six slides from one morning ride</div>
+</div>
+</div><script>
+const tl = gsap.timeline({paused:true});
+tl.fromTo("#car-head h2", {opacity:0, y:30, filter:"blur(8px)"}, {opacity:1, y:0, filter:"blur(0px)", duration:0.45, ease:"expo.out"}, 0.1);
+tl.fromTo("#car-phone", {opacity:0, y:60}, {opacity:1, y:0, duration:0.55, ease:"expo.out"}, 0.15);
+tl.set("#car-strip", {x:0}, 0);
+tl.to("#car-strip", {x: -420, duration: 0.45, ease: "power3.inOut"}, 0.90);tl.set("#car-dot1", {backgroundColor: "#EAFF81"}, 1.10);tl.set("#car-dot0", {backgroundColor: "#3a3f44"}, 1.10);
+tl.to("#car-strip", {x: -840, duration: 0.45, ease: "power3.inOut"}, 1.96);tl.set("#car-dot2", {backgroundColor: "#EAFF81"}, 2.16);tl.set("#car-dot1", {backgroundColor: "#3a3f44"}, 2.16);
+tl.to("#car-strip", {x: -1260, duration: 0.45, ease: "power3.inOut"}, 3.02);tl.set("#car-dot3", {backgroundColor: "#EAFF81"}, 3.22);tl.set("#car-dot2", {backgroundColor: "#3a3f44"}, 3.22);
+tl.to("#car-strip", {x: -1680, duration: 0.45, ease: "power3.inOut"}, 4.08);tl.set("#car-dot4", {backgroundColor: "#EAFF81"}, 4.28);tl.set("#car-dot3", {backgroundColor: "#3a3f44"}, 4.28);
+tl.to("#car-strip", {x: -2100, duration: 0.45, ease: "power3.inOut"}, 5.14);tl.set("#car-dot5", {backgroundColor: "#EAFF81"}, 5.34);tl.set("#car-dot4", {backgroundColor: "#3a3f44"}, 5.34);
+tl.set({}, {}, 6.5);
+window.__timelines["carousel"] = tl;
+</script></template>

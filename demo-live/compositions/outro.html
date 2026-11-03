@@ -9,14 +9,14 @@
 .repo{position:absolute;left:84px;top:860px;font-family:"Space Mono",monospace;font-weight:700;font-size:34px;color:#F4F4F1}
 .repo small{display:block;margin-top:12px;font-family:Inter,sans-serif;font-weight:400;font-size:26px;color:#9AA39D}
 </style><div id="root" data-composition-id="outro" data-width="1920" data-height="1080">
-<div id="outro-head" class="clip head" data-start="0" data-duration="10.0" data-track-index="0">Meta models <span>inside.</span></div>
-<div id="outro-rows" class="clip rows" data-start="0" data-duration="10.0" data-track-index="1"><div class='row'><b>Muse Spark</b><span>edit plans, targeted revisions, multi-clip shot plans</span></div><div class='row'><b>Muse Voice</b><span>approximate transcript for topic-aware B-roll</span></div><div class='row'><b>SAM 3.1</b><span>finds and tracks the chosen speaker</span></div><div class='row'><b>HyperFrames</b><span>B-roll art and multi-clip reels, rendered in Docker</span></div></div>
-<div id="outro-repo" class="clip repo" data-start="0" data-duration="10.0" data-track-index="2">github.com/Thirumurugan-12/reelos<small>Runs locally with Docker Compose · every clip above is a real run</small></div>
+<div id="outro-head" class="clip head" data-start="0" data-duration="7.5" data-track-index="0">Meta models <span>inside.</span></div>
+<div id="outro-rows" class="clip rows" data-start="0" data-duration="7.5" data-track-index="1"><div class='row'><b>Muse Spark</b><span>edit plans, targeted revisions, multi-clip shot plans</span></div><div class='row'><b>Muse Voice</b><span>approximate transcript for topic-aware B-roll</span></div><div class='row'><b>SAM 3.1</b><span>finds and tracks the chosen speaker</span></div><div class='row'><b>Muse Image</b><span>painted B-roll and Instagram carousels from your frames</span></div><div class='row'><b>HyperFrames</b><span>B-roll cards and multi-clip reels, rendered in Docker</span></div></div>
+<div id="outro-repo" class="clip repo" data-start="0" data-duration="7.5" data-track-index="2">github.com/Thirumurugan-12/reelos<small>Runs locally with Docker Compose · every clip above is a real run</small></div>
 </div><script>
 const tl = gsap.timeline({paused:true});
 tl.fromTo("#outro-head", {opacity:0, x:-30}, {opacity:1, x:0, duration:0.45, ease:"expo.out"}, 0.05);
 tl.fromTo("#outro-rows .row", {opacity:0, y:20}, {opacity:1, y:0, duration:0.4, stagger:0.15, ease:"expo.out"}, 0.4);
 tl.fromTo("#outro-repo", {opacity:0}, {opacity:1, duration:0.4}, 1.4);
-tl.set({}, {}, 10.0);
+tl.set({}, {}, 7.5);
 window.__timelines["outro"] = tl;
 </script></template>

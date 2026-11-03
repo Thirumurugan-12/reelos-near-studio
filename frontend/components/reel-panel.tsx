@@ -93,6 +93,8 @@ export function ReelPanel({
   canPlan,
   onMake,
   onRestyle,
+  onCarousel,
+  projectId,
   onAddClips,
 }: {
   clips: Asset[];
@@ -107,6 +109,8 @@ export function ReelPanel({
     showTimes: boolean,
   ) => void;
   onRestyle: (style: ReelStyle, showTimes: boolean) => void;
+  onCarousel: () => void;
+  projectId?: string;
   onAddClips: () => void;
 }) {
   const current = reelSettings(version);
@@ -166,6 +170,51 @@ export function ReelPanel({
           <p className="privacy-note">
             Same shots and captions, re-timed and re-rendered. No new Muse
             request; the current version stays in History.
+          </p>
+        </div>
+      )}
+      {hasReel && version && (
+        <div className="reel-carousel">
+          <div className="section-heading">
+            <h3>Instagram carousel</h3>
+            <span className="optional">Muse Image</span>
+          </div>
+          <p className="muted small">
+            Real frames from these shots, restyled by Muse Image into 4:5
+            slides. Your title and captions are typeset on top.
+          </p>
+          {version.carousel ? (
+            <>
+              <div className="carousel-grid">
+                {version.carousel.slides.map((name) => (
+                  // Local slide previews; sizes are fixed by the grid.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={name}
+                    src={`/api/projects/${projectId}/versions/${version.id}/carousel/${name}`}
+                    alt={`Carousel ${name.replace(".png", "")}`}
+                  />
+                ))}
+              </div>
+              <a
+                className="primary wide carousel-download"
+                href={`/api/projects/${projectId}/versions/${version.id}/carousel/carousel.zip`}
+              >
+                Download carousel <Icon name="download" size={14} />
+              </a>
+            </>
+          ) : (
+            <button
+              className="secondary wide"
+              disabled={busy || !canPlan}
+              onClick={onCarousel}
+            >
+              Make carousel <Icon name="arrow" size={14} />
+            </button>
+          )}
+          <p className="privacy-note">
+            Up to 6 Muse Image requests (about $0.01 each). Nothing is posted
+            for you.
           </p>
         </div>
       )}

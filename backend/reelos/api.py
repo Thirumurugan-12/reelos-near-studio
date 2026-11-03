@@ -2,9 +2,9 @@ import os
 import shutil
 import time
 from contextlib import asynccontextmanager
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import FastAPI, File, Form, Path, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -29,7 +29,7 @@ class VersionInput(Contract):
 
 
 class JobInput(Contract):
-    action: Literal["draft", "revise", "render", "montage", "restyle"]
+    action: Literal["draft", "revise", "render", "montage", "restyle", "carousel", "paint_broll"]
     asset_id: Identifier | None = None
     clip_ids: list[Identifier] = Field(default_factory=list, max_length=12)
     title: str = Field(default="", max_length=24)
@@ -268,6 +268,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return FileResponse(
             target, media_type="video/mp4", filename="reelos.mp4" if kind == "export" else None
         )
+
+    @app.get("/api/projects/{project_id}/versions/{version_id}/carousel/{name}")
+    def carousel_file(
+        project_id: Identifier,
+        version_id: Identifier,
+        name: Annotated[str, Path(pattern=r"^(slide-\d{2}\.png|carousel\.zip)$")],
+    ):
+        version = editor.store.get("version", version_id, project_id)
+        if not version.get("carousel"):
+            raise KeyError("Carousel not ready")
+        target = editor.version_dir(version_id) / "carousel" / name
+        if not target.exists():
+            raise KeyError("Carousel file not found")
+        if name.endswith(".zip"):
+            return FileResponse(
+                target, media_type="application/zip", filename="reelos-carousel.zip"
+            )
+        return FileResponse(target, media_type="image/png")
 
     @app.post("/api/projects/{project_id}/jobs", status_code=202)
     def job_create(project_id: Identifier, data: JobInput):

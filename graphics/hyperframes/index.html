@@ -9,7 +9,7 @@
   lang="en"
   data-resolution="portrait"
   data-composition-variables='[
-    {"id":"template","type":"enum","label":"Template","default":"document_stack","options":[{"value":"document_stack","label":"Document stack"},{"value":"browser_demo","label":"Browser demo"},{"value":"glasses","label":"Glasses"},{"value":"classroom","label":"Classroom"}]},
+    {"id":"template","type":"enum","label":"Template","default":"document_stack","options":[{"value":"document_stack","label":"Document stack"},{"value":"browser_demo","label":"Browser demo"},{"value":"glasses","label":"Glasses"},{"value":"classroom","label":"Classroom"},{"value":"generated","label":"Generated (Muse Image)"}]},
     {"id":"title","type":"string","label":"Title","default":"Make it clear.","maxLength":36},
     {"id":"body","type":"string","label":"Body","default":"One idea can start a conversation.","maxLength":120},
     {"id":"accent","type":"color","label":"Accent","default":"#F21F2B"}
@@ -67,6 +67,12 @@
       #glasses { position: absolute; top: 560px; left: 50px; right: 50px; bottom: 380px; opacity: 0; transform-origin: 50% 50%; }
       #glasses svg { display: block; }
       #glasses p { font-size: 44px; line-height: 1.3; color: #e7e0d4; text-align: center; margin: -40px 100px 0; }
+
+      /* generated: a Muse Image illustration in the illustration band (y 28–65%) */
+      #generated { position: absolute; left: 60px; right: 60px; top: 560px; opacity: 0; }
+      #generated .art { width: 960px; height: 640px; border-radius: 26px; overflow: hidden; box-shadow: 0 30px 80px #000c; }
+      #generated img { width: 960px; height: 640px; object-fit: cover; display: block; transform-origin: 50% 50%; }
+      #generated p { font-size: 40px; line-height: 1.3; color: #e7e0d4; text-align: center; margin: 34px 60px 0; }
 
       /* classroom */
       #classroom { position: absolute; left: 80px; right: 80px; top: 590px; height: 850px; opacity: 0; }
@@ -165,6 +171,13 @@
             </div>
           </div>
 
+          <div class="tpl" id="tpl-generated">
+            <div id="generated">
+              <div class="art"><img id="art-img" src="assets/art.png" alt="" /></div>
+              <p data-var-text="body">One idea can start a conversation.</p>
+            </div>
+          </div>
+
           <div class="footer"><i></i><span>YOUR VOICE. MADE VISIBLE.</span></div>
         </div>
       </div>
@@ -172,7 +185,7 @@
     <script>
       (function () {
         const FPS = 30;
-        const TEMPLATES = ["document_stack", "browser_demo", "glasses", "classroom"];
+        const TEMPLATES = ["document_stack", "browser_demo", "glasses", "classroom", "generated"];
         const vars = (window.__hyperframes && window.__hyperframes.getVariables && window.__hyperframes.getVariables()) || {};
         const template = TEMPLATES.includes(vars.template) ? vars.template : "document_stack";
         const accent = /^#[0-9a-fA-F]{6}$/.test(vars.accent || "") ? vars.accent : "#F21F2B";
@@ -244,6 +257,10 @@
             gsap.set("#glasses", { opacity: clamp(e, 0, 1), y: (1 - e) * 160, rotation: Math.sin(frame / 22) * 4, scale: 0.8 + e * 0.2 });
             $("spark-0").setAttribute("transform", "translate(180 625) rotate(" + frame * 2 + ")");
             $("spark-1").setAttribute("transform", "translate(800 625) rotate(" + frame * 2 + ")");
+          } else if (template === "generated") {
+            const e = spring(frame, 18, 120);
+            gsap.set("#generated", { opacity: clamp(e, 0, 1), y: (1 - e) * 140 });
+            gsap.set("#art-img", { scale: 1.08 - 0.08 * (frame / Math.max(1, N - 1)) });
           } else {
             const e = spring(frame, 20);
             gsap.set("#classroom", { opacity: clamp(e, 0, 1), y: (1 - e) * 160 });

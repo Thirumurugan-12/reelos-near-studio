@@ -10,13 +10,13 @@
 .phone .note{margin-top:20px;font-size:24px;line-height:1.35;color:#C9CEC9}
 </style><div id="root" data-composition-id="multi-result" data-width="1920" data-height="1080">
 <div class="chapter">02 · MANY CLIPS · RESULT</div>
-<div id="multi-result-head" class="clip head" data-start="0" data-duration="8" data-track-index="5"><h2>Two styles.<br>One plan.</h2><p>Energetic and Calm from the same Muse shot plan.</p></div>
-<div class="phone" style="left:900px"><div class="label">Energetic</div><video id="multi-result-p0" class="clip" src="assets/reel-energetic.mp4" data-start="0" data-duration="8" data-media-start="0.0" data-track-index="0" muted playsinline></video><div class="note">7 shots, whips, bold captions</div></div>
-<div class="phone" style="left:1340px"><div class="label">Calm</div><video id="multi-result-p1" class="clip" src="assets/reel-calm.mp4" data-start="0" data-duration="8" data-media-start="0.0" data-track-index="1" muted playsinline></video><div class="note">Mist dissolves, camera times</div></div>
+<div id="multi-result-head" class="clip head" data-start="0" data-duration="5.5" data-track-index="5"><h2>Two styles.<br>One plan.</h2><p>Energetic and Calm from the same Muse shot plan.</p></div>
+<div class="phone" style="left:900px"><div class="label">Energetic</div><video id="multi-result-p0" class="clip" src="assets/reel-energetic.mp4" data-start="0" data-duration="5.5" data-media-start="0.0" data-track-index="0" muted playsinline></video><div class="note">7 shots, whips, bold captions</div></div>
+<div class="phone" style="left:1340px"><div class="label">Calm</div><video id="multi-result-p1" class="clip" src="assets/reel-calm.mp4" data-start="0" data-duration="5.5" data-media-start="0.0" data-track-index="1" muted playsinline></video><div class="note">Mist dissolves, camera times</div></div>
 </div><script>
 const tl = gsap.timeline({paused:true});
 tl.fromTo("#multi-result-head h2", {opacity:0, y:30, filter:"blur(8px)"}, {opacity:1, y:0, filter:"blur(0px)", duration:0.45, ease:"expo.out"}, 0.1);
 tl.fromTo("#root .phone", {opacity:0, y:60}, {opacity:1, y:0, duration:0.55, stagger:0.12, ease:"expo.out"}, 0.2);
-tl.set({}, {}, 8);
+tl.set({}, {}, 5.5);
 window.__timelines["multi-result"] = tl;
 </script></template>

@@ -6,16 +6,16 @@
 .words .accent{color:#EAFF81}
 .sub{position:absolute;left:84px;top:720px;width:560px;font-size:30px;line-height:1.35;color:#C9CEC9}
 </style><div id="root" data-composition-id="hook" data-width="1920" data-height="1080">
-<video id="hook-v0" class="clip hp" src="assets/single-draft.mp4" data-start="0" data-duration="7.0" data-media-start="0.0" data-track-index="0" muted playsinline style="left:700px"></video>
-<video id="hook-v1" class="clip hp" src="assets/reel-energetic.mp4" data-start="0" data-duration="7.0" data-media-start="1.0" data-track-index="1" muted playsinline style="left:1110px"></video>
-<video id="hook-v2" class="clip hp" src="assets/reel-calm.mp4" data-start="0" data-duration="7.0" data-media-start="6.0" data-track-index="2" muted playsinline style="left:1520px"></video>
-<div id="hook-words" class="clip words" data-start="0" data-duration="7.0" data-track-index="4"><span class="w">Edit</span> <span class="w">your</span> <span class="w">video</span> <span class="w accent">by</span> <span class="w accent">talking.</span></div>
-<div id="hook-sub" class="clip sub" data-start="0" data-duration="7.0" data-track-index="5">Real outputs from ReelOS: one recording, and four phone clips.</div>
+<video id="hook-v0" class="clip hp" src="assets/single-draft.mp4" data-start="0" data-duration="5.5" data-media-start="0.0" data-track-index="0" muted playsinline style="left:700px"></video>
+<video id="hook-v1" class="clip hp" src="assets/reel-energetic.mp4" data-start="0" data-duration="5.5" data-media-start="1.0" data-track-index="1" muted playsinline style="left:1110px"></video>
+<video id="hook-v2" class="clip hp" src="assets/reel-calm.mp4" data-start="0" data-duration="5.5" data-media-start="6.0" data-track-index="2" muted playsinline style="left:1520px"></video>
+<div id="hook-words" class="clip words" data-start="0" data-duration="5.5" data-track-index="4"><span class="w">Edit</span> <span class="w">your</span> <span class="w">video</span> <span class="w accent">by</span> <span class="w accent">talking.</span></div>
+<div id="hook-sub" class="clip sub" data-start="0" data-duration="5.5" data-track-index="5">Real outputs from ReelOS: one recording, and four phone clips.</div>
 </div><script>
 const tl = gsap.timeline({paused:true});
 tl.fromTo("#hook-words .w", {opacity:0.25, y:24, filter:"blur(8px)"}, {opacity:1, y:0, filter:"blur(0px)", duration:0.3, stagger:0.11, ease:"expo.out"}, 0);
 tl.fromTo("#hook-sub", {opacity:0}, {opacity:1, duration:0.4}, 0.9);
 tl.fromTo(".hp", {opacity:0, y:80, rotation:3}, {opacity:1, y:0, rotation:0, duration:0.6, stagger:0.15, ease:"expo.out"}, 0.2);
-tl.to(["#hook-words", "#hook-sub", ".hp"], {opacity:0, duration:0.25, ease:"power2.in"}, 6.7);
+tl.to(["#hook-words", "#hook-sub", ".hp"], {opacity:0, duration:0.25, ease:"power2.in"}, 5.2);
 window.__timelines["hook"] = tl;
 </script></template>

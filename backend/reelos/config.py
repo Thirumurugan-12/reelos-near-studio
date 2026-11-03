@@ -14,6 +14,7 @@ class Settings:
     budget_usd: float = 150
     reserve_usd: float = 1
     graphics_renderer: str = "hyperframes"
+    broll_art: str = "muse-image"
 
     @classmethod
     def load(cls):
@@ -28,6 +29,7 @@ class Settings:
             budget_usd=min(150, max(0, float(os.getenv("REELOS_API_BUDGET_USD", "150")))),
             reserve_usd=max(0.1, float(os.getenv("REELOS_REQUEST_RESERVE_USD", "1"))),
             graphics_renderer=graphics_renderer(os.getenv("REELOS_GRAPHICS_RENDERER")),
+            broll_art=broll_art(os.getenv("REELOS_BROLL_ART")),
         )
 
 
@@ -35,4 +37,11 @@ def graphics_renderer(value: str | None) -> str:
     value = (value or "hyperframes").strip().lower()
     if value not in {"hyperframes", "remotion"}:
         raise ValueError("REELOS_GRAPHICS_RENDERER must be 'hyperframes' or 'remotion'")
+    return value
+
+
+def broll_art(value: str | None) -> str:
+    value = (value or "muse-image").strip().lower()
+    if value not in {"muse-image", "template"}:
+        raise ValueError("REELOS_BROLL_ART must be 'muse-image' or 'template'")
     return value

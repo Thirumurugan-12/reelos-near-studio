@@ -11,6 +11,9 @@ import httpx
 from reelos.config import Settings
 from reelos.store import Store
 
+IMAGE_MODEL = "muse-image-1.0"
+IMAGE_RESERVE_USD = 0.02  # list price is $0.01 per generated image; reserve double
+
 
 class MetaClient:
     def __init__(self, settings: Settings, store: Store):
@@ -198,6 +201,68 @@ class MetaClient:
             if not recorded:
                 self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
             raise
+
+    def images(
+        self,
+        prompt: str,
+        size: str = "1024x1024",
+        references: list[str] | None = None,
+        n: int = 1,
+        request_timeout: float = 240,
+    ) -> list[bytes]:
+        """Muse Image generation (or editing when reference images are given), never retried.
+
+        references are base64 data URLs of project media. Built-in web, image search and
+        shell tools are switched off so results depend only on the prompt and references.
+        """
+        import base64
+
+        if not self.settings.api_key:
+            raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
+        call = self.store.reserve(IMAGE_MODEL, IMAGE_RESERVE_USD * n, self.settings.budget_usd)
+        started = time.monotonic()
+        body = {
+            "model": IMAGE_MODEL,
+            "prompt": prompt,
+            "n": n,
+            "size": size,
+            "output_format": "png",
+            "response_format": "b64_json",
+            "tool_enablement": {
+                "enable_image_search": False,
+                "enable_web_search": False,
+                "enable_shell": False,
+            },
+        }
+        endpoint = "generations"
+        if references:
+            body["images"] = [{"image_url": url} for url in references[:10]]
+            endpoint = "edits"
+        try:
+            with httpx.Client(timeout=httpx.Timeout(request_timeout, connect=20)) as client:
+                response = client.post(
+                    f"https://api.meta.ai/v1/images/{endpoint}",
+                    headers={"Authorization": f"Bearer {self.settings.api_key}"},
+                    json=body,
+                )
+            if response.is_error:
+                self.store.finish_call(call, "failed", {}, time.monotonic() - started)
+                if response.status_code == 400 and "content_policy" in response.text:
+                    raise ValueError("Muse Image declined this request (content policy).")
+                raise ValueError(f"Muse Image request failed (HTTP {response.status_code}).")
+            data = response.json()
+            images = [base64.b64decode(item["b64_json"]) for item in data.get("data", [])]
+            usage = dict(data.get("usage") or {}) | {"images_generated": len(images)}
+            self.store.finish_call(call, "completed", usage, time.monotonic() - started)
+            if not images:
+                raise ValueError("Muse Image returned no image.")
+            return images
+        except httpx.RequestError:
+            self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
+            raise ValueError("Muse Image request did not finish (network).") from None
+        except (KeyError, TypeError, json.JSONDecodeError, base64.binascii.Error):
+            self.store.finish_call(call, "failed_or_unknown", {}, time.monotonic() - started)
+            raise ValueError("Muse Image returned an unreadable response.") from None
 
 
 def output_text(data: dict) -> str:

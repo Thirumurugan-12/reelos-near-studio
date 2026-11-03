@@ -1916,3 +1916,40 @@ button.secondary.wide {
 button.secondary:disabled {
   opacity: 0.45;
 }
+.reel-carousel {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.reel-carousel > .small {
+  margin: 4px 0 12px;
+  line-height: 1.55;
+}
+.carousel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.carousel-grid img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+.carousel-download {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+}
+.paint-broll {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.paint-broll > .small {
+  margin: 4px 0 12px;
+  line-height: 1.55;
+}

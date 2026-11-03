@@ -296,3 +296,57 @@ def test_hyperframes_renders_a_real_insert(tmp_path):
     assert len(track.manifest["frames"]) == 15
     with Image.open(track.directory / track.manifest["frames"][7]) as frame:
         assert frame.size == (1080, 1920) and frame.mode == "RGB"
+
+
+def test_muse_image_art_changes_cache_and_switches_template(tmp_path, monkeypatch):
+    from reelos import graphics as g
+
+    art = tmp_path / "art.png"
+    Image.new("RGB", (30, 20), "orange").save(art)
+    seen = []
+
+    def fake(requests):
+        for request in requests:
+            seen.append(request["props"])
+            out = Path(request["outputDir"])
+            out.mkdir(parents=True)
+            Image.new("RGB", (9, 16)).save(out / "0.png")
+            (out / "manifest.json").write_text(json.dumps({"fps": 30, "frames": ["0.png"]}))
+
+    monkeypatch.setattr(g, "_render_hyperframes", fake)
+    plan = _insert_plan()
+    plain = g.prepare_graphics(plan, tmp_path)["insert"].directory
+    generated = g.prepare_graphics(plan, tmp_path, art={"insert": art})["insert"].directory
+    assert plain != generated and seen[1]["art"] and seen[1]["art_path"] == str(art)
+    command = g.hyperframes_command(tmp_path, tmp_path / "out", seen[1])
+    variables = json.loads(command[command.index("--variables") + 1])
+    assert variables["template"] == "generated" and "art_path" not in variables
+    # Remotion fallback ignores generated art and keeps the template illustration.
+    monkeypatch.setattr(g, "_render_remotion", fake)
+    g.prepare_graphics(plan, tmp_path, renderer="remotion", art={"insert": art})
+    assert "art" not in seen[-1]
+
+
+def test_broll_art_setting_is_validated():
+    from reelos.config import broll_art
+
+    assert broll_art(None) == "muse-image"
+    assert broll_art("Template") == "template"
+    with pytest.raises(ValueError):
+        broll_art("dalle")
+
+
+@pytest.mark.skipif(
+    not __import__("reelos.graphics").graphics.hyperframes_binary().exists(),
+    reason="HyperFrames CLI is not installed in graphics/node_modules",
+)
+def test_hyperframes_renders_generated_art(tmp_path):
+    from reelos import graphics as g
+
+    art = tmp_path / "art.png"
+    Image.new("RGB", (1536, 1024), (200, 40, 40)).save(art)
+    track = g.prepare_graphics(_insert_plan(duration=1.5), tmp_path, art={"insert": art})["insert"]
+    frame = track.at(1.0, (1080, 1920))
+    # The red illustration sits inside the illustration band used by the b-roll crop.
+    r, gch, b = frame.getpixel((540, 900))
+    assert r > 150 and gch < 90 and b < 90

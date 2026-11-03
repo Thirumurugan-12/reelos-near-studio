@@ -193,6 +193,26 @@ export function useStudio() {
       setJob(next);
     });
   }
+  async function paintBroll() {
+    if (!project || !versionId) return;
+    await attempt(async () => {
+      const next = await post<Job>(`/projects/${project.id}/jobs`, {
+        action: "paint_broll",
+        version_id: versionId,
+      });
+      setJob(next);
+    });
+  }
+  async function makeCarousel() {
+    if (!project || !versionId) return;
+    await attempt(async () => {
+      const next = await post<Job>(`/projects/${project.id}/jobs`, {
+        action: "carousel",
+        version_id: versionId,
+      });
+      setJob(next);
+    });
+  }
   async function restyle(style: ReelStyle, showTimes: boolean) {
     if (!project || !versionId) return;
     await attempt(async () => {
@@ -270,6 +290,8 @@ export function useStudio() {
     start,
     makeReel,
     restyle,
+    makeCarousel,
+    paintBroll,
     restore,
     applyEffect,
     reframe,
