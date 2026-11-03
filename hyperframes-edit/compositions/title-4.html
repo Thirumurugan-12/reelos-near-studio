@@ -1,0 +1,24 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #title-4-block { position: absolute; left: 0; right: 0; top: 176px; text-align: center; font-family: "Archivo Black", sans-serif; text-transform: uppercase; }
+    #title-4-block .l1 { font-size: 150px; line-height: 0.95; letter-spacing: -0.02em; color: #F4F4F2; }
+    #title-4-block .l2 { font-size: 230px; line-height: 0.92; letter-spacing: -0.03em; color: #4C8DFF; margin-top: 4px; }
+    #title-4-block .w { display: inline-block; }
+  </style>
+  <div data-hf-id="hf-mciq" id="root" data-composition-id="title-4" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-jyh9" id="title-4-block" class="clip" data-start="0" data-duration="7.85" data-layout-allow-overlap>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-638t" class="w">COMMENT</span></div>
+      <div data-hf-id="hf-14ym" class="l2"><span data-hf-id="hf-x60b" class="w">LASER</span></div>
+    </div>
+  </div>
+  <script>
+    const q = (s) => document.querySelectorAll("#title-4-block " + s);
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(q(".l1 .w"), {opacity: 0}, {opacity: 1, duration: 0.08}, 0.0);
+    tl.fromTo(q(".l1 .w"), {color: "#B9BDC6"}, {color: "#F4F4F2", duration: 0.25, stagger: 0.09, ease: "power1.out"}, 0.05);
+    tl.fromTo(q(".l2"), {opacity: 0, filter: "blur(10px)"}, {opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out"}, 0.3);
+    tl.to("#title-4-block", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power2.in" }, 7.50);
+    window.__timelines["title-4"] = tl;
+  </script>
+</template>

@@ -1,0 +1,24 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #title-2-block { position: absolute; left: 0; right: 0; top: 176px; text-align: center; font-family: "Archivo Black", sans-serif; text-transform: uppercase; }
+    #title-2-block .l1 { font-size: 146px; line-height: 0.95; letter-spacing: -0.02em; color: #F4F4F2; }
+    #title-2-block .l2 { font-size: 102px; line-height: 0.92; letter-spacing: -0.03em; color: #4C8DFF; margin-top: 4px; }
+    #title-2-block .w { display: inline-block; }
+  </style>
+  <div data-hf-id="hf-64h8" id="root" data-composition-id="title-2" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-mxoq" id="title-2-block" class="clip" data-start="0" data-duration="7.0" data-layout-allow-overlap>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-3kzl" class="w">ON</span> <span data-hf-id="hf-wrba" class="w">STAGE</span></div>
+      <div data-hf-id="hf-14ym" class="l2"><span data-hf-id="hf-u172" class="w">B</span><span data-hf-id="hf-wf18" class="w">L</span><span data-hf-id="hf-395j" class="w">U</span><span data-hf-id="hf-4g2m" class="w">R</span><span data-hf-id="hf-g6rm" class="w">R</span><span data-hf-id="hf-80tv" class="w">Y</span><span data-hf-id="hf-fr20" class="w">&nbsp;</span><span data-hf-id="hf-tmw1" class="w">C</span><span data-hf-id="hf-gl2n" class="w">R</span><span data-hf-id="hf-v845" class="w">O</span><span data-hf-id="hf-yekd" class="w">W</span><span data-hf-id="hf-t8l0" class="w">D</span></div>
+    </div>
+  </div>
+  <script>
+    const q = (s) => document.querySelectorAll("#title-2-block " + s);
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(q(".l1 .w"), {opacity: 0, filter: "blur(8px)"}, {opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.08, ease: "power3.out"}, 0.05);
+    tl.fromTo(q(".l2 .w"), {opacity: 0.3, filter: "blur(3px)"}, {opacity: 1, filter: "blur(0px)", duration: 0.12, stagger: 0.035, ease: "power2.out"}, 0.25);
+    tl.fromTo(q(".l2 .w"), {opacity: 0}, {opacity: 0.3, duration: 0.01}, 0.0);
+    tl.to("#title-2-block", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power2.in" }, 6.65);
+    window.__timelines["title-2"] = tl;
+  </script>
+</template>

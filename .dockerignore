@@ -18,3 +18,10 @@ docs/design-references
 demo-showcase
 
 demo-master
+
+# HyperFrames comparison edit (private media) and HyperFrames caches
+hyperframes-edit
+**/.hyperframes
+**/.thumbnails
+trip-edit
+demo-final

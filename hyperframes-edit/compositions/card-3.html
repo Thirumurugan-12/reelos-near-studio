@@ -1,0 +1,47 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #card-3-card { position: absolute; left: 48px; top: 1010px; width: 984px; height: 300px; border-radius: 36px;
+      background: rgba(15, 16, 22, 0.80); backdrop-filter: blur(22px); border: 1.5px solid rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; gap: 34px; padding: 30px 40px 30px 30px; transform-origin: 50% 100%; }
+    #card-3-card .art { width: 240px; height: 240px; flex: none; border-radius: 26px; background: linear-gradient(160deg, #1D4ED8 0%, #0E1630 100%); overflow: hidden; }
+    #card-3-card .copy { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+    #card-3-card .kicker { font-family: "Space Mono", monospace; font-size: 28px; letter-spacing: 0.12em; color: #93B4FF; text-transform: uppercase; }
+    #card-3-card h2 { font-family: "Archivo Black", sans-serif; font-weight: 400; font-size: 58px; line-height: 1.0; letter-spacing: -0.02em; color: #F4F4F2; }
+    #card-3-card p { font-family: "Inter", sans-serif; font-weight: 400; font-size: 34px; line-height: 1.25; color: rgba(244, 244, 242, 0.78); }
+  </style>
+  <div data-hf-id="hf-bxmp" id="root" data-composition-id="card-3" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-1k99" id="card-3" class="clip" data-start="0" data-duration="3.0">
+      <div data-hf-id="hf-c2cy" id="card-3-card">
+        <div data-hf-id="hf-y0ev" class="art">
+          <svg data-hf-id="hf-be6q" viewBox="0 0 240 240" width="240" height="240">
+            <defs data-hf-id="hf-mh0t"><linearGradient data-hf-id="hf-gts7" id="beam" x1="0" y1="0" x2="0" y2="1"><stop data-hf-id="hf-b0xk" offset="0" stop-color="#FFF7C2" stop-opacity="0.9"/><stop data-hf-id="hf-192l" offset="1" stop-color="#FFF7C2" stop-opacity="0.05"/></linearGradient></defs>
+            <g data-hf-id="hf-eaa1" class="blurme" fill="#C9D3EA">
+        <circle data-hf-id="hf-jbu1" cx="46" cy="120" r="24"/><circle data-hf-id="hf-kflt" cx="104" cy="112" r="26"/><circle data-hf-id="hf-vs78" cx="164" cy="120" r="24"/><circle data-hf-id="hf-r6mx" cx="214" cy="126" r="18"/>
+        <path data-hf-id="hf-szso" d="M14 214 q32 -64 64 0 Z"/><path data-hf-id="hf-ep11" d="M68 214 q36 -72 72 0 Z"/><path data-hf-id="hf-4ne9" d="M132 214 q32 -64 64 0 Z"/><path data-hf-id="hf-al6r" d="M190 214 q24 -50 48 0 Z"/>
+      </g>
+      <g data-hf-id="hf-mrl1" fill="none" stroke="#F4F4F2" stroke-width="6" stroke-linecap="round"><path data-hf-id="hf-v7t4" class="draw" d="M14 30 H226"/></g>
+          </svg>
+        </div>
+        <div data-hf-id="hf-bdx3" class="copy">
+          <div data-hf-id="hf-b5j9" class="kicker">B-roll</div>
+          <h2 data-hf-id="hf-azy2">Blurred Faces On Stage</h2>
+          <p data-hf-id="hf-d1t8">Crowd visible, faces not clear</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#card-3-card", { opacity: 0, y: 60, scale: 0.94, filter: "blur(10px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0);
+    tl.fromTo("#card-3-card .copy > *", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, stagger: 0.08, ease: "power2.out" }, 0.2);
+    document.querySelectorAll("#card-3-card .draw").forEach((el) => {
+      const len = el.getTotalLength ? Math.ceil(el.getTotalLength()) : 600;
+      tl.fromTo(el, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.out" }, 0.35);
+    });
+    
+    tl.fromTo("#card-3 .blurme", { filter: "blur(0px)" }, { filter: "blur(7px)", duration: 1.0, ease: "power2.inOut" }, 1.0);
+    tl.to("#card-3-card", { opacity: 0, y: 30, filter: "blur(8px)", duration: 0.3, ease: "power3.in" }, 2.62);
+    window.__timelines["card-3"] = tl;
+  </script>
+</template>

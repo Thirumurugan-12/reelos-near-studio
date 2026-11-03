@@ -18,7 +18,9 @@ ReelOS application, validation, compositing and original illustration code is au
 | `meta-sam-parser` | 0.1.0 | SAM License, wheel licence | Installed Python parser / reference compatibility |
 | Next.js | 16.4.3 | MIT; package notice | Web workspace |
 | React / React DOM | 19.2.4 | MIT; package notices | Interface and original Remotion components |
-| Remotion renderer/bundler | 4.0.539 | Remotion licence; installed `LICENSE.md` | Original approved illustration templates |
+| HyperFrames CLI | 0.9.4 (exact pin, `graphics/package.json`) | Apache-2.0; package notice | Default graphic-insert renderer (`REELOS_GRAPHICS_RENDERER=hyperframes`) |
+| GSAP | 3.15.0 (vendored `graphics/hyperframes/assets/gsap.min.js`) | GSAP standard no-charge licence (file header) | Timeline driver inside the HyperFrames template |
+| Remotion renderer/bundler | 4.0.539 | Remotion licence; installed `LICENSE.md` | Fallback graphic-insert renderer (`REELOS_GRAPHICS_RENDERER=remotion`) |
 
 The SAM parsers and Remotion have their own licence terms; they are not described as MIT dependencies. Original package licence files remain in the installed dependency trees. Remotion's installed licence permits qualifying individuals and small organizations and defines separate company terms; see [its official licensing page](https://www.remotion.dev/docs/license/pricing). The present deployment is an independent single-user hackathon build; do not assume another organization's eligibility.
 
@@ -29,7 +31,7 @@ FFmpeg, Python, Node and Debian runtime components are installed through the Doc
 ## Media
 
 - Main recording and visual reference: supplied by the user for processing/demo. Originals remain outside Git. Generated results preserve source audio; source and reference assets are not silently published.
-- Glasses, classroom, document and generic browser illustrations: original SVG/React artwork in `graphics/src/story-illustrations.tsx`; no copied reference screenshots, product logos, or downloaded stock illustrations.
+- Glasses, classroom, document and generic browser illustrations: original SVG/React artwork in `graphics/src/story-illustrations.tsx`, ported one-to-one to HTML/SVG in `graphics/hyperframes/index.html` (Archivo Black and Inter from the retained OFL font inventory, copies and notices in `graphics/hyperframes/assets/fonts/`); no copied reference screenshots, product logos, or downloaded stock illustrations.
 - Independent stock recordings: [creators, original pages and Pexels licence record](EVALUATION_ASSETS.md). Neutral technical evaluation only; no implied endorsement.
 - Design-reference captures under `docs/design-references/` are research material. They are not product UI assets or assets for automatic public redistribution.
 
@@ -42,3 +44,14 @@ The local showcase uses HyperFrames 0.8.220, GSAP 3.14.2 and Inter; its [specifi
 ## Live interface typography
 
 Canvas Pro self-hosts Montserrat, Inter, Archivo Black and Space Mono from the existing licensed font inventory. Copies and SIL Open Font License notices are retained in `frontend/public/fonts/`. These fonts style the web interface; this change does not alter recorded video render profiles.
+
+## Graphic-insert renderer
+
+Since 3 November 2026 graphic inserts render through HyperFrames by default. Only the illustration
+step changed: Muse still writes the plan, SAM still supplies masks, and the Python compositor, catalog
+recipes and FFmpeg export are unchanged. The HyperFrames child runs from a temporary directory with a
+minimal environment (no model credentials; telemetry, update checks and auto-installs disabled), and
+model-written copy reaches it only as JSON variables bound with `textContent`. In the container it reuses
+Remotion's headless Chrome (`HYPERFRAMES_BROWSER_PATH`). Measured in the container: about 39–46 s per
+3-second insert with HyperFrames versus about 6 s with Remotion; results are cached per prop set.
+Set `REELOS_GRAPHICS_RENDERER=remotion` to return to the previous renderer.

@@ -1,0 +1,48 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #card-5-card { position: absolute; left: 48px; top: 1010px; width: 984px; height: 300px; border-radius: 36px;
+      background: rgba(15, 16, 22, 0.80); backdrop-filter: blur(22px); border: 1.5px solid rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; gap: 34px; padding: 30px 40px 30px 30px; transform-origin: 50% 100%; }
+    #card-5-card .art { width: 240px; height: 240px; flex: none; border-radius: 26px; background: linear-gradient(160deg, #1D4ED8 0%, #0E1630 100%); overflow: hidden; }
+    #card-5-card .copy { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+    #card-5-card .kicker { font-family: "Space Mono", monospace; font-size: 28px; letter-spacing: 0.12em; color: #93B4FF; text-transform: uppercase; }
+    #card-5-card h2 { font-family: "Archivo Black", sans-serif; font-weight: 400; font-size: 58px; line-height: 1.0; letter-spacing: -0.02em; color: #F4F4F2; }
+    #card-5-card p { font-family: "Inter", sans-serif; font-weight: 400; font-size: 34px; line-height: 1.25; color: rgba(244, 244, 242, 0.78); }
+  </style>
+  <div data-hf-id="hf-y9kr" id="root" data-composition-id="card-5" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-oa2z" id="card-5" class="clip" data-start="0" data-duration="3.0">
+      <div data-hf-id="hf-wq8g" id="card-5-card">
+        <div data-hf-id="hf-y0ev" class="art">
+          <svg data-hf-id="hf-be6q" viewBox="0 0 240 240" width="240" height="240">
+            <defs data-hf-id="hf-mh0t"><linearGradient data-hf-id="hf-gts7" id="beam" x1="0" y1="0" x2="0" y2="1"><stop data-hf-id="hf-b0xk" offset="0" stop-color="#FFF7C2" stop-opacity="0.9"/><stop data-hf-id="hf-192l" offset="1" stop-color="#FFF7C2" stop-opacity="0.05"/></linearGradient></defs>
+            <g data-hf-id="hf-79m0" fill="none" stroke="#F4F4F2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <path data-hf-id="hf-2d8v" class="draw" d="M14 120 Q120 30 226 120 Q120 210 14 120 Z"/>
+        <circle data-hf-id="hf-jrue" class="draw" cx="120" cy="120" r="34"/>
+      </g>
+      <circle data-hf-id="hf-zwau" class="pop" cx="120" cy="120" r="14" fill="#F4F4F2"/>
+      <rect data-hf-id="hf-0b8j" class="sweep" x="2" y="117" width="236" height="6" rx="3" fill="#FF3B5C"/>
+          </svg>
+        </div>
+        <div data-hf-id="hf-bdx3" class="copy">
+          <div data-hf-id="hf-b5j9" class="kicker">B-roll</div>
+          <h2 data-hf-id="hf-t39v">Laser Awareness</h2>
+          <p data-hf-id="hf-mk53">Learn about the vision campaign</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#card-5-card", { opacity: 0, y: 60, scale: 0.94, filter: "blur(10px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0);
+    tl.fromTo("#card-5-card .copy > *", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, stagger: 0.08, ease: "power2.out" }, 0.2);
+    document.querySelectorAll("#card-5-card .draw").forEach((el) => {
+      const len = el.getTotalLength ? Math.ceil(el.getTotalLength()) : 600;
+      tl.fromTo(el, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.out" }, 0.35);
+    });
+    tl.fromTo("#card-5-card .pop", { opacity: 0, scale: 0.6, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.4)" }, 0.9);
+    tl.fromTo("#card-5-card .sweep", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 1.1);
+    tl.to("#card-5-card", { opacity: 0, y: 30, filter: "blur(8px)", duration: 0.3, ease: "power3.in" }, 2.62);
+    window.__timelines["card-5"] = tl;
+  </script>
+</template>

@@ -1,10 +1,12 @@
 import json
+import logging
 import subprocess
 import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from reelos import montage
 from reelos.config import Settings
 from reelos.graphics import prepare_graphics
 from reelos.media import MaskTrack, render
@@ -13,6 +15,8 @@ from reelos.planner import create_plan, revise_plan
 from reelos.segmentation import save_masks
 from reelos.store import Store, new_id
 from reelos.timeline import EditPlan, validate_assets
+
+log = logging.getLogger("reelos.jobs")
 
 
 class Editor:
@@ -141,6 +145,105 @@ class Editor:
             },
         )
 
+    def montage_clips(self, project_id: str, clip_ids: list[str]) -> list[dict]:
+        clips = [self.store.get("asset", id, project_id) for id in clip_ids]
+        if len(clips) < 2 or any(c["role"] != "clip" for c in clips):
+            raise ValueError("Choose at least two clips for a multi-clip reel.")
+        return clips
+
+    def montage_version(self, pid, shots, clips, plan: dict, summary: str, parent=None):
+        record = montage.version_record(
+            shots,
+            {c["id"]: c for c in clips},
+            plan["title"],
+            summary,
+            plan["style"],
+            plan["show_times"],
+            plan.get("source"),
+        )
+        return self.store.put(
+            "version",
+            new_id(),
+            record
+            | {
+                "project_id": pid,
+                "parent_id": parent,
+                "created_at": time.time(),
+                "track_key": None,
+                "clip_ids": [c["id"] for c in clips],
+                "has_preview": False,
+                "has_export": False,
+            },
+        )
+
+    def make_montage(self, pid: str, req: dict, stage) -> dict:
+        clips = self.montage_clips(pid, req["clip_ids"])
+        style, by_id = req.get("style", "calm"), {c["id"]: c for c in clips}
+        stage("Preparing your clips")
+        for clip in clips:
+            montage.normalized_clip(clip, self.asset_dir(clip["id"]), montage.is_slow(clip))
+        title = req.get("title", "").strip()
+        stage("Muse is watching your clips")
+        files = {c["id"]: self.provider_file(c) for c in clips}
+        stage("Muse is planning your reel")
+        try:
+            proposal = montage.muse_proposal(
+                self.meta, clips, files, title, req["instruction"], style
+            )
+            summary = proposal.summary or "Muse-planned multi-clip reel"
+            shots = montage.fit_plan(proposal, by_id, style)
+        except montage.PlanError:
+            # Muse answered but the plan was unusable: never re-ask (no paid retries).
+            proposal = montage.rule_proposal(clips, style)
+            summary = "Clips in recording order (Muse's plan could not be used)"
+            shots = montage.fit_plan(proposal, by_id, style)
+        plan = {
+            "title": title or proposal.title,
+            "style": style,
+            "show_times": req.get("show_times", True),
+            # Muse's own windows, kept so every later restyle starts from them.
+            "source": [shot.model_dump() for shot in proposal.shots],
+        }
+        return self.montage_version(pid, shots, clips, plan, summary)
+
+    def restyle(self, pid: str, req: dict, stage) -> dict:
+        parent = self.store.get("version", req["version_id"], pid)
+        if parent.get("kind") not in {"montage", "trip"}:
+            raise ValueError("Only multi-clip reels can change style.")
+        clips = [self.store.get("asset", id, pid) for id in parent["clip_ids"]]
+        old, style = montage.stored(parent), req.get("style", "calm")
+        stage("Re-timing your shots for the new style")
+        shots = montage.refit(old["source"], {c["id"]: c for c in clips}, style)
+        plan = {
+            "title": old["title"],
+            "style": style,
+            "show_times": req.get("show_times", True),
+            "source": old["source"],
+        }
+        summary = f"{style.capitalize()} style · same shots, no new Muse request"
+        return self.montage_version(pid, shots, clips, plan, summary, parent=parent["id"])
+
+    def render_montage(self, version: dict, stage) -> None:
+        pid, plan = version["project_id"], montage.stored(version)
+        clips = [self.store.get("asset", id, pid) for id in version["clip_ids"]]
+        export = self.version_dir(version["id"]) / "export.mp4"
+        if not export.exists():
+            stage("HyperFrames is rendering your reel")
+            montage.render_reel(
+                plan["shots"],
+                {c["id"]: c for c in clips},
+                {c["id"]: self.asset_dir(c["id"]) for c in clips},
+                plan["title"],
+                self.store.root,
+                export,
+                plan["style"],
+                plan["show_times"],
+            )
+        preview = export.with_name("preview.mp4")
+        if not preview.exists():
+            preview.hardlink_to(export)
+        version.update(has_preview=True, has_export=True)
+
     def queue(self, project_id: str, request: dict) -> dict:
         if any(j["status"] in {"queued", "running"} for j in self.store.list("job", project_id)):
             raise ValueError("This project already has a job running.")
@@ -232,8 +335,19 @@ class Editor:
                     )
                     self.store.put("job", id, job)
                     return
+            elif req["action"] == "montage":
+                version = self.make_montage(pid, req, stage)
+                job["version_id"] = version["id"]
+            elif req["action"] == "restyle":
+                version = self.restyle(pid, req, stage)
+                job["version_id"] = version["id"]
             elif req["action"] == "revise":
                 parent = self.store.get("version", req["version_id"], pid)
+                if parent.get("kind") in {"montage", "trip"}:
+                    raise ValueError(
+                        "Multi-clip reels can't be revised with text yet. Change the style "
+                        "or make a new reel."
+                    )
                 stage("Muse is applying your direction")
                 plan, summary = revise_plan(
                     self.meta,
@@ -252,14 +366,20 @@ class Editor:
             else:
                 version = self.store.get("version", req["version_id"], pid)
                 job["version_id"] = version["id"]
-            plan = EditPlan.model_validate(version["plan"])
-            asset = self.store.get("asset", plan.asset_id, pid)
             quality = req.get("quality", "preview")
-            target = self.version_dir(version["id"]) / f"{quality}.mp4"
-            if not target.exists():
+            if version.get("kind") in {"montage", "trip"}:
+                self.render_montage(version, stage)
+                target = None
+            else:
+                plan = EditPlan.model_validate(version["plan"])
+                asset = self.store.get("asset", plan.asset_id, pid)
+                target = self.version_dir(version["id"]) / f"{quality}.mp4"
+            if target is not None and not target.exists():
                 if any(e.type == "graphic_insert" for e in plan.effects):
-                    stage("Remotion is illustrating the story")
-                graphics = prepare_graphics(plan, self.store.root)
+                    stage("Illustrating the story")
+                graphics = prepare_graphics(
+                    plan, self.store.root, renderer=self.settings.graphics_renderer
+                )
                 track = None
                 if version.get("track_key"):
                     track = MaskTrack(self.asset_dir(asset["id"]) / "tracks" / version["track_key"])
@@ -275,7 +395,8 @@ class Editor:
                     graphics=graphics,
                     asset_root=self.store.root,
                 )
-            version["has_" + quality] = True
+            if version.get("kind") not in {"montage", "trip"}:
+                version["has_" + quality] = True
             self.store.put("version", version["id"], version)
             project = self.store.get("project", pid)
             project["current_version_id"] = version["id"]
@@ -287,6 +408,8 @@ class Editor:
                 elapsed=time.monotonic() - started,
             )
         except Exception as exc:
+            if not isinstance(exc, ValueError):
+                log.exception("Job %s failed unexpectedly", id)
             message = (
                 str(exc)[:400]
                 if isinstance(exc, ValueError)

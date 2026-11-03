@@ -10,6 +10,8 @@ import {
   type Health,
   type Job,
   type Project,
+  type ReelStyle,
+  type UploadRole,
 } from "./api";
 
 export function useStudio() {
@@ -135,10 +137,7 @@ export function useStudio() {
       window.history.replaceState(null, "", `?project=${id}`);
     });
   }
-  async function upload(
-    file: File,
-    role: "source" | "reference" | "supporting",
-  ) {
+  async function upload(file: File, role: UploadRole) {
     await attempt(async () => {
       let p = project || currentProject.current;
       if (!p) {
@@ -171,6 +170,38 @@ export function useStudio() {
     if (!project) return;
     await attempt(async () => {
       const next = await post<Job>(`/projects/${project.id}/jobs`, data);
+      setJob(next);
+    });
+  }
+  async function makeReel(
+    clipIds: string[],
+    title: string,
+    direction: string,
+    style: ReelStyle,
+    showTimes: boolean,
+  ) {
+    if (!project) return;
+    await attempt(async () => {
+      const next = await post<Job>(`/projects/${project.id}/jobs`, {
+        action: "montage",
+        clip_ids: clipIds,
+        title,
+        instruction: direction,
+        style,
+        show_times: showTimes,
+      });
+      setJob(next);
+    });
+  }
+  async function restyle(style: ReelStyle, showTimes: boolean) {
+    if (!project || !versionId) return;
+    await attempt(async () => {
+      const next = await post<Job>(`/projects/${project.id}/jobs`, {
+        action: "restyle",
+        version_id: versionId,
+        style,
+        show_times: showTimes,
+      });
       setJob(next);
     });
   }
@@ -237,6 +268,8 @@ export function useStudio() {
     select,
     upload,
     start,
+    makeReel,
+    restyle,
     restore,
     applyEffect,
     reframe,

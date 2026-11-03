@@ -32,3 +32,28 @@ coverage/
 
 /demo-master/.thumbnails/
 /demo-showcase/.thumbnails/
+
+# HyperFrames comparison edit of the private source
+/hyperframes-edit/assets/
+/hyperframes-edit/.hyperframes/
+/hyperframes-edit/.media/
+/hyperframes-edit/.thumbnails/
+/hyperframes-edit/renders/
+/hyperframes-edit/*.mp4
+/graphics/hyperframes/.hyperframes/
+
+# Trip reel (private footage)
+/trip-edit/assets/
+/trip-edit/.hyperframes/
+/trip-edit/.media/
+/trip-edit/.thumbnails/
+/trip-edit/renders/
+
+# Final submission demo (links to private media)
+/demo-final/assets/
+/demo-final/.hyperframes/
+/demo-final/.thumbnails/
+/demo-final/*.mp4
+
+# HyperFrames audio waveform caches
+**/.waveform-cache/

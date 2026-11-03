@@ -76,3 +76,11 @@ presentation fields. No new paid model request was made; the reservation remains
 Full private outputs:
 - `data/broll-review/full-broll-preview.mp4`
 - `data/broll-review/full-broll-export.mp4`
+
+## Renderer note (3 November 2026)
+
+The illustration sequences behind both presentations now render through HyperFrames by default
+(`graphics/hyperframes/`), with the same 1080×1920, 30 fps PNG-plus-manifest contract, the same frame
+counts and the same illustration band (y 28–65%) that the b-roll crop uses. Cache keys include the
+renderer, so existing Remotion sequences and already exported versions are untouched.
+`REELOS_GRAPHICS_RENDERER=remotion` restores the Remotion templates. See [dependencies](DEPENDENCIES.md).

@@ -1,0 +1,22 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #title-1-block { position: absolute; left: 0; right: 0; top: 176px; text-align: center; font-family: "Archivo Black", sans-serif; text-transform: uppercase; }
+    #title-1-block .l1 { font-size: 117px; line-height: 0.95; letter-spacing: -0.02em; color: #F4F4F2; }
+    #title-1-block .l2 { font-size: 230px; line-height: 0.92; letter-spacing: -0.03em; color: #4C8DFF; margin-top: 4px; }
+    #title-1-block .w { display: inline-block; }
+  </style>
+  <div data-hf-id="hf-11e1" id="root" data-composition-id="title-1" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-7m86" id="title-1-block" class="clip" data-start="0" data-duration="7.5" data-layout-allow-overlap>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-85s2" class="w">MY</span> <span data-hf-id="hf-bk5c" class="w">GLASSES</span></div>
+      <div data-hf-id="hf-14ym" class="l2"><span data-hf-id="hf-nxpp" class="w">STORY</span></div>
+    </div>
+  </div>
+  <script>
+    const q = (s) => document.querySelectorAll("#title-1-block " + s);
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(q(".w"), {opacity: 0, filter: "blur(6px)"}, {opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.067, ease: "power2.out"}, 0.05);
+    tl.to("#title-1-block", { opacity: 0, filter: "blur(8px)", duration: 0.22, ease: "power2.in" }, 7.15);
+    window.__timelines["title-1"] = tl;
+  </script>
+</template>

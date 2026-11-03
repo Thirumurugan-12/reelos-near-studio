@@ -7,6 +7,8 @@ const labels: Record<string, string> = {
   subject_spotlight: "Spotlight",
   tracked_label: "Tracked label",
   graphic_insert: "Illustration",
+  trip_shot: "Shot",
+  montage_shot: "Shot",
 };
 export function effectLabel(effect: Effect) {
   return effect.type === "catalog_effect"
@@ -15,6 +17,7 @@ export function effectLabel(effect: Effect) {
         .replace(/\b\w/g, (c) => c.toUpperCase())
     : labels[effect.type] || "Effect";
 }
+const reelKinds = new Set(["montage", "trip"]);
 export function Timeline({
   version,
   playhead,
@@ -32,6 +35,7 @@ export function Timeline({
     ? version.plan.source_out - version.plan.source_in
     : 30;
   const lanes = timelineLanes(version?.plan.effects || []);
+  const isReel = reelKinds.has(version?.kind || "");
   if (!version)
     return (
       <section className="timeline" aria-label="Edit timeline">
@@ -91,8 +95,12 @@ export function Timeline({
           aria-label="Go to the start of the edited video"
         >
           <Icon name="film" size={14} />
-          <span>Source recording</span>
-          <small>Original speech</small>
+          <span>
+            {isReel
+              ? `${version.plan.effects.length} clips`
+              : "Source recording"}
+          </span>
+          <small>{isReel ? "Music + natural sound" : "Original speech"}</small>
         </button>
         {lanes.map((lane, i) => (
           <div

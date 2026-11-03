@@ -1,0 +1,21 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #te-block { position: absolute; left: 0; right: 0; top: 760px; text-align: center; color: #10201a; }
+    #te-place { font-family: "EB Garamond", serif; font-size: 150px; line-height: 1; letter-spacing: -0.01em; }
+    #te-date { margin-top: 28px; font-family: "Space Mono", monospace; font-size: 32px; letter-spacing: 0.3em; }
+  </style>
+  <div data-hf-id="hf-dgtv" id="root" data-composition-id="title-end" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-micr" id="te-block" class="clip" data-start="0" data-duration="2.6">
+      <div data-hf-id="hf-iwjy" id="te-place" data-var-text="place">Nandi Hills</div>
+      <div data-hf-id="hf-bii4" id="te-date">29 · 08 · 2026</div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#te-place", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0.2);
+    tl.fromTo("#te-date", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power3.out" }, 0.36);
+    tl.set({}, {}, 2.6);
+    window.__timelines["title-end"] = tl;
+  </script>
+</template>

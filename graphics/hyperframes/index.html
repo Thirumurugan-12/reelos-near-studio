@@ -1,0 +1,267 @@
+<!doctype html>
+<!--
+  ReelOS graphic insert, HyperFrames port of graphics/src (Remotion).
+  Model-written copy arrives only through HyperFrames variables (data-var-text / textContent),
+  never as HTML. The backend copies this folder per render and rewrites only the two
+  3-second duration markers (root and stage) with a validated frame-exact duration.
+-->
+<html
+  lang="en"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"template","type":"enum","label":"Template","default":"document_stack","options":[{"value":"document_stack","label":"Document stack"},{"value":"browser_demo","label":"Browser demo"},{"value":"glasses","label":"Glasses"},{"value":"classroom","label":"Classroom"}]},
+    {"id":"title","type":"string","label":"Title","default":"Make it clear.","maxLength":36},
+    {"id":"body","type":"string","label":"Body","default":"One idea can start a conversation.","maxLength":120},
+    {"id":"accent","type":"color","label":"Accent","default":"#F21F2B"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ReelDisplay"; src: url("assets/fonts/ArchivoBlack-Regular.ttf") format("truetype"); font-weight: 400; }
+      @font-face { font-family: "ReelText"; src: url("assets/fonts/Inter.ttf") format("truetype"); font-weight: 100 900; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #080808; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: "ReelText", sans-serif; color: #f3eee4; }
+      #stage { position: absolute; inset: 0; overflow: hidden; }
+      /* Opaque full-bleed ground: PNG-sequence capture drops the page background. */
+      #ground { position: absolute; inset: 0; background: #080808; overflow: hidden; }
+      #swirl { position: absolute; inset: -160px; }
+      #wave { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: 0.28; }
+      #content { position: absolute; inset: 0; }
+      .kicker { position: absolute; left: 80px; top: 160px; font-size: 28px; font-weight: 600; letter-spacing: 7px; color: #aaa; }
+      .headline { position: absolute; left: 72px; right: 72px; top: 218px; font-family: "ReelDisplay", sans-serif; font-size: 86px; line-height: 1.02; letter-spacing: -2px; color: var(--accent); }
+      .footer { position: absolute; bottom: 145px; left: 80px; right: 80px; display: flex; align-items: center; gap: 20px; }
+      .footer i { width: 48px; height: 3px; background: var(--accent); }
+      .footer span { font-size: 28px; font-weight: 600; letter-spacing: 4px; color: #c7c1b7; }
+      .tpl { position: absolute; inset: 0; display: none; }
+
+      /* document_stack */
+      .doc { position: absolute; width: 650px; height: 760px; top: 620px; left: 215px; background: #f3eee4; color: #171411;
+        border: 2px solid #d4cdc2; border-radius: 10px; padding: 64px 58px; box-shadow: 0 28px 70px #000b; opacity: 0; }
+      .doc.front { border-color: var(--accent); }
+      .doc .tag { font-size: 28px; font-weight: 600; letter-spacing: 2px; color: #5a544b; }
+      .doc .rule { height: 2px; background: #c9c1b5; margin: 28px 0 52px; }
+      .doc h2 { font-family: "ReelDisplay", sans-serif; font-weight: 400; font-size: 58px; line-height: 1.05; letter-spacing: -2px; margin: 42px 0 28px; }
+      .doc p { font-size: 29px; line-height: 1.5; color: #50483f; }
+      .doc .bar { position: absolute; bottom: 55px; left: 58px; width: 300px; height: 8px; background: var(--accent); transform: rotate(-2deg); }
+
+      /* browser_demo */
+      #browser { position: absolute; left: 76px; top: 600px; width: 928px; height: 790px; border-radius: 20px; border: 3px solid var(--accent);
+        background: #141414; overflow: hidden; opacity: 0; }
+      #browser .chrome { height: 64px; background: #212121; display: flex; align-items: center; gap: 10px; padding: 0 25px; border-bottom: 1px solid #414141; }
+      #browser .dot { width: 14px; height: 14px; border-radius: 20px; }
+      #browser .url { margin-left: 30px; font-size: 28px; color: #aaa; }
+      #browser .pane { padding: 62px 52px; }
+      #browser .tag { font-size: 28px; font-weight: 600; letter-spacing: 3px; color: var(--accent); }
+      #browser h2 { font-family: "ReelDisplay", sans-serif; font-weight: 400; font-size: 60px; line-height: 1.12; letter-spacing: -2px; margin: 36px 0; color: #f3eee4; }
+      #browser .field { height: 180px; padding: 26px 28px; background: #222; border-radius: 12px; border: 1px solid #454545; color: #d7d3ca; font-size: 30px; line-height: 1.5; }
+      #browser .ch { opacity: 0; }
+      #browser .cursor { color: var(--accent); }
+      #browser .chips { display: flex; gap: 12px; margin-top: 32px; }
+      #browser .chip { padding: 14px 22px; font-size: 28px; font-weight: 600; color: #f3eee4; opacity: 0; }
+
+      /* glasses */
+      #glasses { position: absolute; top: 560px; left: 50px; right: 50px; bottom: 380px; opacity: 0; transform-origin: 50% 50%; }
+      #glasses svg { display: block; }
+      #glasses p { font-size: 44px; line-height: 1.3; color: #e7e0d4; text-align: center; margin: -40px 100px 0; }
+
+      /* classroom */
+      #classroom { position: absolute; left: 80px; right: 80px; top: 590px; height: 850px; opacity: 0; }
+      #classroom .board { position: relative; height: 490px; border: 18px solid #64503c; background: #193028; border-radius: 8px; padding: 55px; overflow: hidden; }
+      #classroom .chalk { color: #dddcd0; font-size: 73px; line-height: 1.7; transform-origin: 0 0; }
+      #classroom .chalk .small { font-size: 52px; }
+      #classroom .line { height: 3px; background: #b9beaa; }
+      #classroom .ledge { position: absolute; bottom: 0; left: 0; right: 0; height: 18px; background: #937658; }
+      #classroom p { color: #eee6da; font-size: 43px; line-height: 1.3; text-align: center; margin: 0 40px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="3.000000" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="3.000000" data-track-index="0" data-layout-allow-overflow>
+        <div id="ground">
+          <div id="swirl"></div>
+          <svg id="wave" viewBox="0 0 1080 1920">
+            <path d="M-100 1700 C300 1420 150 2080 900 1700 L1200 1980 L-100 1980Z" fill="var(--accent)" />
+            <path d="M-100 1630 C300 1350 150 2010 900 1630" fill="none" stroke="var(--accent)" stroke-width="3" />
+          </svg>
+        </div>
+        <div id="content">
+          <div class="kicker">A CLEARER PICTURE</div>
+          <div class="headline" data-var-text="title">Make it clear.</div>
+
+          <div class="tpl" id="tpl-document_stack">
+            <div class="doc" id="doc-0" data-layout-allow-overlap><div class="tag">AN IDEA WORTH SHARING</div><div class="rule"></div><h2 data-var-text="title">Make it clear.</h2><p data-var-text="body">One idea can start a conversation.</p><div class="bar"></div></div>
+            <div class="doc" id="doc-1" data-layout-allow-occlusion data-layout-allow-overlap><div class="tag">AN IDEA WORTH SHARING</div><div class="rule"></div><h2 data-var-text="title">Make it clear.</h2><p data-var-text="body">One idea can start a conversation.</p><div class="bar"></div></div>
+            <div class="doc front" id="doc-2" data-layout-allow-occlusion>
+              <div class="tag">AN IDEA WORTH SHARING</div>
+              <div class="rule"></div>
+              <svg width="96" height="110" viewBox="0 0 96 110" fill="none">
+                <path d="M12 4H58L84 30V104H12Z" stroke="var(--accent)" stroke-width="5" />
+                <path d="M58 4V30H84M28 52H68M28 68H68M28 84H55" stroke="var(--accent)" stroke-width="5" />
+              </svg>
+              <h2 data-var-text="title">Make it clear.</h2>
+              <p data-var-text="body">One idea can start a conversation.</p>
+              <div class="bar"></div>
+            </div>
+          </div>
+
+          <div class="tpl" id="tpl-browser_demo">
+            <div id="browser">
+              <div class="chrome">
+                <div class="dot" id="dot-accent"></div><div class="dot" style="background:#d5bc77"></div><div class="dot" style="background:#719e82"></div>
+                <span class="url">your workspace / draft</span>
+              </div>
+              <div class="pane">
+                <div class="tag">ONE THOUGHT. CLEARLY TOLD.</div>
+                <h2 data-var-text="title">Make it clear.</h2>
+                <div class="field"><span id="typed"></span><span class="cursor" id="cursor">▍</span></div>
+                <div class="chips"><div class="chip">IDEA</div><div class="chip">CLARITY</div><div class="chip">IMPACT</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tpl" id="tpl-glasses">
+            <div id="glasses">
+              <svg id="glasses-art" viewBox="0 0 980 750" width="980" height="750">
+                <defs>
+                  <linearGradient id="lens" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#f4eee0" stop-opacity=".16" />
+                    <stop offset="1" stop-color="var(--accent)" stop-opacity=".1" />
+                  </linearGradient>
+                </defs>
+                <path d="M100 270 L45 110 M880 270 L935 110" stroke="#ddd5c8" stroke-width="18" stroke-linecap="round" />
+                <rect x="90" y="250" width="340" height="265" rx="100" fill="url(#lens)" stroke="#f0e9dd" stroke-width="20" />
+                <rect x="550" y="250" width="340" height="265" rx="100" fill="url(#lens)" stroke="#f0e9dd" stroke-width="20" />
+                <path d="M430 330 Q490 280 550 330" fill="none" stroke="var(--accent)" stroke-width="22" />
+                <path d="M150 285 L285 285 M610 285 L745 285" stroke="white" stroke-opacity=".45" stroke-width="8" stroke-linecap="round" />
+                <g id="spark-0"><path d="M-25 0H25M0-25V25M-17-17L17 17M-17 17L17-17" stroke="var(--accent)" stroke-width="5" /></g>
+                <g id="spark-1"><path d="M-25 0H25M0-25V25M-17-17L17 17M-17 17L17-17" stroke="var(--accent)" stroke-width="5" /></g>
+              </svg>
+              <p data-var-text="body">One idea can start a conversation.</p>
+            </div>
+          </div>
+
+          <div class="tpl" id="tpl-classroom">
+            <div id="classroom">
+              <div class="board" id="board">
+                <div class="chalk" id="chalk">
+                  <div>A + B = ?</div>
+                  <div class="small">Today’s lesson</div>
+                  <div class="line" style="width:80%;margin-top:12px"></div>
+                  <div class="line" style="width:60%;margin-top:25px"></div>
+                </div>
+                <div class="ledge"></div>
+              </div>
+              <svg viewBox="0 0 920 230" width="920" height="230">
+                <path d="M80 100H840L890 160H30Z" fill="#8f6c4d" />
+                <path d="M80 100V205M840 100V205" stroke="#c49d70" stroke-width="17" />
+                <path d="M400 35H520M460-10V80" stroke="var(--accent)" stroke-width="8" />
+                <path d="M435 55L460 80L485 55" fill="none" stroke="var(--accent)" stroke-width="8" />
+              </svg>
+              <p data-var-text="body">One idea can start a conversation.</p>
+            </div>
+          </div>
+
+          <div class="footer"><i></i><span>YOUR VOICE. MADE VISIBLE.</span></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const FPS = 30;
+        const TEMPLATES = ["document_stack", "browser_demo", "glasses", "classroom"];
+        const vars = (window.__hyperframes && window.__hyperframes.getVariables && window.__hyperframes.getVariables()) || {};
+        const template = TEMPLATES.includes(vars.template) ? vars.template : "document_stack";
+        const accent = /^#[0-9a-fA-F]{6}$/.test(vars.accent || "") ? vars.accent : "#F21F2B";
+        const body = typeof vars.body === "string" ? vars.body : document.querySelector("#tpl-glasses p").textContent;
+        const N = Math.max(6, Math.round(parseFloat(document.getElementById("root").dataset.duration) * FPS));
+        const $ = (id) => document.getElementById(id);
+
+        // Accent with alpha suffixes, exactly as the Remotion version built them.
+        document.documentElement.style.setProperty("--accent", accent);
+        $("swirl").style.background =
+          "radial-gradient(ellipse at 10% 95%, " + accent + "77, transparent 48%), radial-gradient(ellipse at 95% 5%, " + accent + "44, transparent 45%)";
+        $("dot-accent").style.background = accent;
+        $("browser").style.boxShadow = "0 0 80px " + accent + "55";
+        $("board").style.boxShadow = "0 0 70px " + accent + "44";
+        $("glasses-art").style.filter = "drop-shadow(0 0 30px " + accent + "88)";
+        document.querySelectorAll("#browser .chip").forEach((chip) => (chip.style.border = "1px solid " + accent + "88"));
+        $("tpl-" + template).style.display = "block";
+
+        // Typed body for the browser demo: one span per character, text set via textContent.
+        const typed = $("typed");
+        const chars = Array.from(body).map((c) => {
+          const span = document.createElement("span");
+          span.className = "ch";
+          span.textContent = c;
+          typed.appendChild(span);
+          return span;
+        });
+
+        // Remotion-compatible helpers, pure functions of the frame number.
+        function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+        function interp(f, xs, ys) {
+          if (f <= xs[0]) return ys[0];
+          for (let i = 1; i < xs.length; i++) {
+            if (f <= xs[i]) return ys[i - 1] + ((f - xs[i - 1]) / (xs[i] - xs[i - 1])) * (ys[i] - ys[i - 1]);
+          }
+          return ys[ys.length - 1];
+        }
+        function spring(f, damping, stiffness) {
+          if (f <= 0) return 0;
+          const k = stiffness || 100, m = 1, t = f / FPS;
+          const w0 = Math.sqrt(k / m), zeta = damping / (2 * Math.sqrt(k * m));
+          if (zeta < 1) {
+            const wd = w0 * Math.sqrt(1 - zeta * zeta);
+            return 1 - Math.exp(-zeta * w0 * t) * (Math.cos(wd * t) + ((zeta * w0) / wd) * Math.sin(wd * t));
+          }
+          return 1 - Math.exp(-w0 * t) * (1 + w0 * t);
+        }
+
+        function render(frame) {
+          const fade = interp(frame, [0, 5, N - 6, N - 1], [0, 1, 1, 0]);
+          gsap.set("#content", { opacity: fade });
+          gsap.set("#swirl", { rotation: Math.sin(frame / 50) * 7 });
+          if (template === "document_stack") {
+            for (let i = 0; i < 3; i++) {
+              const e = spring(frame - i * 5, 18, 130);
+              gsap.set("#doc-" + i, { opacity: clamp(e, 0, 1), x: (i - 1) * 38, y: (1 - e) * 280 + i * -24, rotation: (i - 1) * 9 });
+            }
+          } else if (template === "browser_demo") {
+            const e = spring(frame, 20);
+            gsap.set("#browser", { opacity: clamp(e, 0, 1), y: (1 - e) * 140, rotation: -3, scale: 0.94 + e * 0.06 });
+            const shown = Math.floor(interp(frame, [12, 62], [0, chars.length]));
+            chars.forEach((span, i) => (span.style.opacity = i < shown ? 1 : 0));
+            $("cursor").style.opacity = frame % 20 < 10 ? 1 : 0;
+            document.querySelectorAll("#browser .chip").forEach((chip, i) => {
+              chip.style.opacity = interp(frame, [24 + i * 7, 34 + i * 7], [0, 1]);
+            });
+          } else if (template === "glasses") {
+            const e = spring(frame, 17, 120);
+            gsap.set("#glasses", { opacity: clamp(e, 0, 1), y: (1 - e) * 160, rotation: Math.sin(frame / 22) * 4, scale: 0.8 + e * 0.2 });
+            $("spark-0").setAttribute("transform", "translate(180 625) rotate(" + frame * 2 + ")");
+            $("spark-1").setAttribute("transform", "translate(800 625) rotate(" + frame * 2 + ")");
+          } else {
+            const e = spring(frame, 20);
+            gsap.set("#classroom", { opacity: clamp(e, 0, 1), y: (1 - e) * 160 });
+            gsap.set("#chalk", { scale: 1 + frame * 0.0008, filter: "blur(" + interp(frame, [14, 50], [0, 9]) + "px)" });
+          }
+        }
+
+        const clock = { f: 0 };
+        const tl = gsap.timeline({ paused: true });
+        render(0);
+        tl.fromTo(
+          clock,
+          { f: 0 },
+          { f: N - 1, duration: (N - 1) / FPS, ease: "none", onUpdate: () => render(Math.round(clock.f)) },
+          0
+        );
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>

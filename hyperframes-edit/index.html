@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { width: 100%; height: 100%; position: relative; }
+      #ground { position: absolute; inset: 0; z-index: 0; background: radial-gradient(120% 70% at 50% 18%, #1B2A5C 0%, #0E1630 55%, #070B18 100%); }
+      .cam { position: absolute; inset: 0; transform-origin: 540px 560px; }
+      #plate { overflow: hidden; }
+      .cam video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #plate { z-index: 1; }
+      #matte { z-index: 3; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-e0wv" id="root" data-composition-id="main" data-start="0" data-duration="167.9" data-width="1080" data-height="1920">
+      <div data-hf-id="hf-7hg0" id="ground"></div>
+      <div data-hf-id="hf-3y2p" id="plate" class="cam">
+        <video data-hf-id="hf-qew8" id="src" class="clip" src="assets/source.mp4" data-start="0" data-media-start="0" data-duration="167.9" data-track-index="0" playsinline data-has-audio="true" data-volume="1"></video>
+      </div>
+      <div data-hf-id="hf-wmf7" id="title-1" data-composition-id="title-1" data-composition-src="compositions/title-1.html" data-start="0.0" data-duration="7.5" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <div data-hf-id="hf-rs0p" id="title-2" data-composition-id="title-2" data-composition-src="compositions/title-2.html" data-start="62.0" data-duration="7.0" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <div data-hf-id="hf-r4ej" id="title-3" data-composition-id="title-3" data-composition-src="compositions/title-3.html" data-start="111.0" data-duration="7.0" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <div data-hf-id="hf-5o4j" id="title-4" data-composition-id="title-4" data-composition-src="compositions/title-4.html" data-start="160.0" data-duration="7.85" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:2"></div>
+      <div data-hf-id="hf-wl4u" id="matte" class="cam">
+        <video data-hf-id="hf-pgyz" id="matte-1" class="clip" src="assets/cut/t1-cutout.webm" data-start="0.0" data-media-start="0" data-duration="7.5" data-track-index="3" muted playsinline data-layout-allow-occlusion></video>
+        <video data-hf-id="hf-pmhz" id="matte-2" class="clip" src="assets/cut/t2-cutout.webm" data-start="61.5" data-media-start="0" data-duration="7.5" data-track-index="3" muted playsinline data-layout-allow-occlusion></video>
+        <video data-hf-id="hf-m5nk" id="matte-3" class="clip" src="assets/cut/t3-cutout.webm" data-start="110.5" data-media-start="0" data-duration="7.5" data-track-index="3" muted playsinline data-layout-allow-occlusion></video>
+        <video data-hf-id="hf-cncb" id="matte-4" class="clip" src="assets/cut/t4-cutout.webm" data-start="159.5" data-media-start="0" data-duration="8.35" data-track-index="3" muted playsinline data-layout-allow-occlusion></video>
+      </div>
+      <div data-hf-id="hf-y1m8" id="label-open" data-composition-id="label-open" data-composition-src="compositions/label-open.html" data-start="0.5" data-duration="7.0" data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
+      <div data-hf-id="hf-vr67" id="label-close" data-composition-id="label-close" data-composition-src="compositions/label-close.html" data-start="160.0" data-duration="7.85" data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:4"></div>
+      <div data-hf-id="hf-7257" id="card-1" data-composition-id="card-1" data-composition-src="compositions/card-1.html" data-start="12.0" data-duration="3" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div data-hf-id="hf-9dhx" id="card-2" data-composition-id="card-2" data-composition-src="compositions/card-2.html" data-start="46.0" data-duration="3" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div data-hf-id="hf-0c0n" id="card-3" data-composition-id="card-3" data-composition-src="compositions/card-3.html" data-start="72.0" data-duration="3" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div data-hf-id="hf-s2it" id="card-4" data-composition-id="card-4" data-composition-src="compositions/card-4.html" data-start="110.0" data-duration="3" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <div data-hf-id="hf-j1ao" id="card-5" data-composition-id="card-5" data-composition-src="compositions/card-5.html" data-start="145.0" data-duration="3" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index:5"></div>
+      <audio data-hf-id="hf-pxde" id="sfx-card-1" class="clip" src="assets/sfx/whoosh.mp3" data-start="12.0" data-duration="0.6" data-track-index="7" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-ywle" id="sfx-card-2" class="clip" src="assets/sfx/whoosh.mp3" data-start="46.0" data-duration="0.6" data-track-index="7" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-xcqy" id="sfx-card-3" class="clip" src="assets/sfx/whoosh.mp3" data-start="72.0" data-duration="0.6" data-track-index="7" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-ngoe" id="sfx-card-4" class="clip" src="assets/sfx/whoosh.mp3" data-start="110.0" data-duration="0.6" data-track-index="7" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-h7r1" id="sfx-card-5" class="clip" src="assets/sfx/whoosh.mp3" data-start="145.0" data-duration="0.6" data-track-index="7" data-volume="0.35"></audio>
+      <audio data-hf-id="hf-f4wp" id="sfx-title-1" class="clip" src="assets/sfx/impact.mp3" data-start="0.05" data-duration="2.1" data-track-index="8" data-volume="0.25"></audio>
+      <audio data-hf-id="hf-6j2m" id="sfx-title-2" class="clip" src="assets/sfx/impact.mp3" data-start="62.05" data-duration="2.1" data-track-index="8" data-volume="0.25"></audio>
+      <audio data-hf-id="hf-9se0" id="sfx-title-3" class="clip" src="assets/sfx/impact.mp3" data-start="111.05" data-duration="2.1" data-track-index="8" data-volume="0.25"></audio>
+      <audio data-hf-id="hf-o0ln" id="sfx-title-4" class="clip" src="assets/sfx/impact.mp3" data-start="160.05" data-duration="2.1" data-track-index="8" data-volume="0.25"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const cams = ["#plate", "#matte"];
+      tl.set(cams, { scale: 1.12, y: 20 }, 18.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 27.0);
+      tl.set(cams, { scale: 1.15, y: 30 }, 33.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 39.0);
+      tl.set(cams, { scale: 1.12, y: 20 }, 47.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 52.6);
+      tl.set(cams, { scale: 1.0, y: 0 }, 60.3);
+      tl.set(cams, { scale: 1.12, y: 20 }, 82.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 88.0);
+      tl.set(cams, { scale: 1.14, y: 30 }, 95.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 100.7);
+      tl.set(cams, { scale: 1.12, y: 20 }, 105.4);
+      tl.set(cams, { scale: 1.12, y: 20 }, 126.0);
+      tl.set(cams, { scale: 1.0, y: 0 }, 138.3);
+      tl.set(cams, { scale: 1.14, y: 30 }, 142.8);
+      tl.set(cams, { scale: 1.0, y: 0 }, 152.4);
+      tl.set(cams, { scale: 1.12, y: 20 }, 156.3);
+      tl.set(cams, { scale: 0.78, y: 300 }, 0); tl.set("#plate", { borderRadius: 44 }, 0);
+      tl.fromTo(cams, { scale: 0.78, y: 300 }, { scale: 1, y: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 7.5); tl.fromTo("#plate", { borderRadius: 44 }, { borderRadius: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 7.5);
+      tl.fromTo(cams, { scale: 1.0, y: 0 }, { scale: 0.78, y: 300, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 61.5); tl.fromTo("#plate", { borderRadius: 0 }, { borderRadius: 44, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 61.5);
+      tl.fromTo(cams, { scale: 0.78, y: 300 }, { scale: 1, y: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 69.0); tl.fromTo("#plate", { borderRadius: 44 }, { borderRadius: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 69.0);
+      tl.fromTo(cams, { scale: 1.12, y: 20 }, { scale: 0.78, y: 300, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 110.5); tl.fromTo("#plate", { borderRadius: 0 }, { borderRadius: 44, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 110.5);
+      tl.fromTo(cams, { scale: 0.78, y: 300 }, { scale: 1, y: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 118.0); tl.fromTo("#plate", { borderRadius: 44 }, { borderRadius: 0, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 118.0);
+      tl.fromTo(cams, { scale: 1.12, y: 20 }, { scale: 0.78, y: 300, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 159.5); tl.fromTo("#plate", { borderRadius: 0 }, { borderRadius: 44, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 159.5);
+      tl.set({}, {}, 167.9);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

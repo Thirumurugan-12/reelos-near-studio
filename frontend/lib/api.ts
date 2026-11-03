@@ -1,8 +1,9 @@
 export type Asset = {
   id: string;
   name: string;
-  role: "source" | "reference" | "supporting";
+  role: "source" | "reference" | "supporting" | "clip";
   kind?: "image" | "video";
+  recorded_at?: string | null;
   duration: number;
   width: number;
   height: number;
@@ -25,6 +26,9 @@ export type Plan = {
 };
 export type Version = {
   id: string;
+  kind?: "montage" | "trip";
+  montage?: ReelPlan;
+  trip?: ReelPlan;
   parent_id: string | null;
   created_at: number;
   plan: Plan;
@@ -83,6 +87,20 @@ export function post<T>(path: string, data: unknown) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+}
+export type UploadRole = Asset["role"];
+export type ReelStyle = "calm" | "energetic" | "clean";
+export type ReelPlan = {
+  title: string;
+  style?: ReelStyle;
+  show_times?: boolean;
+  shots: { clip_id: string; slow: boolean }[];
+};
+
+/** Local wall-clock time from a clip's recording timestamp, e.g. "07:23". */
+export function clockTime(iso?: string | null) {
+  const match = iso?.match(/T(\d{2}):(\d{2})/);
+  return match ? `${match[1]}:${match[2]}` : "";
 }
 export function time(seconds: number) {
   return `${Math.floor(seconds / 60)

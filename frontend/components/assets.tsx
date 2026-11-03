@@ -1,4 +1,4 @@
-import { type Asset, time } from "../lib/api";
+import { type Asset, type UploadRole, clockTime, time } from "../lib/api";
 import { Icon } from "./icons";
 
 export function Assets({
@@ -15,10 +15,7 @@ export function Assets({
   referenceId: string;
   onSource: (id: string) => void;
   onReference: (id: string) => void;
-  onUpload: (
-    file: File,
-    role: "source" | "reference" | "supporting",
-  ) => void | Promise<void>;
+  onUpload: (file: File, role: UploadRole) => void | Promise<void>;
   disabled: boolean;
 }) {
   return (
@@ -67,6 +64,43 @@ export function Assets({
               </span>
               {asset.id === sourceId && <Icon name="check" size={16} />}
             </button>
+          ))}
+      </div>
+      <div className="reference-section clip-upload">
+        <div className="panel-heading">
+          <h2>Multi-clip reel</h2>
+          <span className="optional">Multi-clip</span>
+        </div>
+        <p className="muted small">
+          Several short clips (a trip, an event, a day out) become one reel, cut
+          on the beat.
+        </p>
+        <label className="reference-upload">
+          <Icon name="plus" size={16} /> Add clips
+          <input
+            type="file"
+            multiple
+            accept="video/mp4,video/quicktime,.mov"
+            disabled={disabled}
+            onChange={async (e) => {
+              const files = Array.from(e.target.files || []);
+              e.target.value = "";
+              for (const file of files) await onUpload(file, "clip");
+            }}
+          />
+        </label>
+        {assets
+          .filter((a) => a.role === "clip")
+          .map((a) => (
+            <div className="supporting-asset" key={a.id}>
+              <Icon name="film" size={16} />
+              <span>{a.name}</span>
+              <small>
+                {[clockTime(a.recorded_at), time(a.duration)]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </small>
+            </div>
           ))}
       </div>
       <div className="reference-section">

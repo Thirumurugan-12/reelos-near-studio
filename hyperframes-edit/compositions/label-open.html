@@ -1,0 +1,26 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    #label-open-row { position: absolute; left: 0; right: 0; top: 1188px; display: flex; justify-content: center; }
+    #label-open-pill { display: flex; align-items: center; gap: 18px;
+      padding: 22px 34px; border-radius: 999px; background: rgba(14, 22, 48, 0.82); backdrop-filter: blur(18px);
+      font-family: "Inter", sans-serif; font-weight: 700; font-size: 46px; color: #F4F4F2; white-space: nowrap; letter-spacing: -0.01em; }
+    #label-open-pill .dot { width: 16px; height: 16px; border-radius: 50%; background: #1D4ED8; box-shadow: 0 0 0 6px rgba(29, 78, 216, 0.28); }
+    #label-open-pill .w { display: inline-block; margin-right: 0.26em; }
+    #label-open-pill .w:last-of-type { margin-right: 0; }
+    #label-open-pill .acc { background: #1D4ED8; padding: 0 0.22em; border-radius: 8px; }
+  </style>
+  <div data-hf-id="hf-tkgy" id="root" data-composition-id="label-open" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-i8xl" id="label-open-wrap" class="clip" data-start="0" data-duration="7.0">
+      <div data-hf-id="hf-vnrp" id="label-open-row"><div data-hf-id="hf-asju" id="label-open-pill"><span data-hf-id="hf-9gry" class="dot"></span><span data-hf-id="hf-vwsn" class="txt"><span data-hf-id="hf-b7a3" class="w">a</span><span data-hf-id="hf-4qrs" class="w">personal</span><span data-hf-id="hf-vvhh" class="w">eye-story</span></span></div></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#label-open-pill", { opacity: 0, y: 30, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.6);
+    tl.fromTo("#label-open-pill .w", { color: "#8A93AB" }, { color: "#F4F4F2", duration: 0.2, stagger: 0.08, ease: "power1.out" }, 0.8);
+    
+    tl.to("#label-open-pill", { opacity: 0, y: 16, filter: "blur(6px)", duration: 0.25, ease: "power2.in" }, 6.60);
+    window.__timelines["label-open"] = tl;
+  </script>
+</template>

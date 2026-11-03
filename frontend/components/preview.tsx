@@ -110,7 +110,11 @@ export function Preview({
               )
             : "9:16"}{" "}
           <span className="divider">/</span>{" "}
-          {original || !hasEdit ? "Original" : "360p preview"}
+          {original || !hasEdit
+            ? "Original"
+            : version?.kind === "montage" || version?.kind === "trip"
+              ? "1080p reel"
+              : "360p preview"}
         </span>
       </div>
     </section>

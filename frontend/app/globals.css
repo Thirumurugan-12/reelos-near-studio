@@ -1799,3 +1799,120 @@ dialog::backdrop {
   min-height: 44px;
   padding: 6px 8px;
 }
+
+/* Multi-clip reel: planning panel and style picker */
+.reel-panel > .small {
+  display: block;
+  margin: -8px 0 14px;
+  line-height: 1.55;
+}
+.reel-clips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.reel-clips li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+}
+.reel-index {
+  font-family: "Space Mono", monospace;
+  color: var(--green);
+  font-size: 10px;
+}
+.reel-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reel-meta {
+  font-family: "Space Mono", monospace;
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.reel-total {
+  display: block;
+  margin: 14px 0 4px;
+}
+.reel-panel input {
+  width: 100%;
+}
+.reel-panel > .text-button {
+  margin-top: 12px;
+}
+.reel-styles {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.reel-style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.reel-style {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 12px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--ink);
+  min-height: 92px;
+}
+.reel-style strong {
+  font-size: 13px;
+}
+.reel-style span {
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.reel-style.selected {
+  border-color: var(--green);
+  background: var(--soft);
+}
+.reel-style.selected strong {
+  color: var(--green);
+}
+.reel-restyle {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.reel-new summary {
+  cursor: pointer;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.reel-panel input[type="checkbox"] {
+  width: auto;
+}
+button.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  font-weight: 600;
+}
+button.secondary.wide {
+  width: 100%;
+}
+button.secondary:disabled {
+  opacity: 0.45;
+}

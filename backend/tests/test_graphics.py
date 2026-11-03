@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -136,9 +137,9 @@ def test_broll_reuses_the_existing_remotion_frames(tmp_path, monkeypatch):
             }
         ],
     }
-    legacy = prepare_graphics(EditPlan.model_validate(data), tmp_path)
+    legacy = prepare_graphics(EditPlan.model_validate(data), tmp_path, renderer="remotion")
     data["effects"][0]["params"]["presentation"] = "broll"
-    overlay = prepare_graphics(EditPlan.model_validate(data), tmp_path)
+    overlay = prepare_graphics(EditPlan.model_validate(data), tmp_path, renderer="remotion")
     assert len(requests) == 1
     assert legacy["g"].directory == overlay["g"].directory
     assert "presentation" not in requests[0]["props"]
@@ -175,3 +176,123 @@ def test_presentation_revision_is_targeted_and_preserves_parent():
     expected["effects"][0]["params"]["presentation"] = "broll"
     assert child.model_dump() == expected
     assert parent.model_dump() == original
+
+
+def _insert_plan(title="Clear ideas", duration=1.0):
+    return EditPlan.model_validate(
+        {
+            "asset_id": "a" * 32,
+            "source_out": 5,
+            "effects": [
+                {
+                    "id": "insert",
+                    "type": "graphic_insert",
+                    "start": 0,
+                    "end": duration,
+                    "subject_id": "0",
+                    "params": {"template": "glasses", "title": title, "body": "Say what matters."},
+                }
+            ],
+        }
+    )
+
+
+def test_renderer_choice_routes_and_keeps_separate_caches(tmp_path, monkeypatch):
+    from reelos import graphics as g
+
+    calls = []
+
+    def fake(name):
+        def render(requests):
+            calls.append(name)
+            for request in requests:
+                out = Path(request["outputDir"])
+                out.mkdir(parents=True)
+                Image.new("RGB", (9, 16)).save(out / "0.png")
+                (out / "manifest.json").write_text(json.dumps({"fps": 30, "frames": ["0.png"]}))
+
+        return render
+
+    monkeypatch.setattr(g, "_render_hyperframes", fake("hyperframes"))
+    monkeypatch.setattr(g, "_render_remotion", fake("remotion"))
+    plan = _insert_plan()
+    hf = g.prepare_graphics(plan, tmp_path)["insert"].directory
+    rem = g.prepare_graphics(plan, tmp_path, renderer="remotion")["insert"].directory
+    g.prepare_graphics(plan, tmp_path)  # cached: no second HyperFrames render
+    assert calls == ["hyperframes", "remotion"]
+    assert hf != rem
+    with pytest.raises(ValueError, match="renderer"):
+        g.prepare_graphics(plan, tmp_path, renderer="ffmpeg")
+
+
+def test_hyperframes_render_keeps_model_text_out_of_html_and_secrets_out_of_child(
+    tmp_path, monkeypatch
+):
+    from reelos import graphics as g
+
+    binary = tmp_path / "hyperframes"
+    binary.write_text("")
+    monkeypatch.setattr(g, "hyperframes_binary", lambda: binary)
+    monkeypatch.setenv("MODEL_API_KEY", "secret-value")
+    title = "<script>x()</script>"
+    seen = {}
+
+    def fake_run(command, cwd, env, **kwargs):
+        project, output = Path(command[2]), Path(command[command.index("-o") + 1])
+        seen["html"] = (project / "index.html").read_text()
+        seen["variables"] = json.loads(command[command.index("--variables") + 1])
+        seen["env"], seen["cwd"] = env, cwd
+        output.mkdir()
+        for i in range(32):  # one more than needed: extra frames are trimmed
+            Image.new("RGBA", (12, 20), (0, 0, 0, 0)).save(output / f"frame_{i + 1:06d}.png")
+
+    monkeypatch.setattr(g.subprocess, "run", fake_run)
+    track = g.prepare_graphics(_insert_plan(title, duration=1.03), tmp_path)["insert"]
+    assert seen["variables"]["title"] == title
+    assert title not in seen["html"] and 'data-duration="1.033333"' in seen["html"]
+    assert "MODEL_API_KEY" not in seen["env"] and seen["env"]["HYPERFRAMES_NO_TELEMETRY"] == "1"
+    assert Path(seen["cwd"]) != g.GRAPHICS_DIR.parent
+    assert len(track.manifest["frames"]) == g.frame_count(1.03) == 31
+    assert track.manifest["renderer"] == "HyperFrames 0.9.4"
+    # Transparent captures are flattened onto the opaque ground.
+    assert track.at(0, (12, 20)).getpixel((0, 0)) == g.GROUND
+
+
+def test_hyperframes_short_render_fails_without_publishing(tmp_path, monkeypatch):
+    from reelos import graphics as g
+
+    binary = tmp_path / "hyperframes"
+    binary.write_text("")
+    monkeypatch.setattr(g, "hyperframes_binary", lambda: binary)
+
+    def fake_run(command, **kwargs):
+        output = Path(command[command.index("-o") + 1])
+        output.mkdir()
+        Image.new("RGBA", (12, 20)).save(output / "frame_000001.png")
+
+    monkeypatch.setattr(g.subprocess, "run", fake_run)
+    with pytest.raises(ValueError, match="previous edit is preserved"):
+        g.prepare_graphics(_insert_plan(), tmp_path)
+    assert not list((tmp_path / "graphics").glob("*/manifest.json"))
+
+
+def test_graphics_renderer_setting_is_validated():
+    from reelos.config import graphics_renderer
+
+    assert graphics_renderer(None) == "hyperframes"
+    assert graphics_renderer(" Remotion ") == "remotion"
+    with pytest.raises(ValueError):
+        graphics_renderer("chrome")
+
+
+@pytest.mark.skipif(
+    not __import__("reelos.graphics").graphics.hyperframes_binary().exists(),
+    reason="HyperFrames CLI is not installed in graphics/node_modules",
+)
+def test_hyperframes_renders_a_real_insert(tmp_path):
+    from reelos import graphics as g
+
+    track = g.prepare_graphics(_insert_plan(duration=0.5), tmp_path)["insert"]
+    assert len(track.manifest["frames"]) == 15
+    with Image.open(track.directory / track.manifest["frames"][7]) as frame:
+        assert frame.size == (1080, 1920) and frame.mode == "RGB"

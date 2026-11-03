@@ -1,0 +1,84 @@
+<!doctype html>
+<html
+  lang="en"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"place","type":"string","label":"Place","default":"Nandi Hills","maxLength":24},
+    {"id":"date","type":"string","label":"Date line","default":"29 AUG 2026 · MORNING RIDE","maxLength":36}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b0f0d; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+      .shot { position: absolute; inset: 0; overflow: hidden; }
+      .shot video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #mist { position: absolute; inset: 0; z-index: 20; pointer-events: none; opacity: 0;
+        background: radial-gradient(120% 80% at 50% 45%, #f6f7f4 0%, #e9ece8 60%, #dfe3df 100%); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-gdq6" id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920" data-motion-blur="on">
+      <!-- 1 · Misty tree road (IMG_0105, 07:27) -->
+      <div data-hf-id="hf-bick" id="shot-1" class="shot" style="z-index: 1">
+        <video data-hf-id="hf-3khf" id="v1" class="clip" src="assets/clips/mist-road.mp4" data-start="0" data-media-start="1.0" data-duration="4.8" data-track-index="0" playsinline data-has-audio="true" data-volume="0.4"></video>
+      </div>
+      <!-- 2 · Further along the same road -->
+      <div data-hf-id="hf-qhra" id="shot-2" class="shot" style="z-index: 2">
+        <video data-hf-id="hf-n8ed" id="v2" class="clip" src="assets/clips/mist-road.mp4" data-start="4.8" data-media-start="10.5" data-duration="5.0" data-track-index="1" playsinline data-has-audio="true" data-volume="0.4"></video>
+      </div>
+      <!-- 3 · Rider view, interpolated 0.4x slow motion (IMG_0121, 07:53) -->
+      <div data-hf-id="hf-mhhs" id="shot-3" class="shot" style="z-index: 3">
+        <video data-hf-id="hf-q7uc" id="v3" class="clip" src="assets/clips/ride-slow.mp4" data-start="9.5" data-media-start="0" data-duration="1.86" data-track-index="0" muted playsinline></video>
+      </div>
+      <!-- 4 · Bike at the valley viewpoint (IMG_0128, 08:07) -->
+      <div data-hf-id="hf-o73a" id="shot-4" class="shot" style="z-index: 4">
+        <video data-hf-id="hf-zjsv" id="v4" class="clip" src="assets/clips/viewpoint.mp4" data-start="11.36" data-media-start="0.96" data-duration="7.84" data-track-index="1" playsinline data-has-audio="true" data-volume="0.45"></video>
+      </div>
+      <!-- 5 · Afternoon mist path, tilting up into the trees (IMG_0109, 15:25) -->
+      <div data-hf-id="hf-4alg" id="shot-5" class="shot" style="z-index: 5">
+        <video data-hf-id="hf-e79s" id="v5" class="clip" src="assets/clips/mist-path.mp4" data-start="19.2" data-media-start="2.8" data-duration="10.8" data-track-index="0" playsinline data-has-audio="true" data-volume="0.22"></video>
+      </div>
+
+      <div data-hf-id="hf-e8iu" id="mist"></div>
+
+      <div data-hf-id="hf-pt0u" id="title-open" data-composition-id="title-open" data-composition-src="compositions/title-open.html" data-start="0" data-duration="4.6" data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 30"></div>
+      <div data-hf-id="hf-nhx9" id="stamps" data-composition-id="stamps" data-composition-src="compositions/stamps.html" data-start="5" data-duration="22" data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 30"></div>
+      <div data-hf-id="hf-zj9k" id="title-end" data-composition-id="title-end" data-composition-src="compositions/title-end.html" data-start="27.4" data-duration="2.6" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 30"></div>
+
+      <audio data-hf-id="hf-lk2g" id="music" class="clip" src="assets/music/morning-bed.wav" data-start="0" data-media-start="0" data-duration="30" data-track-index="6" data-timeline-role="music" data-volume="0.6" data-fade-in="0.3" data-fade-out="2.2"></audio>
+      <audio data-hf-id="hf-atas" id="sfx-whip" class="clip" src="assets/sfx/whoosh.mp3" data-start="9.45" data-duration="0.6" data-track-index="7" data-volume="0.3"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const ease = "power2.inOut";
+
+      // Shot 1: slow push into the mist.
+      tl.fromTo("#shot-1", { scale: 1.0 }, { scale: 1.06, duration: 4.8, ease: "none" }, 0);
+      // 4.8 s: mist flash hides the jump along the road.
+      tl.fromTo("#mist", { opacity: 0 }, { opacity: 0.85, duration: 0.25, ease: "power2.in" }, 4.55);
+      tl.fromTo("#mist", { opacity: 0.85 }, { opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, 4.8);
+      // Shot 2: gentle pull back, then whip up out of frame on the 9.6 s chord.
+      tl.fromTo("#shot-2", { scale: 1.05, y: 0 }, { scale: 1.0, duration: 4.6, ease: "none" }, 4.8);
+      tl.fromTo("#shot-2", { y: 0 }, { y: -1920, duration: 0.3, ease: "power3.inOut", immediateRender: false }, 9.5);
+      // Shot 3: rider view lands from below, matching the whip's direction and speed.
+      tl.fromTo("#shot-3", { y: 1920 }, { y: 0, duration: 0.3, ease: "power3.inOut" }, 9.5);
+      // Shot 4: hard cut on the ramp end, slow push, punch-in on the 14.4 s chord change.
+      tl.fromTo("#shot-4", { scale: 1.0, transformOrigin: "540px 1100px" }, { scale: 1.04, duration: 3.04, ease: "none" }, 11.36);
+      tl.set("#shot-4", { scale: 1.18 }, 14.4);
+      tl.fromTo("#shot-4", { scale: 1.18 }, { scale: 1.22, duration: 4.8, ease: "none", immediateRender: false }, 14.4);
+      // 19.2 s: a longer mist dissolve into the afternoon.
+      tl.fromTo("#mist", { opacity: 0 }, { opacity: 0.9, duration: 0.35, ease: "power2.in", immediateRender: false }, 18.85);
+      tl.fromTo("#mist", { opacity: 0.9 }, { opacity: 0, duration: 0.6, ease: "power2.out", immediateRender: false }, 19.2);
+      tl.fromTo("#shot-5", { scale: 1.0 }, { scale: 1.05, duration: 10.8, ease: "none" }, 19.2);
+      // Ending: the mist rises while the camera tilts into the trees; the end title sits on it.
+      tl.fromTo("#mist", { opacity: 0 }, { opacity: 0.9, duration: 1.2, ease: ease, immediateRender: false }, 26.5);
+      tl.set({}, {}, 30);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

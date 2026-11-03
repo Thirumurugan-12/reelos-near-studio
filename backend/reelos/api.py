@@ -12,6 +12,7 @@ from pydantic import Field, model_validator
 
 from reelos.config import Settings
 from reelos.media import inspect_media, make_proxy
+from reelos.montage import clip_metadata
 from reelos.segmentation import subject_thumbnail
 from reelos.service import Editor
 from reelos.store import new_id
@@ -28,8 +29,12 @@ class VersionInput(Contract):
 
 
 class JobInput(Contract):
-    action: Literal["draft", "revise", "render"]
+    action: Literal["draft", "revise", "render", "montage", "restyle"]
     asset_id: Identifier | None = None
+    clip_ids: list[Identifier] = Field(default_factory=list, max_length=12)
+    title: str = Field(default="", max_length=24)
+    style: Literal["calm", "energetic", "clean"] = "calm"
+    show_times: bool = True
     version_id: Identifier | None = None
     reference_id: Identifier | None = None
     instruction: str = Field(default="Create a clear, engaging creator explainer.", max_length=2000)
@@ -43,6 +48,10 @@ class JobInput(Contract):
     def references(self):
         if self.action == "draft" and not self.asset_id:
             raise ValueError("Source footage is required.")
+        if self.action == "montage":
+            if len(set(self.clip_ids)) < 2:
+                raise ValueError("Choose at least two clips for a multi-clip reel.")
+            return self
         if self.action != "draft" and not self.version_id:
             raise ValueError("An edit version is required.")
         return self
@@ -145,7 +154,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def asset_upload(
         project_id: Identifier,
         file: UploadFile = File(),
-        role: Literal["source", "reference", "supporting"] = Form("source"),
+        role: Literal["source", "reference", "supporting", "clip"] = Form("source"),
     ):
         editor.store.get("project", project_id)
         id = new_id()
@@ -185,12 +194,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 except (OSError, Image.DecompressionBombError) as exc:
                     raise ValueError("Cannot decode this supporting image.") from exc
             metadata = metadata or inspect_media(source)
-            if metadata["duration"] > (60 if role == "reference" else 300):
+            if metadata["duration"] > {"reference": 60, "clip": 120}.get(role, 300):
                 raise ValueError(
-                    "Use source footage up to five minutes or a reference up to one minute."
+                    "Use source footage up to five minutes, reel clips up to two minutes "
+                    "or a reference up to one minute."
                 )
+            if role == "clip":
+                metadata |= clip_metadata(source)
             if metadata.get("kind") != "image":
-                make_proxy(source, directory / "proxy.mp4", portrait=role == "source")
+                make_proxy(source, directory / "proxy.mp4", portrait=role in {"source", "clip"})
             return editor.store.put(
                 "asset",
                 id,
@@ -269,6 +281,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             value = getattr(data, key)
             if value:
                 editor.store.get(kind, value, project_id)
+        for clip_id in data.clip_ids:
+            editor.store.get("asset", clip_id, project_id)
         return editor.queue(project_id, data.model_dump())
 
     @app.get("/api/projects/{project_id}/jobs/{job_id}")

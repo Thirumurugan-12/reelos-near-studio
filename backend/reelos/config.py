@@ -13,6 +13,7 @@ class Settings:
     sam_model: str = "sam-3.1"
     budget_usd: float = 150
     reserve_usd: float = 1
+    graphics_renderer: str = "hyperframes"
 
     @classmethod
     def load(cls):
@@ -26,4 +27,12 @@ class Settings:
             sam_model=os.getenv("META_SAM_MODEL", "sam-3.1"),
             budget_usd=min(150, max(0, float(os.getenv("REELOS_API_BUDGET_USD", "150")))),
             reserve_usd=max(0.1, float(os.getenv("REELOS_REQUEST_RESERVE_USD", "1"))),
+            graphics_renderer=graphics_renderer(os.getenv("REELOS_GRAPHICS_RENDERER")),
         )
+
+
+def graphics_renderer(value: str | None) -> str:
+    value = (value or "hyperframes").strip().lower()
+    if value not in {"hyperframes", "remotion"}:
+        raise ValueError("REELOS_GRAPHICS_RENDERER must be 'hyperframes' or 'remotion'")
+    return value

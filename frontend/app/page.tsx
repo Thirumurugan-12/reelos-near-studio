@@ -10,6 +10,7 @@ import { Timeline, effectLabel } from "../components/timeline";
 import { EffectBrowser } from "../components/effect-browser";
 import { Icon } from "../components/icons";
 import { VersionHistory } from "../components/version-history";
+import { ReelPanel, isReel, reelClips } from "../components/reel-panel";
 
 type Tool = "edit" | "effects" | "media" | "moment";
 const toolItems = [
@@ -43,6 +44,12 @@ export default function Studio() {
   const source = s.project?.assets.find(
     (a) => a.id === (version?.plan.asset_id || s.sourceId),
   );
+  const clips = reelClips(s.project?.assets || []);
+  const onReel = isReel(version);
+  const reelMode = clips.length >= 2 && (!s.sourceId || onReel || !version);
+  const previewSource = onReel
+    ? undefined
+    : source || (!version && !s.sourceId ? clips[0] : undefined);
   const mode = tool === "moment" && !selected ? "edit" : tool;
   const prefix = s.project ? `/api/projects/${s.project.id}` : "";
   const versionNumber = version
@@ -97,7 +104,7 @@ export default function Studio() {
       ? "Preview ready"
       : version
         ? "Storyboard ready"
-        : source
+        : source || clips.length
           ? "Ready for your direction"
           : "Add footage to begin";
   return (
@@ -227,7 +234,7 @@ export default function Studio() {
         <div className="canvas-main">
           <Preview
             projectId={s.project?.id}
-            source={source}
+            source={previewSource}
             version={version}
             original={original}
             onOriginal={setOriginal}
@@ -308,7 +315,25 @@ export default function Studio() {
           </div>
           <div className="inspector-content">
             <div hidden={mode !== "edit"}>
-              {version && (
+              {reelMode && (
+                <ReelPanel
+                  key={`${s.project?.id}-reel-${version?.id || "new"}`}
+                  clips={clips}
+                  busy={s.busy}
+                  canPlan={!!s.health?.meta_configured}
+                  version={onReel ? version : undefined}
+                  onMake={(ids, title, direction, style, showTimes) => {
+                    s.makeReel(ids, title, direction, style, showTimes);
+                    setSheetOpen(false);
+                  }}
+                  onRestyle={(style, showTimes) => {
+                    s.restyle(style, showTimes);
+                    setSheetOpen(false);
+                  }}
+                  onAddClips={() => openTool("media")}
+                />
+              )}
+              {version && !onReel && (
                 <section
                   className="quick-treatments"
                   aria-label="Quick treatments"
@@ -339,14 +364,14 @@ export default function Studio() {
                   </div>
                 </section>
               )}
-              {!source && (
+              {!source && !clips.length && (
                 <div className="setup-hint">
                   <span className="eyebrow">
                     01 FOOTAGE → 02 DIRECTION → 03 EDIT
                   </span>
                   <p>
-                    Add your recording in Media, then tell ReelOS what you want
-                    to make.
+                    Add a recording, or several clips for a reel, in Media. Then
+                    tell ReelOS what you want to make.
                   </p>
                   <button
                     className="text-button"
@@ -367,7 +392,7 @@ export default function Studio() {
                   </button>
                 </div>
               )}
-              {version && (
+              {version && !onReel && (
                 <fieldset className="framing-controls" disabled={s.busy}>
                   <legend>Framing</legend>
                   <p>
@@ -399,41 +424,43 @@ export default function Studio() {
                   </div>
                 </fieldset>
               )}
-              <Direction
-                key={`${s.project?.id}-${version?.id || "draft"}`}
-                projectId={s.project?.id}
-                version={version}
-                job={s.job}
-                busy={s.busy}
-                canDraft={!!s.sourceId && !!s.health?.meta_configured}
-                onDraft={(instruction, review, subject, outputMode) => {
-                  s.start({
-                    action: "draft",
-                    asset_id: s.sourceId,
-                    reference_id: s.referenceId || null,
-                    instruction,
-                    subject_prompt: subject,
-                    subject_id: s.subjectId || null,
-                    review_storyboard: review,
-                    output_mode: outputMode,
-                  });
-                  setSheetOpen(false);
-                }}
-                onRevise={(instruction) => {
-                  s.start({
-                    action: "revise",
-                    version_id: version?.id,
-                    instruction: focused
-                      ? `Update only effect ${focused.id} (${effectLabel(focused)}, ${focused.start}–${focused.end}s). ${instruction}`
-                      : instruction,
-                  });
-                  setSheetOpen(false);
-                }}
-                focusedLabel={focused ? effectLabel(focused) : undefined}
-                subjectId={s.subjectId}
-                onSubject={s.setSubjectId}
-              />
-              {version && (
+              {!reelMode && (
+                <Direction
+                  key={`${s.project?.id}-${version?.id || "draft"}`}
+                  projectId={s.project?.id}
+                  version={version}
+                  job={s.job}
+                  busy={s.busy}
+                  canDraft={!!s.sourceId && !!s.health?.meta_configured}
+                  onDraft={(instruction, review, subject, outputMode) => {
+                    s.start({
+                      action: "draft",
+                      asset_id: s.sourceId,
+                      reference_id: s.referenceId || null,
+                      instruction,
+                      subject_prompt: subject,
+                      subject_id: s.subjectId || null,
+                      review_storyboard: review,
+                      output_mode: outputMode,
+                    });
+                    setSheetOpen(false);
+                  }}
+                  onRevise={(instruction) => {
+                    s.start({
+                      action: "revise",
+                      version_id: version?.id,
+                      instruction: focused
+                        ? `Update only effect ${focused.id} (${effectLabel(focused)}, ${focused.start}–${focused.end}s). ${instruction}`
+                        : instruction,
+                    });
+                    setSheetOpen(false);
+                  }}
+                  focusedLabel={focused ? effectLabel(focused) : undefined}
+                  subjectId={s.subjectId}
+                  onSubject={s.setSubjectId}
+                />
+              )}
+              {version && !onReel && (
                 <button
                   className="text-button new-draft"
                   disabled={s.busy}
@@ -490,16 +517,18 @@ export default function Studio() {
                   {selected.reason ||
                     "A visual treatment on your original recording."}
                 </p>
-                <button
-                  className="primary wide"
-                  disabled={s.busy}
-                  onClick={() => {
-                    setFocusedId(selected.id);
-                    setTool("edit");
-                  }}
-                >
-                  Revise this moment <Icon name="arrow" size={14} />
-                </button>
+                {!onReel && (
+                  <button
+                    className="primary wide"
+                    disabled={s.busy}
+                    onClick={() => {
+                      setFocusedId(selected.id);
+                      setTool("edit");
+                    }}
+                  >
+                    Revise this moment <Icon name="arrow" size={14} />
+                  </button>
+                )}
                 <button
                   className="text-button"
                   onClick={() => seekTo(selected.start)}
@@ -513,17 +542,19 @@ export default function Studio() {
               </section>
             )}
           </div>
-          {mode === "media" && s.sourceId && !version && (
-            <div className="inspector-footer">
-              <button
-                className="primary wide"
-                disabled={s.busy}
-                onClick={() => openTool("edit")}
-              >
-                Continue to direction <Icon name="arrow" size={14} />
-              </button>
-            </div>
-          )}
+          {mode === "media" &&
+            (s.sourceId || clips.length >= 2) &&
+            !version && (
+              <div className="inspector-footer">
+                <button
+                  className="primary wide"
+                  disabled={s.busy}
+                  onClick={() => openTool("edit")}
+                >
+                  Continue to direction <Icon name="arrow" size={14} />
+                </button>
+              </div>
+            )}
         </aside>
       </div>
       <footer className="app-footer">

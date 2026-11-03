@@ -122,13 +122,19 @@ class MetaClient:
     def upload(self, path: Path) -> str:
         if not self.settings.api_key:
             raise ValueError("Configure MODEL_API_KEY in the server's .env first.")
-        with path.open("rb") as file, httpx.Client(timeout=90) as client:
-            result = client.post(
-                "https://api.meta.ai/v1/files",
-                headers={"Authorization": f"Bearer {self.settings.api_key}"},
-                data={"purpose": "user_data"},
-                files={"file": (path.name, file, "video/mp4")},
-            )
+        try:
+            with path.open("rb") as file, httpx.Client(timeout=90) as client:
+                result = client.post(
+                    "https://api.meta.ai/v1/files",
+                    headers={"Authorization": f"Bearer {self.settings.api_key}"},
+                    data={"purpose": "user_data"},
+                    files={"file": (path.name, file, "video/mp4")},
+                )
+        except httpx.RequestError as exc:
+            # Uploads are free and reserve nothing; the job can simply be started again.
+            raise ValueError(
+                "Meta media upload did not finish (network). Try again; nothing was charged."
+            ) from exc
         if result.is_error:
             raise ValueError(f"Meta media upload failed (HTTP {result.status_code}).")
         id = result.json().get("id")
