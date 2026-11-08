@@ -1,3 +1,10 @@
+> **NEAR hackathon extension:** ReelOS Studio adds client-funded editing jobs.
+> Existing editor baseline: `2ddb6d1`; new work is on `codex/near-paid-jobs`.
+> See [scope](SPEC-near-paid-jobs.md), [build checklist](tasks/near-todo.md), and
+> [escrow contract](contracts/reelos-escrow/README.md). The contract is not yet
+> deployed or connected to the editor. Compare NEAR work with
+> `git diff 2ddb6d1 -- contracts/ SPEC-near-paid-jobs.md tasks/near-*.md README.md .gitignore`.
+
 # ReelOS
 
 An AI creative director for short portrait videos. Meta Muse proposes an edit; SAM tracks the subject; a validated timeline drives a deterministic compositor and FFmpeg export. Chat revisions create new versions instead of replacing earlier results. Several short clips (a trip, an event, a day out) can also become one beat-cut reel: Muse watches the clips and plans the shots, and HyperFrames renders the result in one of three styles.
