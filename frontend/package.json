@@ -11,6 +11,8 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
+    "@near-wallet-selector/core": "10.1.4",
+    "@near-wallet-selector/meteor-wallet": "10.1.4",
     "next": "16.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -21,5 +23,9 @@
     "@types/react-dom": "19.2.3",
     "prettier": "3.9.10",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "nanoid": "5.1.16",
+    "decode-uri-component": "0.5.1"
   }
 }
