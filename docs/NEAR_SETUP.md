@@ -5,7 +5,11 @@ Keep real credentials in the ignored `.env`; never paste seed phrases or private
 
 ## Owner setup
 
-Start with a native NEAR testnet account at [MyNearWallet testnet](https://testnet.mynearwallet.com/).
+MyNearWallet no longer creates new accounts. Use [Meteor Wallet](https://wallet.meteorwallet.app/).
+Verified on 8 November 2026: the new-user page opens on “Create a Password” and defaults
+to Mainnet. Open the network badge at the top right of the setup card and choose
+**Testnet** before proceeding. Set the password and complete the remaining wallet
+creation steps yourself. Share only the resulting public testnet account ID.
 Keep the recovery information in your own wallet. Only the public account ID is needed here.
 The studio provider, contract deployment account and demo customer will be separate identities
 for the end-to-end rehearsal. Choose actual available names at setup time.
