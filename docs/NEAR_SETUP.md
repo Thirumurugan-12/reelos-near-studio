@@ -36,3 +36,34 @@ Set it to the deployed named `.testnet` account in `.env`, then restart the back
 
 [NEAR RPC reference](https://docs.near.org/api/rpc/contracts)
 [NEAR CLI account creation](https://docs.near.org/tools/cli#account)
+
+## Local paid studio
+
+Open `/orders` (or “Paid studio” in the editor header). Choose a project and source
+video, write the brief, connect Meteor on testnet, then review the order. No funds
+move until the funding action. After finalized funding, Start AI editing verifies
+the brief/client/amount/deadline and dispatches one draft/export. The provider
+connects their account to publish the rendered file digest; the client reconnects
+to approve payment or refund after the deadline. Saved orders allow returning
+after reload or switching wallets. A local preview is visible before approval;
+escrow does not prevent copying footage.
+
+Paid editing stays disabled when the contract is unset. Do not set the contract
+ID to the provider's empty wallet account; it must hold the initialized escrow Wasm.
+
+To avoid the original editor's ports, start this copy in two terminals:
+
+```sh
+REELOS_API_BUDGET_USD=0 uv --directory backend run python -m uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8101
+BACKEND_URL=http://127.0.0.1:8101 npm --prefix frontend run dev -- --port 3101
+```
+
+The zero API budget prevents paid model calls during UI review. Set an intentional
+small budget when rehearsing a real edit with the studio's working Meta credentials.
+
+SDKs: wallet-selector core and Meteor 10.1.4, loaded only when connecting.
+Transitive overrides pin nanoid 5.1.16 and decode-uri-component 0.5.1 to fix high
+severity advisories. The dependency audit retains low-severity elliptic/secp256k1
+findings inherited through the NEAR SDK; no unreviewed major downgrade was applied.
+Sources: [Meteor adapter](https://github.com/near/wallet-selector/tree/main/packages/meteor-wallet),
+[wallet selector](https://github.com/near/wallet-selector/tree/main/packages/core).

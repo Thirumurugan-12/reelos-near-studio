@@ -1,8 +1,8 @@
 > **NEAR hackathon extension:** ReelOS Studio adds client-funded editing jobs.
 > Existing editor baseline: `2ddb6d1`; new work is on `codex/near-paid-jobs`.
 > See [scope](SPEC-near-paid-jobs.md), [build checklist](tasks/near-todo.md), and
-> [escrow contract](contracts/reelos-escrow/README.md). The contract is not yet
-> deployed or connected to the editor. Compare NEAR work with
+> [escrow contract](contracts/reelos-escrow/README.md). The `/orders` screen and
+> payment-verified rendering worker are implemented. Live deployment and wallet rehearsal are pending. Compare NEAR work with
 > `git diff 2ddb6d1 -- contracts/ SPEC-near-paid-jobs.md tasks/near-*.md README.md .gitignore`.
 
 # ReelOS

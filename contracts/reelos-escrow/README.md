@@ -51,7 +51,8 @@ keys; this prototype is not represented as an immutable or audited escrow.
 SDK mocked-VM tests cover permissions, lifecycle, storage charging and callback
 recovery. They do not execute real network receipts. A deployed testnet rehearsal
 must verify transfers, callback gas and balances before claiming end-to-end support.
-The wallet UI and ReelOS worker are not connected to this contract yet.
+The `/orders` wallet UI and ReelOS worker implement this interface. Live contract
+deployment, Meteor signatures and network receipts remain unverified.
 
 Contract design sources: [NEAR state](https://docs.near.org/smart-contracts/anatomy/storage),
 [transfers](https://docs.near.org/smart-contracts/anatomy/actions),

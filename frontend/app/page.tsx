@@ -150,6 +150,7 @@ export default function Studio() {
           </button>
         </div>
         <div className="header-end">
+          <a className="history-button" href={s.project ? `/orders?project=${s.project.id}` : "/orders"}>Paid studio ↗</a>
           <button
             className="history-button"
             aria-label="Version history"
