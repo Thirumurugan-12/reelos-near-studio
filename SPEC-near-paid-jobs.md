@@ -49,3 +49,10 @@ Wasm: cargo build --manifest-path contracts/reelos-escrow/Cargo.toml --target wa
 Backend regression: uv --directory backend run pytest -q
 Code style: explicit enums, integer yoctoNEAR, bounded inputs, small methods.
 Testing: SDK mocked VM for access/receipt/state tests; sandbox/deployed-testnet end-to-end later.
+
+## Integration configuration
+`REELOS_NEAR_CONTRACT_ID` is optional and must name a `.testnet` account.
+Read-only routes use the fixed official testnet RPC and finalized blocks. A null
+contract job is missing; RPC failures never become missing or paid states.
+The user has MetaMask but no NEAR testnet accounts yet. Native wallet setup is
+documented in docs/NEAR_SETUP.md; development remains possible without accounts.

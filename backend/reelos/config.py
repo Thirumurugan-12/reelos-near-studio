@@ -15,6 +15,7 @@ class Settings:
     reserve_usd: float = 1
     graphics_renderer: str = "hyperframes"
     broll_art: str = "muse-image"
+    near_contract_id: str = ""
 
     @classmethod
     def load(cls):
@@ -23,6 +24,7 @@ class Settings:
         data_dir = Path(os.getenv("REELOS_DATA_DIR", "data"))
         return cls(
             data_dir=data_dir if data_dir.is_absolute() else root / data_dir,
+            near_contract_id=os.getenv("REELOS_NEAR_CONTRACT_ID", "").strip(),
             api_key=os.getenv("MODEL_API_KEY", ""),
             muse_model=os.getenv("META_MUSE_MODEL", "muse-spark-1.3"),
             sam_model=os.getenv("META_SAM_MODEL", "sam-3.1"),

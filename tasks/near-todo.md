@@ -4,8 +4,9 @@
   Verified: 26 SDK tests, fmt, clippy and release Wasm build; includes transfer-failure recovery.
   Existing editor: 205 backend tests passed using the copied project interpreter.
   Live testnet transfers remain part of the final rehearsal.
-- [ ] Testnet read adapter: verify onchain state without trusting a browser payment claim.
-  Verify: RPC boundary tests, malformed responses and testnet-only configuration.
+- [x] Testnet read adapter: verify onchain state without trusting a browser payment claim.
+  Verified: RPC boundary tests, malformed responses and testnet-only configuration.
+  Configure a deployed testnet contract before live reads; see ../docs/NEAR_SETUP.md.
 - [ ] Wallet UI: fund, inspect, approve and refund jobs; show costs before signing.
   Verify: typecheck, build and real-browser wallet flow.
 - [ ] Worker integration: one paid job maps to one persisted render, with delivery digest.
