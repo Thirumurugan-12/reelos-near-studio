@@ -56,3 +56,15 @@ Read-only routes use the fixed official testnet RPC and finalized blocks. A null
 contract job is missing; RPC failures never become missing or paid states.
 The user has MetaMask but no NEAR testnet accounts yet. Native wallet setup is
 documented in docs/NEAR_SETUP.md; development remains possible without accounts.
+
+## Paid order and wallet flow
+A local order binds a client-selected UUID, source file SHA-256, edit directions,
+24-hour deadline, studio configuration and contract ID into one brief hash.
+Order creation is idempotent for the same immutable input; changed input under the
+same ID fails. A finalized matching payment is required before one persisted draft/
+export job is dispatched. No automatic restart/retry of paid model calls.
+The delivery hash is computed from the rendered file. The provider signs delivery
+in Meteor; the client signs approval/refund. This initial version requires that
+provider signature and is not a fully autonomous treasury. Multi-subject footage
+may need manual recovery; use one subject in the initial demo. The existing local
+editor remains accessible; escrow is not DRM or a public multitenant access boundary.
