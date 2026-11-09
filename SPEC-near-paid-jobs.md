@@ -69,11 +69,13 @@ provider signature and is not a fully autonomous treasury. Multi-subject footage
 may need manual recovery; use one subject in the initial demo. The existing local
 editor remains accessible; escrow is not DRM or a public multitenant access boundary.
 
-## Wallet-signed deployment
-The studio's wallet may atomically create/fund/deploy/initialize `escrow.<studio>`
-with 3 testnet NEAR and no access keys. The factory initializer derives the provider
-from predecessor and validates the exact account name. The account is permanent;
-the setup UI must explain the retained balance and require an acknowledgement.
-Only the user signs. Activation requires exact compiled code hash, empty access-key
-list, matching provider/price/storage fee and finalized chain reads. It preserves
-other environment credentials and refuses switching an already-configured escrow.
+## Deployment and activation
+Meteor blocks contract deployment from apps. Deploy and initialize atomically using
+the official CLI and a dedicated locally generated testnet account; never import the
+studio wallet's key into the app. The CLI contract may retain its developer key and
+remain upgradeable, an explicit testnet trust assumption. Setup offers finalized
+verification only. Explicit contract selection with retained access keys requires
+acknowledgement; the legacy derived keyless account still requires zero access keys.
+All activation paths verify exact Wasm hash, provider/price/storage fee, preserve
+other environment credentials and refuse switching an already-configured escrow.
+The parent-only `new_for_studio` initializer remains for factories/supported tools.

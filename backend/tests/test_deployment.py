@@ -23,6 +23,7 @@ def test_deployment_manifest_has_no_keys_and_serves_matching_artifact(setup):
     client, _, _ = setup
     info = client.get("/api/near/deployment").json()
     assert info["network"] == "testnet"
+    assert info["wallet_deployment"] is False
     assert info["deposit"] == "3000000000000000000000000"
     assert len(info["wasm_sha256"]) == 64
     assert client.get("/api/near/deployment/wasm").content.startswith(b"\x00asm")
@@ -98,3 +99,35 @@ def test_mainnet_wallet_rejected(setup):
         client.post("/api/near/deployment/activate", json={"studio": "studio.near"}).status_code
         == 422
     )
+
+
+def test_cli_deployment_requires_explicit_upgrade_acknowledgement(setup, monkeypatch):
+    client, app, env = setup
+    mock_chain(monkeypatch)
+    monkeypatch.setattr(
+        deployment,
+        "inspect_contract",
+        lambda id: {
+            "code_hash": deployment.code_hash(deployment.ARTIFACT.read_bytes()),
+            "keys": [{"access_key": {"permission": "FullAccess"}}],
+        },
+    )
+    payload = {"studio": "studio.testnet", "contract_id": "separate-escrow.testnet"}
+    assert client.post("/api/near/deployment/activate", json=payload).status_code == 422
+    response = client.post(
+        "/api/near/deployment/activate", json=payload | {"allow_upgradeable": True}
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["upgradeable"] is True
+    assert app.state.near_reader.contract_id == "separate-escrow.testnet"
+    assert "separate-escrow.testnet" in env.read_text()
+
+
+def test_explicit_contract_rejects_mainnet_or_provider_account(setup):
+    client, _, _ = setup
+    for account in ("escrow.near", "studio.testnet"):
+        response = client.post(
+            "/api/near/deployment/activate",
+            json={"studio": "studio.testnet", "contract_id": account, "allow_upgradeable": True},
+        )
+        assert response.status_code == 422

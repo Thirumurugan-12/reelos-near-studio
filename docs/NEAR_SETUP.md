@@ -68,24 +68,37 @@ findings inherited through the NEAR SDK; no unreviewed major downgrade was appli
 Sources: [Meteor adapter](https://github.com/near/wallet-selector/tree/main/packages/meteor-wallet),
 [wallet selector](https://github.com/near/wallet-selector/tree/main/packages/core).
 
-## Wallet-signed keyless deployment
+## CLI deployment and local activation
 
-Open `/setup` in the local preview. Connect the studio's named testnet account,
-review the exact `escrow.<studio-account>` destination, acknowledge that the contract
-account is permanent, then review the transaction in Meteor. It transfers **3
-testnet NEAR** (plus gas) to cover contract code/state storage. The account is
-created, funded, deployed and initialized in one atomic batch with **no access keys**.
-The studio wallet's private key never reaches this app. The deployment account has
-no upgrade/delete/withdraw mechanism; its setup balance cannot be reclaimed.
+Meteor blocks `DeployContract` requests from apps, including the atomic child-account
+batch originally proposed here. Cancel a blocked request; repeating it does not help.
+The setup page no longer requests any wallet deployment transaction.
+Use the [official NEAR CLI](https://docs.near.org/tools/cli#deploy) with a separate
+developer account. No studio wallet seed or private key is needed.
 
-The initializer `new_for_studio` derives the provider from predecessor identity
-and only accepts the exact `escrow.<predecessor>` account. The existing private
-self-initializer is retained for independently keyed deployments and tests.
+Create a fresh named testnet deployment account with a locally generated key:
 
-After signing, the page verifies finalized contract settings, exact compiled code
-hash and an empty access-key list before enabling the paid studio. If the request
-times out after signing, use Verify an existing deployment before retrying.
-The activation endpoint changes only the local copied project's ignored environment.
+```sh
+near account create-account sponsor-by-faucet-service YOUR-ESCROW.testnet autogenerate-new-keypair save-to-keychain network-config testnet create
+near contract deploy YOUR-ESCROW.testnet use-file contracts/reelos-escrow/target/wasm32-unknown-unknown/release/reelos_escrow.wasm with-init-call new json-args '{"provider":"YOUR-STUDIO.testnet","price":"100000000000000000000000"}' prepaid-gas '100 Tgas' attached-deposit '0 NEAR' network-config testnet sign-with-keychain send
+```
+
+Deploy and initialize atomically, using the contract account itself as signer.
+The sponsor service creates accounts; it is separate from near-faucet.io top-ups.
+Availability and funding may change. Reserve at least 3 testnet NEAR for code/state.
+Keep the generated key in the local credential store outside the repository and
+restrict its filesystem permissions. Never print or paste it into chat.
+The CLI account retains its full-access key, so its holder can upgrade/delete the
+contract. This is an explicit testnet rehearsal trust assumption, not immutable escrow.
+
+Open `/setup`, enter the public provider and deployed contract IDs, acknowledge
+retained developer control, and verify. Activation checks finalized provider/pricing,
+exact compiled code hash and access keys before changing only the local copied
+project's ignored environment setting. Already-configured contracts cannot be
+silently switched. The default legacy keyless-subaccount path still rejects any keys.
+
+The `new_for_studio` initializer remains tested for factories/other supported tools;
+it is not offered through Meteor.
 
 For the 3101 preview, include the exact Origin allowance when starting the backend:
 

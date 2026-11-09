@@ -63,3 +63,24 @@ browser fixture server was stopped and is not part of application code.
 - The local server explicitly allows the preview's 3101 origin for POST requests.
 - No public wallet signature, public deployment, or paid model call has occurred.
   The next step requires the user's wallet connection/signature on `/setup`.
+
+## 9 November — Meteor restriction resolved with official CLI
+
+- User's screenshot confirmed Meteor rejects app-initiated DeployContract. Removed
+  the transaction builder and replaced setup with CLI guidance and read-only verification.
+- Official near-cli-rs 0.31.1 sponsor service created `reelos-escrow-20261109.testnet`
+  with 10 testnet NEAR and a fresh local deployment key. No studio credentials used.
+- Public deployment and private self-initialization succeeded atomically:
+  `HehvqR2nvW6aD2QJPu23AEDp5EWeAhjZav9MXVWznuSh`.
+- Finalized RPC confirms provider `thirumurugan12.testnet`, price 0.1 NEAR,
+  storage fee 0.02 NEAR and matching compiled Wasm SHA-256
+  `20d265c2c5217c81d00073a019825fd16a675c57e8fb7f72ab72aab517e745d6`.
+- One full-access deployment key remains in the local CLI credential store, outside
+  the repository with restricted permissions. The testnet escrow is upgradeable.
+- Activation now accepts a separate named testnet contract with explicit acknowledgement
+  of retained developer keys. Default derived keyless activation still rejects keys.
+- Public wallet funding/delivery/approval and real paid-model editing remain pending.
+- Local activation succeeded and persisted only REELOS_NEAR_CONTRACT_ID. Browser
+  verifies live 0.1 + 0.02 = 0.12 NEAR pricing with Meteor connection available.
+- Regression checks: 251 backend tests, 13 frontend tests, TypeScript, production
+  build and Ruff pass. Setup no longer has a wallet deployment/signing control.

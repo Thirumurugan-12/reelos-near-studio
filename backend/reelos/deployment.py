@@ -20,6 +20,8 @@ STORAGE = "20000000000000000000000"
 
 class ActivateDeployment(Contract):
     studio: Account
+    contract_id: Account | None = None
+    allow_upgradeable: bool = False
 
 
 def code_hash(code):
@@ -77,13 +79,14 @@ def mount_deployment(app, settings):
         wasm = ARTIFACT.read_bytes()
         return {
             "network": "testnet",
+            "wallet_deployment": False,
             "deposit": DEPOSIT,
             "price": PRICE,
             "storage_fee": STORAGE,
             "wasm_bytes": len(wasm),
             "wasm_sha256": hashlib.sha256(wasm).hexdigest(),
             "wasm_url": "/api/near/deployment/wasm",
-            "initializer": "new_for_studio",
+            "initializer": "new",
         }
 
     @app.get("/api/near/deployment/wasm")
@@ -94,8 +97,13 @@ def mount_deployment(app, settings):
 
     @app.post("/api/near/deployment/activate")
     def activate(data: ActivateDeployment):
-        account = f"escrow.{data.studio}"
-        if not data.studio.endswith(".testnet") or len(account) > 64:
+        account = data.contract_id or f"escrow.{data.studio}"
+        if (
+            not data.studio.endswith(".testnet")
+            or not account.endswith(".testnet")
+            or len(account) > 64
+            or account == data.studio
+        ):
             raise ValueError("Choose a named NEAR testnet studio account.")
         if settings.near_contract_id and settings.near_contract_id != account:
             raise ValueError(
@@ -109,9 +117,22 @@ def mount_deployment(app, settings):
         if config != {"provider": data.studio, "price": PRICE, "storage_fee": STORAGE}:
             raise ValueError("Deployed studio or pricing does not match the reviewed plan.")
         onchain = inspect_contract(account)
-        if onchain["code_hash"] != expected_hash or onchain["keys"] != []:
-            raise ValueError("Expected the reviewed Wasm and a keyless escrow account.")
+        if onchain["code_hash"] != expected_hash:
+            raise ValueError("Deployed code does not match the reviewed Wasm.")
+        upgradeable = any(
+            key.get("access_key", {}).get("permission") == "FullAccess" for key in onchain["keys"]
+        )
+        if onchain["keys"] and not (data.contract_id and data.allow_upgradeable):
+            raise ValueError(
+                "This escrow has access keys. Review and acknowledge developer control."
+            )
         set_key(str(ENV_FILE), "REELOS_NEAR_CONTRACT_ID", account, quote_mode="never")
         settings.near_contract_id = account
         app.state.near_reader = reader
-        return {"enabled": True, "network": "testnet", "contract_id": account, "config": config}
+        return {
+            "enabled": True,
+            "network": "testnet",
+            "contract_id": account,
+            "config": config,
+            "upgradeable": upgradeable,
+        }
