@@ -1,0 +1,21 @@
+{
+  "network": "testnet",
+  "client": "reelos-demo-client-20261109.testnet",
+  "contract_id": "reelos-escrow-20261109.testnet",
+  "job_id": "3461ba8334eb447ea57c62cc0a173392",
+  "brief_hash": "ec8092e48c7ffbeb25465fc1cca1efedcd430456603732ca27942c59cc98decb",
+  "deadline_ns": "1794302705931361000",
+  "delivery_hash": "bd76a5276856a7306cc4703d0f9c61d31d6ddb4f00ab878b87f70f83772cb0ca",
+  "fund_tx": "6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc",
+  "delivery_tx": "CT4YtFQmSN29ZGqHTGT4Wqa2f8UxZih9GXvNxqKT2c5E",
+  "approve_tx": "AKZdntwS8Y7eEKwHDBoAcNgNaPCwgbfEvUsxsBpMvKwA",
+  "provider": "thirumurugan12.testnet",
+  "status": "paid",
+  "finalized_observation_block": 276903508,
+  "editing_payment_yoctonear": "100000000000000000000000",
+  "retained_storage_fee_yoctonear": "20000000000000000000000",
+  "payout_receipt_id": "5bLEH1xzxr6fohUg7MqRbPWjNEA81825ZZfEdir2NMmr",
+  "payout_receipt_block": 276903374,
+  "rpc": "https://test.rpc.fastnear.com",
+  "scope": "Public testnet settlement of an existing edited MP4. No fresh AI inference or payment-triggered worker render is claimed."
+}

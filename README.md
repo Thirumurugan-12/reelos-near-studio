@@ -12,16 +12,20 @@ after the deadline. Price: 0.1 testnet NEAR + a retained 0.02 NEAR storage fee.
 - [Deployment transaction](https://explorer.testnet.near.org/transactions/HehvqR2nvW6aD2QJPu23AEDp5EWeAhjZav9MXVWznuSh).
 - [Public customer funding](https://explorer.testnet.near.org/transactions/6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc):
   separate customer `reelos-demo-client-20261109.testnet` deposited 0.12 NEAR.
-  Provider delivery and customer approval remain pending.
+- [Provider delivery](https://explorer.testnet.near.org/transactions/CT4YtFQmSN29ZGqHTGT4Wqa2f8UxZih9GXvNxqKT2c5E)
+  published the actual export SHA-256 from the studio's Meteor wallet.
+- [Customer approval and native payout](https://explorer.testnet.near.org/transactions/AKZdntwS8Y7eEKwHDBoAcNgNaPCwgbfEvUsxsBpMvKwA):
+  finalized `paid`, with a successful native transfer of 0.1 NEAR to the provider.
+  See the [rehearsal evidence and limits](docs/NEAR_REHEARSAL.md).
 - `/orders`: wallet actions, finalized-payment checks and durable render dispatch.
   `/rehearsal`: explicit contract-settlement rehearsal using an existing export;
   it does not claim a new paid-worker render or fresh AI inference.
-- 257 backend tests, 28 Rust contract unit tests,
+- 258 backend tests, 28 Rust contract unit tests,
   and a compiled-Wasm Sandbox exercise covering funding, delivery, native payout,
   deadline refund and callback recovery. See [verification](docs/NEAR_VERIFICATION.md).
 - A fresh 20-second 1080p edit includes actual moving B-roll and original voice.
-  Its [editable walkthrough](videos/reelos-near-demo/README.md) labels remaining
-  wallet steps. Private media are excluded from Git; a public demo post is pending.
+  Its [editable walkthrough](videos/reelos-near-demo/README.md) shows the real
+  settlement receipts. Private media are excluded from Git; a public demo post is pending.
 
 This is a controlled single-user testnet prototype. Provider delivery is signed
 manually. A local deployment key is retained, so the escrow is upgradeable. It

@@ -16,10 +16,16 @@ spring-pop-entrance + restrained drift. Show the real working editor and timelin
 status: outline
 src: compositions/escrow.html
 32–45s. Shape: actual studio image with evidence sidebar, spring-pop-entrance.
-Show price from finalized chain. No user payment claimed.
+Show finalized paid state, exact amounts and three actual public receipts.
 
 ## Frame 4
 status: outline
+src: compositions/receipt.html
+45–57s. Shape: same browser-device-stage adapted to the actual NearBlocks transfer
+receipt. Smooth spring-pop-entrance + restrained drift. Show successful 0.1 NEAR payout.
+
+## Frame 5
+status: outline
 src: compositions/delivery.html
-45–54s. Shape: result excerpt with output specifications and explicit pending work.
-Same restrained entrance rule; no claim of completed wallet settlement.
+57–66s. Shape: result excerpt with output specifications and confirmed settlement.
+Same restrained entrance rule; explain the remaining public paid-worker test.

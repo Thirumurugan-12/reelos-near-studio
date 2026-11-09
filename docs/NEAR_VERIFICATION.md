@@ -100,3 +100,20 @@ browser fixture server was stopped and is not part of application code.
   after that signature is finalized. Neither is claimed as complete yet.
 - 257 backend tests pass, plus frontend typecheck and production build. Three new
   tests reject changed output/chain data and require distinct customer/provider roles.
+
+## Completed public settlement and RPC recovery — 9 November
+
+- Backend 258 tests and frontend 13 tests pass. TypeScript and production build pass.
+- Deprecated testnet RPC returned HTTP 429; both finalized reads and wallet setup
+  now use the officially listed `https://test.rpc.fastnear.com`. A regression test
+  pins the expected HTTPS host. The rehearsal clears recovered read errors and
+  prevents overlapping poll requests.
+- The studio signed delivery in Meteor. Separate CLI demo customer approved release.
+  All three public transactions are finalized; the job is `paid`.
+- Approval receipt includes a successful native 0.1 NEAR transfer to the studio.
+  [Exact transaction links and scope](NEAR_REHEARSAL.md).
+- Public code repository: https://github.com/Thirumurugan-12/reelos-near-studio.
+  Environment files, private footage and local signing keys are excluded.
+- The latest settlement evidence supersedes the earlier pending-wallet checkpoints.
+  A fresh payment-triggered public AI render remains unverified; this rehearsal
+  settles the already-rendered MP4 and preserves a zero model-call budget.

@@ -1,39 +1,39 @@
-# Revised demo review
+# Final settlement demo review — v3
 
-The first 18-second sample was rejected by the user. The replacement is a new
-20-second native-frame edit with two moving eyewear B-roll cutaways, two readable
-story headings, one restrained camera push and one short keyword label. Removed
-the generic Speaker badge and blurred framing. Her original voice is continuous.
-The B-roll is neutral illustrative stock, not the creator's own shop/property.
+66 seconds, 1920×1080/30fps, H.264/AAC, 1,980 frames. The first 20 seconds retain
+the requested direction: original versus fresh native-frame edit, two moving stock
+B-roll cutaways, readable story headings, restrained push-in, original voice.
+The real editor follows, then actual finalized app state and the actual NearBlocks
+native transfer receipt. Closing playback names the remaining fresh paid-worker test.
 
-Measured: 20s, 1080×1920/30fps, H.264/AAC, full decode, 53.3007s worker time,
-preview readyState 4, unchanged model usage. New project-scoped footage_insert
-renders real moving frames. Integration tests verify main audio preservation,
-return to the presenter, rejection of invalid assets and atomic export recovery.
-254 backend tests, TypeScript and frontend production build pass.
+## Evidence and verification
 
-Reviewed actual encoded sample frames and nine full walkthrough snapshots spanning
-all six edit beats plus the three evidence scenes. Actual editor screenshot shows
-the selected B-roll moment and the six-moment timeline. The preview loads at 54s.
-HyperFrames checks have zero errors. One retained warning: six sequential caption
-annotations share one track, keeping the six short beats together for readability.
-No runtime, layout, contrast, audio or type-floor findings remain.
+- Real funding, provider Meteor delivery, and separate customer approval are FINAL.
+  Approval receipt transfers 0.1 NEAR to thirumurugan12.testnet; job is paid.
+  Exact links: ../../docs/NEAR_REHEARSAL.md. This settles the existing MP4 and does
+  not claim fresh AI inference or a payment-triggered public worker render.
+- 258 backend tests, 13 frontend tests, TypeScript, production build and Ruff pass.
+- HyperFrames check: zero errors, zero runtime/layout/contrast/craft/audio findings.
+  One intentional lint warning: six short sequential annotations share a track.
+- Inspected the beats sheet, phone sheet, all scene midpoints and changed cut seams.
+  The native transfer receipt is a browser crop, not a drawn transaction mockup.
+- Animation map reviewed: slow drifts are intentional evidence holds. Its collision
+  flags include duplicate proxy/scene timelines and hidden later-scene targets;
+  they do not represent visible simultaneous overlap in the inspected frames.
+  Zero-size audio targets are expected. Checked scenes remain deterministic.
+- MP4 fully decoded with FFmpeg. Actual encoded payout frame at 51s matches the
+  preview; 66s duration, 1920×1080, H.264/AAC confirmed with ffprobe.
+- Music extends through the added receipt scene; final fade moves to 64.5–66s.
+  Final max audio level -2.4 dBFS. Audio measured, not judged through human listening.
 
-Source peaks reach 0 dBFS; the walkthrough voice uses 0.75 gain with a quiet local
-music bed. Sound has been measured, not judged through human listening. Output
-claims trace to actual render/RPC evidence. No new model inference, customer
-funding, provider delivery or client approval is claimed. Testnet upgrade key
-remains. Nothing has been published.
+## Weakest shot and remaining limits
 
-Weakest shot: full application screenshots are small on a phone. Large sidebars
-carry the important statements; longer control-by-control zooms are outside this
-short walkthrough. Human review of pacing and sound remains the next quality gate.
+Small explorer metadata and full editor controls are difficult to read on phones.
+Large copy carries the amount, provider and settlement steps; the public repository
+links provide inspectable full receipts. A future longer walkthrough could zoom
+through individual controls. Human pacing/listening review remains useful.
+The prototype is single-user; delivery is manually signed and an upgrade key remains.
+Public code is published. The demo video still awaits owner approval for publication.
 
-Delivery verification: 54s / 1620 frames at 1920×1080/30fps, H.264/AAC; full
-FFmpeg decode passed. Encoded frames at 4.5s and 38s match the preview and show
-actual B-roll plus unchanged NEAR pricing. Final audio peak remains below 0 dBFS.
-
-Final capture correction: the narrow browser layout put payment below the fold,
-so the old whole-page viewport image omitted it. Replaced that shot with a direct
-631×784 browser crop of the actual live payment summary. The film now shows the
-full 0.1/0.02/0.12 breakdown and pending wallet connection at a readable size.
+Final artifact: data/near-demo/reelos-near-working-demo-v3.mp4 (repository root).
+SHA-256: 91476f4774f942ee6af54ac93df4109f4730f31ce20775a64c8edc882324fe0f

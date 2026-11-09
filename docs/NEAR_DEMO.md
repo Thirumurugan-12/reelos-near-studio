@@ -12,11 +12,13 @@ revision uses a new directed timeline with cached subject tracking, two actual
 moving stock cutaways, native presenter framing, restrained camera emphasis and
 readable story headings. No new model calls; the local API budget stayed zero.
 
-Updated walkthrough: 54s, 1920×1080/30fps. Editable sources in
+Updated walkthrough: 66s, 1920×1080/30fps. Editable sources in
 `videos/reelos-near-demo/`; see BRIEF, SPEC and REVIEW for verification. Captures
-show the actual revised editor and the deployed NEAR testnet pricing. No customer
-funding, provider delivery signature or client approval is claimed. No artifact
-or footage has been published. Previous source files and edit versions are intact.
+show the actual revised editor, finalized paid state with all three public receipts,
+and the successful 0.1 NEAR native transfer in NearBlocks. This settles the existing
+MP4; it is not a new payment-triggered AI render. [Transaction evidence](NEAR_REHEARSAL.md).
+Code is public; the video and private footage are not yet published. Previous
+source files and edit versions are intact.
 
 ## Requested quality revision
 
@@ -40,5 +42,6 @@ failed render cannot replace a previous export. Integration tests verify moving
 picture changes, presenter restoration and source 440 Hz audio rather than the
 support clip's 880 Hz audio.
 
-Final walkthrough: `data/near-demo/reelos-near-working-demo-v2.mp4`, 54s / 1920×1080/30fps.
-SHA-256: `142d0570fe38e57713abbbb0788108c046505473f7ba6b981631a6e4c1948af7`.
+Final walkthrough: `data/near-demo/reelos-near-working-demo-v3.mp4`, 66s / 1920×1080/30fps.
+
+Walkthrough SHA-256: `91476f4774f942ee6af54ac93df4109f4730f31ce20775a64c8edc882324fe0f`. Full MP4 decode passed; audio peak -2.4 dBFS.
