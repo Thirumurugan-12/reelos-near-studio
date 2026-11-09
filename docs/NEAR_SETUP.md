@@ -109,3 +109,12 @@ REELOS_ALLOWED_ORIGINS=http://127.0.0.1:3101,http://localhost:3101 REELOS_API_BU
 `npm run dev` and `npm run build` explicitly run the pinned Meteor SDK logging
 patch even when npm lifecycle scripts are disabled by `.npmrc`. Do not bypass
 those scripts when bundling the application.
+
+## Current RPC endpoint
+
+The former `https://rpc.testnet.near.org` returned HTTP 429 with a deprecation
+notice during the 9 November rehearsal. Both the finalized backend reader and the
+wallet selector now pin `https://test.rpc.fastnear.com`, listed in the
+[official NEAR RPC provider documentation](https://docs.near.org/api/rpc/providers).
+Its reported chain ID was verified as testnet. No browser-provided RPC URL or
+mainnet override is accepted. Reload an existing rehearsal tab after this change.

@@ -28,8 +28,11 @@ JOB = {
 }
 
 
-def reader(value, inspect=None):
+def reader(value, inspect=None, host=None):
     def respond(request):
+        if host:
+            assert request.url.scheme == "https"
+            assert request.url.host == host
         if inspect:
             inspect(json.loads(request.content))
         return httpx.Response(
@@ -65,6 +68,10 @@ def test_rpc_uses_final_block_and_base64_arguments():
 
 def test_config_reads_price_from_chain_not_environment():
     assert reader(CONFIG).get_config()["config"] == CONFIG
+
+
+def test_reads_use_current_pinned_testnet_provider():
+    assert reader(CONFIG, host="test.rpc.fastnear.com").get_config()["config"] == CONFIG
 
 
 def test_null_is_the_only_missing_job_response():

@@ -31,15 +31,41 @@ export default function Rehearsal() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const lock = useRef(false);
+  const revision = useRef(0);
+  const polling = useRef(false);
   async function refresh() {
-    const fresh = await api<Evidence>("/near/rehearsal");
-    setData(fresh);
-    return fresh;
+    const request = ++revision.current;
+    try {
+      const fresh = await api<Evidence>("/near/rehearsal");
+      if (request === revision.current) {
+        setData(fresh);
+        setError("");
+      }
+      return fresh;
+    } catch (e) {
+      if (request === revision.current)
+        setError(
+          e instanceof Error
+            ? e.message
+            : "Unable to read finalized state. Try refreshing.",
+        );
+      throw e;
+    }
   }
   useEffect(() => {
-    const check = () => refresh().catch((e) => setError(e.message));
+    const check = async () => {
+      if (lock.current || polling.current) return;
+      polling.current = true;
+      try {
+        await refresh();
+      } catch {
+        /* Keep the last verified state visible. */
+      } finally {
+        polling.current = false;
+      }
+    };
     void check();
-    const timer = setInterval(check, 5000);
+    const timer = setInterval(check, 10000);
     return () => clearInterval(timer);
   }, []);
   async function run(label: string, action: () => Promise<void>) {
@@ -226,9 +252,9 @@ export default function Rehearsal() {
               {busy}
             </p>
             <p className={styles.hint}>
-              Publishing delivery attaches 0 NEAR, plus testnet gas. The
-              separate customer must then approve the 0.1 NEAR release. The 0.02
-              NEAR storage fee remains in escrow.
+              {data.chain?.status === "paid"
+                ? "Settlement complete. The customer approved the 0.1 NEAR release to the studio. The 0.02 NEAR storage fee remains in escrow."
+                : "Publishing delivery attaches 0 NEAR, plus testnet gas. The separate customer must then approve the 0.1 NEAR release. The 0.02 NEAR storage fee remains in escrow."}
             </p>
             <ul>
               {(

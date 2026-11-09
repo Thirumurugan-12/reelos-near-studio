@@ -13,7 +13,13 @@ export function walletSelector() {
     ])
       .then(([core, meteor]) =>
         core.setupWalletSelector({
-          network: "testnet",
+          network: {
+            networkId: "testnet",
+            nodeUrl: "https://test.rpc.fastnear.com",
+            helperUrl: "https://helper.testnet.near.org",
+            explorerUrl: "https://testnet.nearblocks.io",
+            indexerUrl: "https://testnet-api.kitwallet.app",
+          },
           modules: [meteor.setupMeteorWallet()],
           debug: false,
         }),

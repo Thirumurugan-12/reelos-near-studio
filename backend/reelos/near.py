@@ -8,7 +8,7 @@ from typing import Annotated, Literal
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
 
-TESTNET_RPC = "https://rpc.testnet.near.org"
+TESTNET_RPC = "https://test.rpc.fastnear.com"
 ACCOUNT = r"^(([a-z0-9]+[-_])*[a-z0-9]+\.)*([a-z0-9]+[-_])*[a-z0-9]+$"
 Account = Annotated[str, Field(pattern=ACCOUNT, min_length=2, max_length=64)]
 Amount = Annotated[str, Field(pattern=r"^(0|[1-9][0-9]{0,38})$")]
