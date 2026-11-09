@@ -79,3 +79,11 @@ acknowledgement; the legacy derived keyless account still requires zero access k
 All activation paths verify exact Wasm hash, provider/price/storage fee, preserve
 other environment credentials and refuse switching an already-configured escrow.
 The parent-only `new_for_studio` initializer remains for factories/supported tools.
+
+## Moving supporting footage
+A `footage_insert` plan effect accepts a supporting-video asset ID from the same
+project plus a bounded source offset. The selected interval must fit that video.
+The renderer streams and composites its actual frames at the output frame rate;
+the main recording's audio continues across the cutaway. No arbitrary path/URL
+is accepted. Missing/invalid decode aborts the render without promoting a partial
+export. Other subject-aware effects retain their existing mask requirement.

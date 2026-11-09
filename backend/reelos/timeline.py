@@ -87,13 +87,24 @@ class GraphicInsert(EffectBase):
     params: GraphicStyle
 
 
+class FootageStyle(Contract):
+    asset_id: Identifier
+    source_in: Seconds = 0
+
+
+class FootageInsert(EffectBase):
+    type: Literal["footage_insert"]
+    params: FootageStyle
+
+
 class CatalogEffect(EffectBase):
     type: Literal["catalog_effect"]
     params: CatalogParams
 
 
 Effect = Annotated[
-    Headline | Spotlight | Label | GraphicInsert | CatalogEffect, Field(discriminator="type")
+    Headline | Spotlight | Label | GraphicInsert | FootageInsert | CatalogEffect,
+    Field(discriminator="type"),
 ]
 
 
@@ -164,6 +175,15 @@ def validate_assets(plan: EditPlan, assets: dict) -> None:
     if assets[plan.asset_id].get("role") not in (None, "source"):
         raise ValueError("Choose source footage for the main recording.")
     for effect in plan.effects:
+        if effect.type == "footage_insert":
+            asset = assets.get(effect.params.asset_id, {})
+            if (
+                asset.get("role") != "supporting"
+                or asset.get("kind", "video") != "video"
+                or effect.params.source_in + effect.end - effect.start
+                > asset.get("duration", 0) + 0.001
+            ):
+                raise ValueError("Choose a supporting video with enough footage from this project.")
         if effect.type == "catalog_effect":
             for id in effect.params.media_ids:
                 if id not in assets or assets[id].get("role") not in {"supporting", "source"}:

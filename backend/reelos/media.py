@@ -4,6 +4,7 @@ import json
 import math
 import subprocess
 import tempfile
+from contextlib import ExitStack
 from functools import lru_cache
 from pathlib import Path
 
@@ -367,7 +368,10 @@ def render(
     graphics: dict | None = None,
     asset_root: Path | None = None,
 ) -> None:
-    if any(e.type != "graphic_insert" for e in plan.effects) and track is None:
+    if (
+        any(e.type not in {"graphic_insert", "footage_insert"} for e in plan.effects)
+        and track is None
+    ):
         raise ValueError("Subject effects require a real tracking artifact.")
     if track and any(e.subject_id not in track.subjects for e in plan.effects):
         raise ValueError("Selected subject is absent from tracking artifact.")
@@ -380,7 +384,10 @@ def render(
     )
     output.parent.mkdir(parents=True, exist_ok=True)
     # Temporary output is promoted atomically only after decoder and encoder succeed.
-    with tempfile.TemporaryDirectory(dir=output.parent) as temp:
+    with tempfile.TemporaryDirectory(dir=output.parent) as temp, ExitStack() as stack:
+        from reelos.footage import prepare_footage
+
+        footage = prepare_footage(plan, asset_root, width, stack)
         part = Path(temp) / "render.mp4"
         with (
             (Path(temp) / "decode.log").open("w+b") as dec_log,
@@ -489,6 +496,9 @@ def render(
                     result = Image.fromarray(
                         composite(image, plan, t, masks, font_family, graphics)
                     )
+                    for effect in plan.effects:
+                        if effect.type == "footage_insert" and effect.start <= t < effect.end:
+                            result = footage[effect.id].frame()
                     if catalog_renderer:
                         result = catalog_renderer.apply(result, t, masks)
                     encoder.stdin.write(np.asarray(result).tobytes())

@@ -7,6 +7,7 @@ const labels: Record<string, string> = {
   subject_spotlight: "Spotlight",
   tracked_label: "Tracked label",
   graphic_insert: "Illustration",
+  footage_insert: "B-roll video",
   trip_shot: "Shot",
   montage_shot: "Shot",
 };
