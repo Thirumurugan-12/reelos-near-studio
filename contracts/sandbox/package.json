@@ -1,0 +1,14 @@
+{
+  "name": "reelos-escrow-sandbox-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node run.mjs"
+  },
+  "devDependencies": {
+    "near-workspaces": "5.0.0"
+  },
+  "overrides": {
+    "tar": "7.5.22"
+  }
+}

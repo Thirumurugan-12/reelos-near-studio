@@ -62,6 +62,17 @@ impl Escrow {
         }
     }
 
+    /// Atomically initialize a keyless `escrow.<studio>` account from its parent.
+    #[init]
+    pub fn new_for_studio(price: NearToken) -> Self {
+        let studio = env::predecessor_account_id();
+        require!(
+            env::current_account_id().as_str() == format!("escrow.{studio}"),
+            "Only the escrow account's parent can initialize it"
+        );
+        Self::new(studio, price)
+    }
+
     pub fn get_config(&self) -> Config {
         Config {
             provider: self.provider.clone(),

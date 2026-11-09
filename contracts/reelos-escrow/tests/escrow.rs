@@ -270,3 +270,22 @@ fn private_preview_url_cannot_be_used_as_delivery_hash() {
     context(1, 0, 2);
     e.deliver_job(id(), "https://private.example/video.mp4".into());
 }
+
+fn factory_context(parent: &str) {
+    let mut b = VMContextBuilder::new();
+    b.current_account_id("escrow.studio.testnet".parse().unwrap())
+        .predecessor_account_id(parent.parse().unwrap());
+    testing_env!(b.build());
+}
+#[test]
+fn parent_initializes_a_keyless_studio_escrow() {
+    factory_context("studio.testnet");
+    let e = Escrow::new_for_studio(NearToken::from_yoctonear(PRICE));
+    assert_eq!(e.get_config().provider.as_str(), "studio.testnet");
+}
+#[test]
+#[should_panic(expected = "Only the escrow account's parent")]
+fn stranger_cannot_initialize_a_studio_escrow() {
+    factory_context("stranger.testnet");
+    Escrow::new_for_studio(NearToken::from_yoctonear(PRICE));
+}
