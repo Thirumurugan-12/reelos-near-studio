@@ -1,168 +1,133 @@
-# ReelOS Studio — creative jobs on NEAR
+# ReelOS Studio — creative jobs paid on NEAR
 
-An AI-assisted editing service with client-funded native NEAR escrow. Customers
-fund an immutable brief; the studio publishes a rendered-file digest; only the
-customer can approve the editing payment. Unreleased payments can be refunded
-after the deadline. Price: 0.1 testnet NEAR + a retained 0.02 NEAR storage fee.
+[![Reproducible checks](https://github.com/Thirumurugan-12/reelos-near-studio/actions/workflows/verify.yml/badge.svg)](https://github.com/Thirumurugan-12/reelos-near-studio/actions/workflows/verify.yml)
 
-## Current NEAR evidence
+ReelOS connects an AI-assisted video editor to client-approved native NEAR escrow.
+A customer funds an immutable brief, the studio publishes the MP4's SHA-256, and
+only the funding customer can release the editing payment. The customer can reclaim
+an unreleased editing payment after the deadline. The separate storage fee is retained.
 
-- Deployed contract: `reelos-escrow-20261109.testnet`; studio provider:
-  `thirumurugan12.testnet`. Compiled Wasm and finalized configuration verified.
-- [Deployment transaction](https://explorer.testnet.near.org/transactions/HehvqR2nvW6aD2QJPu23AEDp5EWeAhjZav9MXVWznuSh).
-- [Public customer funding](https://explorer.testnet.near.org/transactions/6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc):
-  separate customer `reelos-demo-client-20261109.testnet` deposited 0.12 NEAR.
-- [Provider delivery](https://explorer.testnet.near.org/transactions/CT4YtFQmSN29ZGqHTGT4Wqa2f8UxZih9GXvNxqKT2c5E)
-  published the actual export SHA-256 from the studio's Meteor wallet.
-- [Customer approval and native payout](https://explorer.testnet.near.org/transactions/AKZdntwS8Y7eEKwHDBoAcNgNaPCwgbfEvUsxsBpMvKwA):
-  finalized `paid`, with a successful native transfer of 0.1 NEAR to the provider.
-  See the [rehearsal evidence and limits](docs/NEAR_REHEARSAL.md).
-- `/orders`: wallet actions, finalized-payment checks and durable render dispatch.
-  `/rehearsal`: explicit contract-settlement rehearsal using an existing export;
-  it does not claim a new paid-worker render or fresh AI inference.
-- 258 backend tests, 28 Rust contract unit tests,
-  and a compiled-Wasm Sandbox exercise covering funding, delivery, native payout,
-  deadline refund and callback recovery. See [verification](docs/NEAR_VERIFICATION.md).
-- A fresh 20-second 1080p edit includes actual moving B-roll and original voice.
-  Its [editable walkthrough](videos/reelos-near-demo/README.md) shows the real
-  settlement receipts. Private media are excluded from Git; a public demo post is pending.
+**Tracks:** Agent Economy, Real-World Money, Open Innovation. **Prototype:** controlled, single-user, NEAR testnet.
+Provider delivery is manually signed. The contract retains an upgrade key.
 
-This is a controlled single-user testnet prototype. Provider delivery is signed
-manually. A local deployment key is retained, so the escrow is upgradeable. It
-uses native NEAR, not NEAR Intents, and does not claim confidential AI inference.
+[Watch the 66-second public demo](https://x.com/blu_esense/status/2119733707791876185) · [Public transaction evidence](#public-near-evidence)
+
+## Start here: reproduce the app without keys
+
+Requires macOS Apple Silicon or Linux x64, Bash, **Node 22**, **Python 3.12+ / uv**,
+**FFmpeg** and **ffprobe** on PATH. Install tools from their official distributions.
+The first run downloads locked dependencies and a browser runtime for graphics tests.
+No `.env`, Meta account, testnet wallet, private footage or signing key is required.
+
+```sh
+git clone https://github.com/Thirumurugan-12/reelos-near-studio.git
+cd reelos-near-studio
+./scripts/verify.sh app
+./scripts/reviewer-demo.sh
+```
+
+The first command installs locked dependencies, runs backend/frontend checks and
+builds the frontend. The second generates a four-second source and moving cutaway,
+uploads them through the real API, and queues real preview and **1080×1920 MP4 export**
+jobs. It prints a project URL at **http://127.0.0.1:3102/**. Open it to play, inspect
+the timeline, compare source/output and download the export. Ctrl+C stops the demo.
+Its isolated temporary directory and logs are printed; existing projects are untouched.
+
+Expected results: **259 backend tests**, **13 frontend tests**, passing Ruff,
+TypeScript and production build; a generated project with a playable preview,
+export digest and zero model calls. See [verification map](docs/REVIEWABILITY.md).
+The generated demo uses a manual timeline and calibrated tones; it does not
+represent fresh AI planning or SAM inference. The AI workflow requires your own
+working Meta credentials and an intentionally enabled budget.
+
+![Generated review sample running from a fresh checkout](docs/evidence/reviewer-demo.png)
+
+## Run the NEAR contract locally
+
+Requires the official **Rust 1.92.0** toolchain with `rustfmt`, `clippy` and
+`wasm32-unknown-unknown`, plus Node 22. The pinned Sandbox supports Apple Silicon
+macOS and Linux x64. Installation needs network access; the scenario uses only local
+Sandbox accounts, signatures and balances.
+
+```sh
+rustup toolchain install 1.92.0 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+rustup default 1.92.0
+./scripts/verify.sh contract
+```
+
+Expected: **28 contract unit tests**, formatting/Clippy, release Wasm build and the
+compiled-Wasm Sandbox scenario pass. The scenario executes deployment, funding,
+unauthorized-action rejection, delivery, native payout, duplicate rejection and
+deadline refund. Run `./scripts/verify.sh` for both app and contract checks.
+[Contract methods](contracts/reelos-escrow/README.md) · [Sandbox details](contracts/sandbox/README.md).
+
+## Public NEAR evidence
+
+Contract **`reelos-escrow-20261109.testnet`**, studio **`thirumurugan12.testnet`**,
+separate customer **`reelos-demo-client-20261109.testnet`**. Price **0.1 NEAR** +
+**0.02 NEAR retained storage**; gas extra. Public state finalized as **paid**.
+
+| Step | Public transaction |
+| --- | --- |
+| Deploy and initialize | [HehvqR2n…](https://testnet.nearblocks.io/txns/HehvqR2nvW6aD2QJPu23AEDp5EWeAhjZav9MXVWznuSh) |
+| Customer funds 0.12 NEAR | [6JSmQc96…](https://testnet.nearblocks.io/txns/6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc) |
+| Studio publishes export digest via Meteor | [CT4YtFQm…](https://testnet.nearblocks.io/txns/CT4YtFQmSN29ZGqHTGT4Wqa2f8UxZih9GXvNxqKT2c5E) |
+| Customer approval → native 0.1 NEAR transfer to studio | [AKZdntwS…](https://testnet.nearblocks.io/txns/AKZdntwS8Y7eEKwHDBoAcNgNaPCwgbfEvUsxsBpMvKwA) |
+
+[Exact IDs, digest and read-only reproduction](docs/NEAR_REHEARSAL.md) ·
+[Machine-readable evidence](docs/evidence/near-settlement.json).
+This public rehearsal settles an existing edited MP4. A **fresh payment-triggered
+public AI render remains unverified**. Local integration tests use chain/model
+responses as test doubles and execute the real renderer.
+
+## Architecture and where to inspect
+
+```text
+Customer wallet → native NEAR escrow → finalized RPC verification
+                                          ↓
+                               immutable brief + durable job
+                                          ↓
+                              editor / renderer → MP4 SHA-256
+                                          ↓
+Provider wallet → delivery digest → customer approval → native payout
+```
+
+| Component | Source | Verification |
+| --- | --- | --- |
+| Price, caller authorization, deadline, transfer recovery | [Rust contract](contracts/reelos-escrow/src/lib.rs) | Rust tests + compiled Sandbox |
+| Finalized testnet state, fixed RPC boundary | [NEAR reader](backend/reelos/near.py) | [RPC tests](backend/tests/test_near.py) |
+| Immutable brief, matching payment, one dispatch | [Paid-job API](backend/reelos/orders.py) | [Order integration tests](backend/tests/test_orders.py) |
+| Timeline validation, project-scoped moving cutaways | [Timeline](backend/reelos/timeline.py), [decoder](backend/reelos/footage.py) | [Moving footage/audio tests](backend/tests/test_footage_insert.py) |
+| Wallet review and signing | [Paid studio](frontend/app/orders/page.tsx), [wallet adapter](frontend/lib/near-wallet.ts) | Frontend tests + public Meteor delivery receipt |
+| Reproducible generated editor/export | [Demo tool](backend/scripts/reviewer_demo.py) | [Credential-free integration test](backend/tests/test_reviewer_demo.py) |
+
+The backend holds **no wallet signing keys**. Onchain data contain payment terms
+and hashes, not videos or editing instructions. Payment release is customer-approved;
+it does not judge creative quality, resolve disputes or prove copyright ownership.
+SQLite records durable jobs; failed work is not automatically replayed against paid APIs.
 
 ## What is new for this hackathon
 
-We reused the earlier Meta hackathon editor at commit `2ddb6d1`. New work adds
-[Rust escrow](contracts/reelos-escrow/), [finalized RPC verification](backend/reelos/near.py),
-[paid-job dispatch](backend/reelos/orders.py), Meteor wallet controls, `/orders`,
-CLI deployment/verification, transaction evidence, and moving supporting footage.
-Use `git diff 2ddb6d1..HEAD` to inspect the new work; the original history is retained.
-[Scope](SPEC-near-paid-jobs.md) · [setup](docs/NEAR_SETUP.md) · [demo evidence](docs/NEAR_DEMO.md).
+We reused the earlier Meta hackathon editor at **`2ddb6d1`**. New work adds the
+Rust escrow, Meteor controls, finalized RPC verification, paid-job dispatch,
+CLI deployment/activation, `/orders`, settlement proof, moving supporting video,
+and the credential-free review path. Inspect `git diff 2ddb6d1..HEAD` (full history
+is retained). The earlier editor and third-party recipe attribution are documented
+in [editor baseline](EDITOR_BASELINE.md) and [dependency/media inventory](docs/DEPENDENCIES.md).
 
-## Run this copy locally
+## Limitations and further setup
 
-Install Python/uv, Node 22+, FFmpeg, and the locked frontend dependencies. Follow
-[NEAR setup](docs/NEAR_SETUP.md) for the contract configuration and wallet flow.
-Keep credentials in the ignored `.env`; no signing key belongs in the backend.
-The review servers use ports 3101/8101 and a zero model budget:
+- Single-user local workspace; no public multi-tenant deployment or authentication.
+- AI inference needs working Meta credentials. Default example budget is zero.
+  Generated review media remain independent of external providers.
+- Provider delivery is manual; retained deployment key makes testnet escrow upgradeable.
+- Native NEAR only; no NEAR Intents, confidential inference or autonomous treasury claim.
+- Private source footage, `.env`, generated media and local CLI keys are excluded from Git.
+  `/rehearsal` requires the private local manifest; public reviewers use the linked
+  receipts and generated demo instead.
+- The public demo is linked above. The hackathon submission form remains a draft.
 
-```sh
-REELOS_ALLOWED_ORIGINS=http://127.0.0.1:3101,http://localhost:3101 REELOS_API_BUDGET_USD=0 uv --directory backend run python -m uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8101
-BACKEND_URL=http://127.0.0.1:8101 npm --prefix frontend run dev -- --port 3101
-```
-
-New AI inference requires your own working Meta credentials and an intentional
-model budget. Tests do not require the private demo footage or wallet secrets.
-
-## Editor baseline
-
-
-An AI creative director for short portrait videos. Meta Muse proposes an edit; SAM tracks the subject; a validated timeline drives a deterministic compositor and FFmpeg export. Chat revisions create new versions instead of replacing earlier results. Several short clips (a trip, an event, a day out) can also become one beat-cut reel: Muse watches the clips and plans the shots, and HyperFrames renders the result in one of three styles.
-
-**Historical Meta demo:** a 2 min 58 s walkthrough of saved real outputs. The current NEAR walkthrough and limitations are documented above. Private footage, renders and the data volume are not in this repository; a fresh clone runs the app but cannot reproduce those exact media without your own clips.
-
-## Run with Docker Compose
-
-Both applications live in this repository. Docker installs Python, Node, FFmpeg, HyperFrames, Remotion (fallback), Chrome Headless Shell, and the required font/runtime dependencies.
-
-1. Copy `.env.example` to `.env` and set `MODEL_API_KEY` locally. Keep it server-side.
-2. Run `docker compose up --build -d`.
-3. Open [ReelOS](http://127.0.0.1:3000).
-
-```sh
-docker compose ps
-docker compose logs --tail=30 backend frontend
-docker compose down
-```
-
-Project state, footage, tracking masks, versions, exports, and the API ledger persist in the `reelos-data` named volume. `docker compose down` retains it. The frontend is the sole published service and binds to loopback; this release is a controlled single-user workspace, not a public multi-tenant service.
-
-Provider keys are passed to the backend at runtime, excluded from image build contexts and Git, and never sent to the browser. The app respects `REELOS_API_BUDGET_USD` up to the $150 ceiling; the current local configuration may impose a lower limit. Each paid attempt reserves an allowance before dispatch. Reservations remain consumed even when a timeout leaves the provider outcome unknown. They are not a statement of confirmed Meta charges; reconcile with the account dashboard.
-
-## Current workflow
-
-1. Upload one MP4/MOV source up to five minutes and an optional reference up to 60 seconds, each up to 200 MB. Choose Full video (web default) to preserve the entire recording, or Short reel for a 15–30 second excerpt.
-2. Describe the edit and subject. Creating a draft sends a compressed source proxy to Meta; reference proxies preserve their original composition. Muse Voice transcribes source speech for topic selection, without generating exact-word captions.
-3. If SAM finds multiple subjects, choose the highlighted person from actual source thumbnails.
-4. Inspect the storyboard or play the draft. The Effects picker adds all 45 catalog recipes plus three named looks, with animated previews, editable settings and supporting-media cards. The original subject text, spotlight, labels and Remotion inserts remain available. See the [complete catalog](docs/EFFECT_CATALOG.md).
-5. Use Edit → Framing → Room for titles when a headline needs clear space. This creates a new version using existing tracking. [Recovery workflow and evidence](docs/TITLE_LAYOUT_RECOVERY.md).
-6. Request changes such as “lower the headline,” “soften the spotlight,” or “make the opening faster.” The last request shortens opening effects; it does not change speech speed.
-7. Compare versions, restore a prior playable edit, and export a 1080 × 1920, 30 fps H.264 MP4 with source audio.
-
-**Multi-clip reel.** In Media → Multi-clip reel, add two or more clips (each up to 2 minutes). Choose Calm, Energetic or Clean, optionally a title, and Make reel: ReelOS converts HDR to SDR, turns very short clips into slow motion, sends one Muse Spark request with every clip attached, snaps the proposed shots to the style's beat grid and renders with HyperFrames. Times and dates come from the clips' metadata, never from the model. Change style re-times Muse's original shots and re-renders without a new Muse request. See [Multi-clip reel](docs/MULTI_CLIP_REEL.md).
-
-Canvas Pro keeps the video and compact timeline in a fitted workspace. Edit, Looks and Media open contextual controls: a side inspector on desktop and a bottom sheet on mobile. Long forms scroll inside the controls without scrolling the page. Version history and export stay in the header. See [the Canvas Pro implementation and validation](docs/CANVAS_PRO.md).
-
-The initial prototype used a 20-second excerpt. Full-video mode now validates source coverage from zero to the complete source duration; it rejects an excerpt instead of silently shortening the recording. The CLI selects this mode with `draft --full-length`. Originals and generated outputs are ignored by Git.
-
-## Repository
-
-```text
-backend/                 FastAPI, durable jobs, timeline, compositor, Meta integrations, CLI
-  scripts/decode-sam.mjs  Official Meta parser for fast mask decoding
-  tests/                 Contract, media, API, revision, segmentation, and ledger checks
-frontend/                Next.js/React workspace
-graphics/                Illustration templates (HyperFrames default, Remotion fallback) and the multi-clip reel template
-skills/reelos-effects/   Portable skill instructions using the shared service
-docs/                    Product specifications and measured progress
-demo-final/              HyperFrames source of the submission demo (private media not included)
-compose.yaml             Backend + frontend deployment with health checks
-```
-
-SQLite stores project/job/version records. A single background executor runs jobs, with no additional queue service required for this initial single-user release. On restart, interrupted jobs are marked for review rather than automatically repeating paid calls. SAM responses and decoded masks are cached; changes to text placement or spotlight intensity reuse them.
-
-## Local development
-
-Requires Python 3.12+, uv, Node 22, npm, FFmpeg, and ffprobe.
-
-```sh
-uv --directory backend sync --frozen
-npm --prefix backend ci --ignore-scripts
-npm --prefix frontend ci --ignore-scripts
-npm --prefix graphics ci --ignore-scripts
-uv --directory backend run uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8000
-# Separate terminal:
-npm --prefix frontend run dev
-```
-
-Local development uses the root `data/` directory, while Compose uses its named volume. Do not run paid work against separate copies of a budget ledger. When migrating local projects, stop the local backend first, back up both stores, copy into an empty Compose data volume, and preserve ownership for UID 10001. The initial development data and usage ledger were migrated into the current Compose instance during verification.
-
-## CLI / skill interface
-
-The CLI calls the same API as the browser. With Compose:
-
-```sh
-docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost:8000 health
-docker compose exec backend /app/backend/.venv/bin/reelos --url http://localhost:8000 usage
-```
-
-During local development, use `uv --directory backend run reelos --help`. Commands include `create`, `upload`, `draft`, `revise`, `render`, `job --wait`, `plan`, `effects` and `apply`. Keep returned project, asset, version, and job IDs. A wait timeout does not mean a provider request failed; inspect the same job before retrying. The [skill](skills/reelos-effects/SKILL.md) documents the workflow.
-
-## Verification
-
-```sh
-uv --directory backend run pytest -q
-uv --directory backend run ruff check reelos tests
-npm --prefix frontend run typecheck
-npm --prefix frontend run build
-npm --prefix frontend audit --omit=dev
-npm --prefix graphics audit --omit=dev
-docker compose config --quiet
-```
-
-Backend tests generate their own tiny videos and include a real, recorded SAM response to a generated red square. Tests do not call paid APIs. Run `npm --prefix backend ci --ignore-scripts` first so segmentation fixtures use the official native JavaScript parser.
-
-Real model verification is documented in [the evaluation report](docs/EVALUATION.md). Three independent footage sets now have playable exports and nine exact targeted revision checks; see [results and quality limitations](docs/THREE_SET_EVALUATION.md). [Three fresh-project rehearsals](docs/REHEARSALS.md) also pass. The [complete-effects recording and extended master](docs/EFFECT_DEMO.md) are verified at 101.4 and 193.4 seconds respectively. All 45 recipes and three extra looks appear on the supplied footage. [Local delivery instructions](docs/DELIVERY.md) identify the current artifacts and remaining submission gates. Creator feedback and human listening review remain open.
-
-## Scope and provenance
-
-The application and original illustration code are authored here. The complete catalog adapts all 45 actual MIT-licensed drawing recipes from Vibha Ramprakash’s Claude effects repository, with copyright, fonts and model notices retained in `backend/reelos/vendor/`. The Notion recipes and video-editor agent also informed the workflow. See [how the references apply](docs/EDITOR_REFERENCE_INTEGRATION.md). SAM decoding uses Meta's official `@meta-sam/parser` package. See the dependency lockfiles, retained package notices, and [dependency/media inventory](docs/DEPENDENCIES.md) for third-party components. New drafts record a render profile using the Aileron font embedded in locked Pillow 12.3.0. Revisions retain their parent's profile; legacy versions retain the earlier host-font policy.
-
-Exact-word captions, elaborate transitions, full timeline manipulation, social publishing, and automatic video generation are outside the baseline. Muse outputs are validated data, never shell commands. Reference observations are proposed interpretations rather than a promise to recover a video's hidden editing settings.
-
-Graphic inserts now render through HyperFrames 0.9.4 by default (`REELOS_GRAPHICS_RENDERER=remotion` restores Remotion); the HyperFrames child runs with no credentials, telemetry or self-updates, and model text reaches it only as JSON variables. Remotion 4.0.539 renders original SVG/React graphics from four allowlisted templates: glasses, classroom, document stack, and a stylized browser mockup. Model text is passed as escaped props; the model cannot supply executable components or external asset URLs. Rendered frames are cached by template version, props, and duration. See [Remotion's licence](https://www.remotion.dev/docs/license/pricing); its free tier covers individuals and companies of up to three people, with different terms for larger organizations. This independent demo does not copy the reference's logos or screenshots. The lockfile overrides a vulnerable transitive Zod release with 4.6.7; the graphics dependency audit passes.
-
-The [fixed ten-attempt reliability batch](docs/RELIABILITY_RESULTS.md) produced seven decodable exports and four sampled visual passes; the 9/10 target was not met. This newer evidence is separate from the earlier three successful rehearsals. Transport failures now retain redacted diagnostic categories without automatic paid retries.
-
-[Measured source/output audio timing](docs/AUDIO_TIMING_RESULTS.md) now includes beginning/middle/end checks for the actual main v22 export, catalog sampler and fresh framed draft, plus a calibrated local checker. Human listening and visual lip-sync review remain separate gates.
+For your own real AI/NEAR workflow: [setup](docs/NEAR_SETUP.md),
+[paid-job scope](SPEC-near-paid-jobs.md), [current evidence](docs/NEAR_VERIFICATION.md),
+[video provenance](docs/NEAR_DEMO.md). Historical Docker/development instructions
+and editor features are in [EDITOR_BASELINE.md](EDITOR_BASELINE.md).

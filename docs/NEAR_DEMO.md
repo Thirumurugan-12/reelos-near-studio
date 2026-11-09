@@ -17,7 +17,7 @@ Updated walkthrough: 66s, 1920×1080/30fps. Editable sources in
 show the actual revised editor, finalized paid state with all three public receipts,
 and the successful 0.1 NEAR native transfer in NearBlocks. This settles the existing
 MP4; it is not a new payment-triggered AI render. [Transaction evidence](NEAR_REHEARSAL.md).
-Code is public; the video and private footage are not yet published. Previous
+Code and the [66-second walkthrough](https://x.com/blu_esense/status/2119733707791876185) are public; raw source footage remains excluded from Git. Previous
 source files and edit versions are intact.
 
 ## Requested quality revision
