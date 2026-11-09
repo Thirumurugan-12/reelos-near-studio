@@ -77,6 +77,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from reelos.orders import mount_orders
 
     mount_orders(app, editor)
+    from reelos.deployment import mount_deployment
+
+    mount_deployment(app, settings)
 
     @app.middleware("http")
     async def local_boundary(request: Request, call_next):

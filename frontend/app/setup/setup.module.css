@@ -1,0 +1,16 @@
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 24px 0;
+  cursor: pointer;
+}
+.consent input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin: 2px 0;
+  accent-color: var(--green);
+}

@@ -45,7 +45,7 @@ export default function PaidStudio() {
               footage in the editor; funding and wallet signing will open once
               the contract is live.
             </p>
-            <Link href="/">Prepare your footage →</Link>
+            <Link href="/setup">Set up the testnet contract →</Link>
           </div>
         </section>
       )}

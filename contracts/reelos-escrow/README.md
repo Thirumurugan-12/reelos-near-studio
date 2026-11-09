@@ -71,3 +71,9 @@ Validation: 26 contract tests, format and Clippy passed; release Wasm built. The
 existing editor's 205 backend tests passed using `uv --directory backend run python -m pytest -q`.
 Use `python -m pytest` in this copied workspace: copied executable shebangs can
 otherwise invoke the original workspace's interpreter. No paid model calls were made.
+
+Wallet setup can instead use `new_for_studio(price)` on the exact keyless
+`escrow.<provider>` subaccount. Its parent must create/fund/deploy/initialize it in
+one batch. This keeps private keys in the studio wallet, but the deployment
+account is permanent and has no upgrade, deletion or setup-balance withdrawal.
+See `/setup` and docs/NEAR_SETUP.md for review and verification.

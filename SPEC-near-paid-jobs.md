@@ -68,3 +68,12 @@ in Meteor; the client signs approval/refund. This initial version requires that
 provider signature and is not a fully autonomous treasury. Multi-subject footage
 may need manual recovery; use one subject in the initial demo. The existing local
 editor remains accessible; escrow is not DRM or a public multitenant access boundary.
+
+## Wallet-signed deployment
+The studio's wallet may atomically create/fund/deploy/initialize `escrow.<studio>`
+with 3 testnet NEAR and no access keys. The factory initializer derives the provider
+from predecessor and validates the exact account name. The account is permanent;
+the setup UI must explain the retained balance and require an acknowledgement.
+Only the user signs. Activation requires exact compiled code hash, empty access-key
+list, matching provider/price/storage fee and finalized chain reads. It preserves
+other environment credentials and refuses switching an already-configured escrow.

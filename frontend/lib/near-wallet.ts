@@ -30,13 +30,24 @@ export function walletSelector() {
       });
   return pending;
 }
-export async function connectWallet(contractId: string) {
+export function requireTestnet(selector: WalletSelector) {
+  if (
+    walletNetwork !== "testnet" ||
+    selector.options.network.networkId !== "testnet"
+  )
+    throw new Error("Only NEAR testnet is supported.");
+}
+export async function connectWallet(contractId?: string) {
   const selector = await walletSelector();
   const wallet = await selector.wallet<InjectedWallet>("meteor-wallet");
-  const accounts = await wallet.signIn({
-    contractId,
-    methodNames: ["fund_job", "deliver_job", "approve_job", "refund_job"],
-  });
+  const accounts = await wallet.signIn(
+    contractId
+      ? {
+          contractId,
+          methodNames: ["fund_job", "deliver_job", "approve_job", "refund_job"],
+        }
+      : {},
+  );
   if (!accounts.length) throw new Error("No wallet account selected.");
   return accounts[0].accountId;
 }

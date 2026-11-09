@@ -37,3 +37,29 @@ Implemented on codex/near-paid-jobs in the separate near-hackathon copy.
 Frontend: http://127.0.0.1:3101/orders; backend: http://127.0.0.1:8101.
 The preview uses this copy's data directory and a zero API budget. The generated
 browser fixture server was stopped and is not part of application code.
+
+# 9 November 2026 — full runtime rehearsal and wallet deployment preparation
+
+- Verified 11 testnet NEAR total on the user's public studio account before testing.
+- 28 contract unit tests and 249 backend tests pass; 15 frontend tests pass.
+- Release Wasm rebuilt (259,337 bytes); Clippy, Ruff, typecheck and production build pass.
+- Full compiled-Wasm Sandbox rehearsal passes on nearcore 2.14.0-rc.5 / protocol 88,
+  matching the public testnet runtime. Includes real local receipts and callbacks,
+  exact payment, deadline refund, duplicate/unauthorized action rejection and a
+  parent-signed atomic deployment into a new keyless subaccount.
+- Default workspaces runtime 2.6.2 / protocol 77 rejected the modern artifact. The
+  reproducible launcher now pins the matching runtime instead of relying on that default.
+- `/setup` reviews a 3 testnet NEAR deployment and requires a wallet connection,
+  explicit acknowledgement and Meteor signature. No private key is imported.
+- Activation verifies finalized config, deployed code SHA-256 and no access keys,
+  then sets only REELOS_NEAR_CONTRACT_ID in the local ignored environment file.
+- Tests ensure activation cannot accept mainnet, wrong pricing/provider, altered
+  code or an escrow with access keys; existing environment credentials are preserved.
+- Found a generated-key console diagnostic in pinned Meteor SDK 1.0.24 before any
+  wallet connection. An explicit pre-bundle patch removes that line. The guard is
+  repeatable and rejects dependency-version changes; a regression test covers it.
+- Browser checks: setup terms and disabled deployment before consent, desktop and
+  320px layout, no console errors/warnings before wallet connection.
+- The local server explicitly allows the preview's 3101 origin for POST requests.
+- No public wallet signature, public deployment, or paid model call has occurred.
+  The next step requires the user's wallet connection/signature on `/setup`.

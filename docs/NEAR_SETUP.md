@@ -67,3 +67,32 @@ severity advisories. The dependency audit retains low-severity elliptic/secp256k
 findings inherited through the NEAR SDK; no unreviewed major downgrade was applied.
 Sources: [Meteor adapter](https://github.com/near/wallet-selector/tree/main/packages/meteor-wallet),
 [wallet selector](https://github.com/near/wallet-selector/tree/main/packages/core).
+
+## Wallet-signed keyless deployment
+
+Open `/setup` in the local preview. Connect the studio's named testnet account,
+review the exact `escrow.<studio-account>` destination, acknowledge that the contract
+account is permanent, then review the transaction in Meteor. It transfers **3
+testnet NEAR** (plus gas) to cover contract code/state storage. The account is
+created, funded, deployed and initialized in one atomic batch with **no access keys**.
+The studio wallet's private key never reaches this app. The deployment account has
+no upgrade/delete/withdraw mechanism; its setup balance cannot be reclaimed.
+
+The initializer `new_for_studio` derives the provider from predecessor identity
+and only accepts the exact `escrow.<predecessor>` account. The existing private
+self-initializer is retained for independently keyed deployments and tests.
+
+After signing, the page verifies finalized contract settings, exact compiled code
+hash and an empty access-key list before enabling the paid studio. If the request
+times out after signing, use Verify an existing deployment before retrying.
+The activation endpoint changes only the local copied project's ignored environment.
+
+For the 3101 preview, include the exact Origin allowance when starting the backend:
+
+```sh
+REELOS_ALLOWED_ORIGINS=http://127.0.0.1:3101,http://localhost:3101 REELOS_API_BUDGET_USD=0 uv --directory backend run python -m uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8101
+```
+
+`npm run dev` and `npm run build` explicitly run the pinned Meteor SDK logging
+patch even when npm lifecycle scripts are disabled by `.npmrc`. Do not bypass
+those scripts when bundling the application.

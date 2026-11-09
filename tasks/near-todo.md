@@ -13,5 +13,7 @@
 - [x] Worker integration implementation: one paid job maps to one persisted render, with delivery digest.
   Verified: finalized-payment boundary, concurrent starts dispatch once, failed work is not replayed,
   and a real generated-video export with mocked model calls. Provider publishes delivery from wallet.
-- [ ] Testnet rehearsal and demo: actual receipts and one complete funded edit.
+- [x] Compiled Wasm Sandbox rehearsal: atomic keyless setup, real callbacks, payout and refund.
+  Verify: npm --prefix contracts/sandbox test (runtime pinned to testnet protocol 88).
+- [ ] Public testnet rehearsal and demo: actual receipts and one complete funded edit.
   Verify: fresh clone README, independent wallet and published demo review.
