@@ -1,6 +1,6 @@
 # ReelOS editing escrow
 
-First NEAR increment for ReelOS Studio. This contract has not been deployed.
+Deployed on NEAR testnet as `reelos-escrow-20261109.testnet`.
 It holds a fixed editing price until the client approves a provider-delivered preview.
 After the deadline, the client can recover the editing price, including when a
 preview was delivered but not approved. The separate 0.02 NEAR storage fee is retained.
@@ -51,8 +51,8 @@ keys; this prototype is not represented as an immutable or audited escrow.
 SDK mocked-VM tests cover permissions, lifecycle, storage charging and callback
 recovery. They do not execute real network receipts. A deployed testnet rehearsal
 must verify transfers, callback gas and balances before claiming end-to-end support.
-The `/orders` wallet UI and ReelOS worker implement this interface. Live contract
-deployment, Meteor signatures and network receipts remain unverified.
+The `/orders` wallet UI and ReelOS worker implement this interface. Public deployment and separate-customer funding are verified; provider delivery
+and client approval signatures remain pending. See ../../docs/NEAR_VERIFICATION.md.
 
 Contract design sources: [NEAR state](https://docs.near.org/smart-contracts/anatomy/storage),
 [transfers](https://docs.near.org/smart-contracts/anatomy/actions),

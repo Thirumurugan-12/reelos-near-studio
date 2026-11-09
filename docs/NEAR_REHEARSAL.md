@@ -1,0 +1,30 @@
+# Public testnet settlement rehearsal
+
+This bounded rehearsal settles an already-rendered 20s sample. It demonstrates
+actual native funding and, after the required signatures, native settlement.
+It does not claim a new AI inference or payment-triggered worker render.
+
+Contract: `reelos-escrow-20261109.testnet`.
+Provider: `thirumurugan12.testnet`.
+Customer: `reelos-demo-client-20261109.testnet`.
+Job: `3461ba8334eb447ea57c62cc0a173392`.
+Export SHA-256: `bd76a5276856a7306cc4703d0f9c61d31d6ddb4f00ab878b87f70f83772cb0ca`.
+[Funding receipt](https://explorer.testnet.near.org/transactions/6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc).
+
+Anyone can inspect the current chain state without keys:
+
+```sh
+near contract call-function as-read-only reelos-escrow-20261109.testnet get_job json-args '{"job_id":"3461ba8334eb447ea57c62cc0a173392"}' network-config testnet now
+```
+
+Locally, `/rehearsal` reads an ignored manifest and verifies the actual MP4 digest
+plus finalized chain data. The provider connects Meteor and signs `deliver_job`
+with zero attached NEAR, plus network gas. A separate customer must then sign
+`approve_job` to release exactly the 0.1 NEAR price; 0.02 remains for storage.
+If approval never occurs, the customer can refund the price after the deadline.
+
+The manifest and footage remain outside Git. The page is not a general custody
+endpoint: the backend never signs. Test CLI keys stay in a restricted credential
+store outside the repository. Use your own funded accounts to repeat this on a
+new contract, or run the compiled-Wasm Sandbox scenario without public funds.
+Provider delivery and customer approval are pending at this checkpoint.

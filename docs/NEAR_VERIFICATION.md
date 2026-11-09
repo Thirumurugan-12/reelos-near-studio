@@ -84,3 +84,19 @@ browser fixture server was stopped and is not part of application code.
   verifies live 0.1 + 0.02 = 0.12 NEAR pricing with Meteor connection available.
 - Regression checks: 251 backend tests, 13 frontend tests, TypeScript, production
   build and Ruff pass. Setup no longer has a wallet deployment/signing control.
+
+## Public customer funding and wallet handoff
+
+- Separate CLI-created testnet customer `reelos-demo-client-20261109.testnet`.
+- Job `3461ba8334eb447ea57c62cc0a173392` is finalized as funded on
+  `reelos-escrow-20261109.testnet`, with 0.1 NEAR editing payment plus 0.02 storage.
+- Funding transaction: `6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc`;
+  execution fee 0.0001992097033956 testnet NEAR. No studio wallet funds used.
+- The known 20s export SHA-256 is bound into the local rehearsal manifest.
+  `/rehearsal` re-hashes it and verifies finalized client, brief, amount and deadline.
+- This is a contract-settlement rehearsal of an existing export, not a new
+  paid-worker render or fresh model inference. Main `/orders` behavior is unchanged.
+- Provider delivery requires the user's Meteor signature; client approval follows
+  after that signature is finalized. Neither is claimed as complete yet.
+- 257 backend tests pass, plus frontend typecheck and production build. Three new
+  tests reject changed output/chain data and require distinct customer/provider roles.

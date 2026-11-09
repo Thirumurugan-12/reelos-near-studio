@@ -1,15 +1,62 @@
-> **NEAR hackathon extension:** ReelOS Studio adds client-funded editing jobs.
-> Existing editor baseline: `2ddb6d1`; new work is on `codex/near-paid-jobs`.
-> See [scope](SPEC-near-paid-jobs.md), [build checklist](tasks/near-todo.md), and
-> [escrow contract](contracts/reelos-escrow/README.md). The `/orders` screen and
-> payment-verified rendering worker are implemented. Live deployment and wallet rehearsal are pending. Compare NEAR work with
-> `git diff 2ddb6d1 -- contracts/ SPEC-near-paid-jobs.md tasks/near-*.md README.md .gitignore`.
+# ReelOS Studio — creative jobs on NEAR
 
-# ReelOS
+An AI-assisted editing service with client-funded native NEAR escrow. Customers
+fund an immutable brief; the studio publishes a rendered-file digest; only the
+customer can approve the editing payment. Unreleased payments can be refunded
+after the deadline. Price: 0.1 testnet NEAR + a retained 0.02 NEAR storage fee.
+
+## Current NEAR evidence
+
+- Deployed contract: `reelos-escrow-20261109.testnet`; studio provider:
+  `thirumurugan12.testnet`. Compiled Wasm and finalized configuration verified.
+- [Deployment transaction](https://explorer.testnet.near.org/transactions/HehvqR2nvW6aD2QJPu23AEDp5EWeAhjZav9MXVWznuSh).
+- [Public customer funding](https://explorer.testnet.near.org/transactions/6JSmQc96HwwMYYF8WnfDmvj5Vr9hphPqa1qsjqFPS1Hc):
+  separate customer `reelos-demo-client-20261109.testnet` deposited 0.12 NEAR.
+  Provider delivery and customer approval remain pending.
+- `/orders`: wallet actions, finalized-payment checks and durable render dispatch.
+  `/rehearsal`: explicit contract-settlement rehearsal using an existing export;
+  it does not claim a new paid-worker render or fresh AI inference.
+- 257 backend tests, 28 Rust contract unit tests,
+  and a compiled-Wasm Sandbox exercise covering funding, delivery, native payout,
+  deadline refund and callback recovery. See [verification](docs/NEAR_VERIFICATION.md).
+- A fresh 20-second 1080p edit includes actual moving B-roll and original voice.
+  Its [editable walkthrough](videos/reelos-near-demo/README.md) labels remaining
+  wallet steps. Private media are excluded from Git; a public demo post is pending.
+
+This is a controlled single-user testnet prototype. Provider delivery is signed
+manually. A local deployment key is retained, so the escrow is upgradeable. It
+uses native NEAR, not NEAR Intents, and does not claim confidential AI inference.
+
+## What is new for this hackathon
+
+We reused the earlier Meta hackathon editor at commit `2ddb6d1`. New work adds
+[Rust escrow](contracts/reelos-escrow/), [finalized RPC verification](backend/reelos/near.py),
+[paid-job dispatch](backend/reelos/orders.py), Meteor wallet controls, `/orders`,
+CLI deployment/verification, transaction evidence, and moving supporting footage.
+Use `git diff 2ddb6d1..HEAD` to inspect the new work; the original history is retained.
+[Scope](SPEC-near-paid-jobs.md) · [setup](docs/NEAR_SETUP.md) · [demo evidence](docs/NEAR_DEMO.md).
+
+## Run this copy locally
+
+Install Python/uv, Node 22+, FFmpeg, and the locked frontend dependencies. Follow
+[NEAR setup](docs/NEAR_SETUP.md) for the contract configuration and wallet flow.
+Keep credentials in the ignored `.env`; no signing key belongs in the backend.
+The review servers use ports 3101/8101 and a zero model budget:
+
+```sh
+REELOS_ALLOWED_ORIGINS=http://127.0.0.1:3101,http://localhost:3101 REELOS_API_BUDGET_USD=0 uv --directory backend run python -m uvicorn reelos.api:create_app --factory --host 127.0.0.1 --port 8101
+BACKEND_URL=http://127.0.0.1:8101 npm --prefix frontend run dev -- --port 3101
+```
+
+New AI inference requires your own working Meta credentials and an intentional
+model budget. Tests do not require the private demo footage or wallet secrets.
+
+## Editor baseline
+
 
 An AI creative director for short portrait videos. Meta Muse proposes an edit; SAM tracks the subject; a validated timeline drives a deterministic compositor and FFmpeg export. Chat revisions create new versions instead of replacing earlier results. Several short clips (a trip, an event, a day out) can also become one beat-cut reel: Muse watches the clips and plans the shots, and HyperFrames renders the result in one of three styles.
 
-**Demo:** a 2 min 58 s walkthrough of saved real outputs (see the submission). Private footage, renders and the data volume are not in this repository; a fresh clone runs the app but cannot reproduce those exact media without your own clips.
+**Historical Meta demo:** a 2 min 58 s walkthrough of saved real outputs. The current NEAR walkthrough and limitations are documented above. Private footage, renders and the data volume are not in this repository; a fresh clone runs the app but cannot reproduce those exact media without your own clips.
 
 ## Run with Docker Compose
 
